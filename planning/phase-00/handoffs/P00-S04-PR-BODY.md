@@ -11,9 +11,9 @@ Handoff: planning/phase-00/handoffs/S04-to-P01.md — Draft
 
 ## أدلة التحقق
 
-V1: verify-roadmap.ps1 وverify-git-workflow.ps1 وgit diff --check وgit diff --cached --check؛ النتائج النهائية في S04.
+V1: Passed؛ verify-roadmap.ps1: 76 صفًا و75 اعتمادًا، و128 رابطًا في نسخة المراجعة قبل إضافة رابط PR؛ ستة قرارات Approved. verify-git-workflow.ps1: 24 عينة مستبعدة و21 مسموحة و23 ملفًا متتبعًا غير مستبعد. git diff --check وgit diff --cached --check وgit diff --check main...HEAD: exit 0. النتائج النهائية في S04.
 V2: N/A؛ توثيق وحوكمة فقط.
-V3: baseline efcb6a5 مرفوعة؛ نتيجة Push الفرع وPR تسجل في S04.
+V3: Passed؛ baseline efcb6a5 على main، وفرع fe680ea مرفوع؛ PR #1 Draft/open إلى main دون دمج. نتائج GitHub النهائية في S04.
 V4: Awaiting user review.
 لا CI أو Build للتطبيق في هذه المهمة.
 
