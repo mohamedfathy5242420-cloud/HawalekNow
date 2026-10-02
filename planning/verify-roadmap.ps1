@@ -43,6 +43,10 @@ function Visit([string]$Id) {
 }
 foreach($id in $ids){Visit $id}
 $files=@('planning/ROADMAP.md','planning/phase-00/steps/S03.md','planning/phase-00/handoffs/S02-to-S03.md','planning/phase-00/handoffs/S03-to-S04.md','docs/CURRENT_STATE.md','docs/DECISIONS.md')
+if(Test-Path (Join-Path $Root 'planning/phase-00/steps/S04.md')){
+  $files += @('planning/phase-00/steps/S04.md','docs/GIT_WORKFLOW.md')
+  if(Test-Path (Join-Path $Root 'planning/phase-00/handoffs/S04-to-P01.md')){$files += 'planning/phase-00/handoffs/S04-to-P01.md'}
+}
 $links=0
 foreach($file in $files){
   $path=Join-Path $Root $file
@@ -67,10 +71,31 @@ foreach($kind in @('STEP','HANDOFF')){
 $s02=Get-Content (Join-Path $Root 'planning/phase-00/steps/S02.md') -Raw
 $s03=Get-Content (Join-Path $Root 'planning/phase-00/steps/S03.md') -Raw
 $state=Get-Content (Join-Path $Root 'docs/CURRENT_STATE.md') -Raw
-if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: P00-S04\r?$' -or $state -notmatch '(?m)^- Status: NotStarted\r?$'){throw 'Closure state mismatch'}
+if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: P00-S04\r?$'){throw 'Closure state mismatch'}
 $handoff=Get-Content (Join-Path $Root 'planning/phase-00/handoffs/S03-to-S04.md') -Raw
 if($handoff -notmatch '(?m)^Status: Ready\r?$' -or $handoff -notmatch '(?m)^From: P00-S03\r?$' -or $handoff -notmatch '(?m)^To: P00-S04\r?$'){throw 'Closure handoff mismatch'}
-if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path (Join-Path $Root 'planning/phase-00/steps/S04.md'))){throw 'S04 must not have started or advertise a missing active file'}
+$currentStatus=[regex]::Match($state,'(?m)^- Status: (\w+)\r?$').Groups[1].Value
+$s04Path=Join-Path $Root 'planning/phase-00/steps/S04.md'
+if($currentStatus -eq 'NotStarted'){
+  if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path $s04Path)){throw 'NotStarted S04 must have no active file'}
+}elseif($currentStatus -in @('InProgress','InReview')){
+  if($state -notmatch '(?m)^- ActiveStepFile: planning/phase-00/steps/S04.md\r?$' -or -not (Test-Path $s04Path)){throw 'Missing S04 active file'}
+  $s04=Get-Content $s04Path -Raw
+  foreach($field in @("Status: $currentStatus",'Phase: P00','PreviousStep: P00-S03','NextStep: PhaseReview')){
+    if($s04 -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "S04 state mismatch: $field"}
+  }
+  $stepTemplate=Get-Content (Join-Path $Root 'planning/templates/STEP_TEMPLATE.md') -Raw
+  foreach($h in [regex]::Matches($stepTemplate,'(?m)^## .+$')){if(-not $s04.Contains($h.Value.Trim())){throw 'S04 missing template heading'}}
+  if($currentStatus -eq 'InReview'){
+    $phaseHandoff=Get-Content (Join-Path $Root 'planning/phase-00/handoffs/S04-to-P01.md') -Raw
+    foreach($field in @('Status: Draft','From: P00-S04','To: PhaseReview')){
+      if($phaseHandoff -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "Phase handoff mismatch: $field"}
+    }
+    $handoffTemplate=Get-Content (Join-Path $Root 'planning/templates/HANDOFF_TEMPLATE.md') -Raw
+    foreach($h in [regex]::Matches($handoffTemplate,'(?m)^## .+$')){if(-not $phaseHandoff.Contains($h.Value.Trim())){throw 'Phase handoff missing template heading'}}
+    if($s04 -notmatch 'Awaiting user review'){throw 'Missing S04 human review gate'}
+  }
+}else{throw 'Unsupported S04 transition; phase approval must be checked before closure'}
 if($map -notmatch '(?m)^Status: Approved\r?$' -or -not $map.Contains('مستند Word الأصلي، الذي لم يُعدّل')){throw 'Missing approved roadmap/source timing correction notice'}
 if($s03 -notmatch 'V4 Approved' -or $s03 -notmatch 'المستخدم راجع التقرير واعتمد' -or $handoff -notmatch 'V4 Passed'){throw 'Missing human approval evidence'}
 $decisions=Get-Content (Join-Path $Root 'docs/DECISIONS.md') -Raw
@@ -108,6 +133,6 @@ foreach($id in $required.Keys){
 }
 foreach($token in @('لا يضمن عدم تكرار Email عند فشل الشبكة','exactly-once','فقد الاستجابة','صندوق المستلم')){if(-not $decisions.Contains($token)){throw "Missing email guarantee limit: $token"}}
 Write-Output "PASS: 76 source rows match IDs/order/names/outputs/basic gates; 75 dependency edges; no missing nodes, forward edges or cycles."
-Write-Output "PASS: $links local links/anchors; referenced IDs; template headings; S02/S03 Done, S03-to-S04 Ready, current S04 NotStarted with no S04 file."
+Write-Output "PASS: $links local links/anchors; referenced IDs; template headings; S02/S03 Done, S03-to-S04 Ready, current S04 $currentStatus with consistent active file and review gate."
 Write-Output 'PASS: six Approved decisions with foundation/completion timing; affected service conditions; early secret redaction; email guarantee limits; original Word correction notice and recorded user approval.'
 Write-Output 'LIMIT: documentation checks only; service runtime, Backend, Docker, SDK, mail delivery and GitHub push are not verified.'
