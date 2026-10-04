@@ -1,8 +1,8 @@
 # Git workflow في HawalekNow
 
-Updated: 2026-10-02
+Updated: 2026-10-04
 OwnerStep: P00-S04
-Status: InReview
+Status: Approved
 
 ## القواعد
 
@@ -41,7 +41,7 @@ git diff origin/main...HEAD
 git push -u origin chore/p00-s04-setup-git-workflow
 ```
 
-في هذا الجهاز Git احتاج `-c safe.directory=D:/HwalekNow` لكل أمر بسبب اختلاف الملكية؛ لم نغير إعداد safe.directory العام. افتح PR من GitHub واختر base: main وcompare: فرع الخطوة. راجع Files changed والـCommits؛ لا تضغط Merge في مهمة S04. لا توجد CI مؤكدة حاليًا؛ GitHub Actions ستنشأ في خطوتها بالخطة.
+في هذا الجهاز Git احتاج `-c safe.directory=D:/HwalekNow` لكل أمر بسبب اختلاف الملكية؛ لم نغير إعداد safe.directory العام. افتح PR من GitHub واختر base: main وcompare: فرع الخطوة. راجع Files changed والـCommits. منع الدمج في تنفيذ S04 الأول كان حتى مراجعة المستخدم؛ بتاريخ 2026-10-04 اعتمد المستخدم المخرج وأذن بإغلاق P00 وSquash Merge لـPR #1. يجمع Squash تغييرات الـPR في Commit واحد على main؛ يحتفظ بفرع العمل، ولا يبدأ P01 بهذا الدمج. لا توجد CI مؤكدة حاليًا؛ GitHub Actions ستنشأ في خطوتها بالخطة.
 
 ## مراجعة ملفات البداية
 

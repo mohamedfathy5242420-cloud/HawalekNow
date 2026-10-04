@@ -42,11 +42,12 @@ function Visit([string]$Id) {
   $visiting[$Id]=$false; $visited[$Id]=$true
 }
 foreach($id in $ids){Visit $id}
-$files=@('planning/ROADMAP.md','planning/phase-00/steps/S03.md','planning/phase-00/handoffs/S02-to-S03.md','planning/phase-00/handoffs/S03-to-S04.md','docs/CURRENT_STATE.md','docs/DECISIONS.md')
+$files=@('planning/phase-00/steps/S01.md','planning/phase-00/steps/S02.md','planning/phase-00/handoffs/S01-to-S02.md','planning/ROADMAP.md','planning/phase-00/steps/S03.md','planning/phase-00/handoffs/S02-to-S03.md','planning/phase-00/handoffs/S03-to-S04.md','docs/CURRENT_STATE.md','docs/DECISIONS.md')
 if(Test-Path (Join-Path $Root 'planning/phase-00/steps/S04.md')){
   $files += @('planning/phase-00/steps/S04.md','docs/GIT_WORKFLOW.md')
   if(Test-Path (Join-Path $Root 'planning/phase-00/handoffs/S04-to-P01.md')){$files += 'planning/phase-00/handoffs/S04-to-P01.md'}
 }
+if(Test-Path (Join-Path $Root 'planning/phase-00/PHASE_REVIEW.md')){$files += 'planning/phase-00/PHASE_REVIEW.md'}
 $links=0
 foreach($file in $files){
   $path=Join-Path $Root $file
@@ -71,14 +72,52 @@ foreach($kind in @('STEP','HANDOFF')){
 $s02=Get-Content (Join-Path $Root 'planning/phase-00/steps/S02.md') -Raw
 $s03=Get-Content (Join-Path $Root 'planning/phase-00/steps/S03.md') -Raw
 $state=Get-Content (Join-Path $Root 'docs/CURRENT_STATE.md') -Raw
-if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: P00-S04\r?$'){throw 'Closure state mismatch'}
+if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: (P00-S04|P01-S01)\r?$'){throw 'Closure state mismatch'}
 $handoff=Get-Content (Join-Path $Root 'planning/phase-00/handoffs/S03-to-S04.md') -Raw
 if($handoff -notmatch '(?m)^Status: Ready\r?$' -or $handoff -notmatch '(?m)^From: P00-S03\r?$' -or $handoff -notmatch '(?m)^To: P00-S04\r?$'){throw 'Closure handoff mismatch'}
 $currentStatus=[regex]::Match($state,'(?m)^- Status: (\w+)\r?$').Groups[1].Value
 $s04Path=Join-Path $Root 'planning/phase-00/steps/S04.md'
-if($currentStatus -eq 'NotStarted'){
+$currentStep=[regex]::Match($state,'(?m)^- Step: (P\d{2}-S\d{2})\r?$').Groups[1].Value
+if($currentStep -eq 'P01-S01'){
+  foreach($field in @('- Phase: P01','- Status: NotStarted')){
+    if($state -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "P01 initial state mismatch: $field"}
+  }
+  if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path (Join-Path $Root 'planning/phase-01/steps/S01.md'))){throw 'P01 must remain NotStarted with no execution file'}
+  foreach($number in 1..4){
+    $stepFile=Join-Path $Root ('planning/phase-00/steps/S{0:d2}.md' -f $number)
+    $stepText=Get-Content $stepFile -Raw
+    if($stepText -notmatch '(?m)^Status: Done\r?$'){throw "P00 step not Done: $number"}
+  }
+  foreach($name in @('S01-to-S02','S02-to-S03','S03-to-S04','S04-to-P01')){
+    $readyText=Get-Content (Join-Path $Root "planning/phase-00/handoffs/$name.md") -Raw
+    if($readyText -notmatch '(?m)^Status: Ready\r?$'){throw "P00 handoff not Ready: $name"}
+  }
+  $s04=Get-Content $s04Path -Raw
+  foreach($field in @('Status: Done','Phase: P00','PreviousStep: P00-S03','NextStep: P01-S01')){
+    if($s04 -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "Closed S04 mismatch: $field"}
+  }
+  $phaseReview=Get-Content (Join-Path $Root 'planning/phase-00/PHASE_REVIEW.md') -Raw
+  $phaseHandoff=Get-Content (Join-Path $Root 'planning/phase-00/handoffs/S04-to-P01.md') -Raw
+  foreach($field in @('Phase: P00','Status: Approved','UserApproval: Approved','ApprovalDate: 2026-10-04','NextStep: P01-S01')){
+    if($phaseReview -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "P00 phase review mismatch: $field"}
+  }
+  foreach($field in @('From: P00-S04','To: P01-S01','Status: Ready','UserApproval: Approved','ApprovalDate: 2026-10-04')){
+    if($phaseHandoff -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "P01 handoff mismatch: $field"}
+  }
+  foreach($kind in @('STEP','HANDOFF')){
+    $template=Get-Content (Join-Path $Root "planning/templates/${kind}_TEMPLATE.md") -Raw
+    $actual=if($kind -eq 'STEP'){$s04}else{$phaseHandoff}
+    foreach($h in [regex]::Matches($template,'(?m)^## .+$')){if(-not $actual.Contains($h.Value.Trim())){throw "P00 closure missing template heading: $($h.Value)"}}
+  }
+  foreach($token in @('Definition of Done','نقطة واحدة موثوقة','قالب ثابت','Frontend','توافق','المتطلبات','P01-S01 NotStarted','.NET','Docker','V1','V2','V3','V4')){
+    if(-not $phaseReview.Contains($token)){throw "P00 review missing closure evidence: $token"}
+  }
+  if($s04 -notmatch 'Passed؛ المستخدم راجع واعتمد' -or $phaseReview -notmatch 'المستخدم قال' -or $phaseHandoff -notmatch 'V4 Passed'){throw 'Missing P00 user approval evidence'}
+}elseif($currentStatus -eq 'NotStarted'){
+  if($state -notmatch '(?m)^- Phase: P00\r?$'){throw 'S04 initial phase mismatch'}
   if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path $s04Path)){throw 'NotStarted S04 must have no active file'}
 }elseif($currentStatus -in @('InProgress','InReview')){
+  if($state -notmatch '(?m)^- Phase: P00\r?$'){throw 'S04 active phase mismatch'}
   if($state -notmatch '(?m)^- ActiveStepFile: planning/phase-00/steps/S04.md\r?$' -or -not (Test-Path $s04Path)){throw 'Missing S04 active file'}
   $s04=Get-Content $s04Path -Raw
   foreach($field in @("Status: $currentStatus",'Phase: P00','PreviousStep: P00-S03','NextStep: PhaseReview')){
@@ -133,6 +172,6 @@ foreach($id in $required.Keys){
 }
 foreach($token in @('لا يضمن عدم تكرار Email عند فشل الشبكة','exactly-once','فقد الاستجابة','صندوق المستلم')){if(-not $decisions.Contains($token)){throw "Missing email guarantee limit: $token"}}
 Write-Output "PASS: 76 source rows match IDs/order/names/outputs/basic gates; 75 dependency edges; no missing nodes, forward edges or cycles."
-Write-Output "PASS: $links local links/anchors; referenced IDs; template headings; S02/S03 Done, S03-to-S04 Ready, current S04 $currentStatus with consistent active file and review gate."
+Write-Output "PASS: $links local links/anchors; referenced IDs; template headings; S02/S03 Done, S03-to-S04 Ready, current $currentStep $currentStatus with consistent active file, P00 closure and review gate."
 Write-Output 'PASS: six Approved decisions with foundation/completion timing; affected service conditions; early secret redaction; email guarantee limits; original Word correction notice and recorded user approval.'
 Write-Output 'LIMIT: documentation checks only; service runtime, Backend, Docker, SDK, mail delivery and GitHub push are not verified.'
