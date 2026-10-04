@@ -1,0 +1,71 @@
+# .NET generated outputs
+**/[Bb]in/
+**/[Oo]bj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+TestResults/
+**/TestResults/
+**/coverage/
+*.coverage
+*.coveragexml
+*.nupkg
+*.snupkg
+
+# Angular / Node generated outputs; lockfiles remain tracked
+node_modules/
+.angular/
+dist/
+out-tsc/
+.npm/
+.cache/
+
+# Local IDE and assistant settings
+.idea/
+.vscode/
+.codex/
+.agents/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Docker persistent local data; Dockerfiles and compose manifests remain tracked
+.docker-data/
+docker-data/
+volumes/
+
+# Local configuration and secrets; examples must contain placeholders only
+.env
+.env.*
+!.env.example
+!.env.*.example
+**/appsettings.Local.json
+**/appsettings.*.Local.json
+secrets.json
+*.pfx
+*.p12
+*.key
+*.pem
+.aws/
+.azure/
+
+# Temporary files and generated diagnostics
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+~$*
+__pycache__/
+*.pyc
+/tmp/
+/temp/
+/artifacts/
+
+# Reviewed legacy raw material and derived extraction; retain locally
+/Mazen_Source/
+/extract_project_materials.py
+/project_materials_extracted.json
+/Hawalek_Now_Project_Questions_AR_Answered.docx
