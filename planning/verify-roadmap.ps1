@@ -75,14 +75,34 @@ foreach($kind in @('STEP','HANDOFF')){
 $s02=Get-Content (Join-Path $Root 'planning/phase-00/steps/S02.md') -Raw
 $s03=Get-Content (Join-Path $Root 'planning/phase-00/steps/S03.md') -Raw
 $state=Get-Content (Join-Path $Root 'docs/CURRENT_STATE.md') -Raw
-if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: (P00-S04|P01-S01)\r?$'){throw 'Closure state mismatch'}
+if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: (P00-S04|P01-S01|P01-S02)\r?$'){throw 'Closure state mismatch'}
 $handoff=Get-Content (Join-Path $Root 'planning/phase-00/handoffs/S03-to-S04.md') -Raw
 if($handoff -notmatch '(?m)^Status: Ready\r?$' -or $handoff -notmatch '(?m)^From: P00-S03\r?$' -or $handoff -notmatch '(?m)^To: P00-S04\r?$'){throw 'Closure handoff mismatch'}
 $currentStatus=[regex]::Match($state,'(?m)^- Status: (\w+)\r?$').Groups[1].Value
 $s04Path=Join-Path $Root 'planning/phase-00/steps/S04.md'
 $currentStep=[regex]::Match($state,'(?m)^- Step: (P\d{2}-S\d{2})\r?$').Groups[1].Value
-if($currentStep -eq 'P01-S01'){
+if($currentStep -in @('P01-S01','P01-S02')){
   if($state -notmatch '(?m)^- Phase: P01\r?$'){throw 'P01 phase mismatch'}
+  if($currentStep -eq 'P01-S02'){
+    if($currentStatus -ne 'NotStarted' -or $state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path (Join-Path $Root 'planning/phase-01/steps/S02.md'))){throw 'P01-S02 must remain NotStarted in S01 closure'}
+    $closedStep=Get-Content (Join-Path $Root 'planning/phase-01/steps/S01.md') -Raw
+    $readyHandoff=Get-Content (Join-Path $Root 'planning/phase-01/handoffs/S01-to-S02.md') -Raw
+    foreach($field in @('Status: Done','UserApproval: Approved','ApprovalDate: 2026-10-05','Phase: P01','PreviousStep: P00-S04','NextStep: P01-S02')){
+      if($closedStep -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "Closed P01-S01 mismatch: $field"}
+    }
+    foreach($field in @('Status: Ready','From: P01-S01','To: P01-S02','UserApproval: Approved','ApprovalDate: 2026-10-05')){
+      if($readyHandoff -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "Ready P01 handoff mismatch: $field"}
+    }
+    foreach($kind in @('STEP','HANDOFF')){
+      $template=Get-Content (Join-Path $Root "planning/templates/${kind}_TEMPLATE.md") -Raw
+      $actual=if($kind -eq 'STEP'){$closedStep}else{$readyHandoff}
+      foreach($h in [regex]::Matches($template,'(?m)^## .+$')){if(-not $actual.Contains($h.Value.Trim())){throw 'P01 closure missing template heading'}}
+    }
+    $decisionText=Get-Content (Join-Path $Root 'docs/DECISIONS.md') -Raw
+    $dockerDecision=[regex]::Match($decisionText,'(?ms)^## D009 .*?(?=^## |\z)').Value
+    foreach($token in @('Status: Approved','DeferredTo: P01-S06','ليس Passed')){if(-not $dockerDecision.Contains($token)){throw "Missing approved Docker deferral: $token"}}
+    if(-not $closedStep.Contains('Docker مؤجل إلى P01-S06') -or -not $readyHandoff.Contains('مؤجل إلى P01-S06')){throw 'Docker deferral not carried into step and handoff'}
+  }else{
   $p01StepPath=Join-Path $Root 'planning/phase-01/steps/S01.md'
   if($currentStatus -eq 'NotStarted'){
     if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path $p01StepPath)){throw 'P01 must remain NotStarted with no execution file'}
@@ -104,6 +124,7 @@ if($currentStep -eq 'P01-S01'){
       if($p01Step -notmatch 'Awaiting user review'){throw 'Missing P01 human review gate'}
     }
   }else{throw 'Unsupported P01-S01 transition; user review required before closure'}
+  }
   foreach($number in 1..4){
     $stepFile=Join-Path $Root ('planning/phase-00/steps/S{0:d2}.md' -f $number)
     $stepText=Get-Content $stepFile -Raw

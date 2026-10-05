@@ -22,7 +22,7 @@
 
 SDK المتاح والمختار .NET **10.0.401**. [global.json](global.json) يستخدم `latestPatch` داخل feature band `10.0.4xx` فقط، و`allowPrerelease: false`. لا انتقال تلقائي إلى band أحدث أو .NET major آخر. يفشل الاختيار عند غياب SDK متوافق؛ تغيير السياسة يحتاج مراجعة.
 
-Git وPowerShell لتشغيل فحوص التوثيق. يلزم Docker CLI وCompose وDocker Engine يعمل بوضع Linux containers للخدمات لاحقًا. فحص 2026-10-05 وجد CLI 29.7.2 وCompose v5.4.0 لكن Engine غير متاح؛ تشغيل Docker Desktop وإعادة فحص Linux مطلوبان. لا SQL Server أو Mailpit أو API أو CI منفذة في هذه الخطوة.
+Git وPowerShell لتشغيل فحوص التوثيق. يلزم Docker Engine بوضع Linux containers للخدمات لاحقًا. وفق D009 اعتمد المستخدم تأجيل تشغيل وفحص Engine إلى P01-S06؛ فحصه مؤجل وليس ناجحًا، ولا يمنع إنشاء مشاريع .NET واختبارات المعمارية المحلية. لا SQL Server أو Mailpit أو API أو CI منفذة في هذه الخطوة.
 
 ## الأوامر المتاحة الآن
 

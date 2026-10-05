@@ -3,11 +3,11 @@
 آخر تحديث: 2026-10-05
 
 - Phase: P01
-- Step: P01-S01
-- Status: InReview
-- Scope: تنفيذ P01-S01 فقط بإذن المستخدم بعد تحقق بوابة P00 ودمج PR #1؛ لا مشاريع Backend.
-- ActiveStepFile: planning/phase-01/steps/S01.md
-- NextStep: P01-S02 بعد مراجعة P01-S01 واعتماد المستخدم؛ لا بدء تلقائي.
+- Step: P01-S02
+- Status: NotStarted
+- Scope: P01-S01 مغلقة؛ P01-S02 لم تبدأ.
+- ActiveStepFile: None؛ ينشأ ملف S02 عند بدء التنفيذ.
+- NextStep: P01-S02 بإذن تنفيذ مستقل للـAgent بعد التحقق من دمج PR #2.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## نقطة البداية لأي Agent
@@ -21,8 +21,8 @@ P00-S01 إلى P00-S04 Done؛ مراجعة المرحلة Approved وتسليم 
 
 ## التحقق والقيود
 
-نتائج P00 التاريخية في مراجعة المرحلة وS04. نتائج P01-S01 في [ملف الخطوة](../planning/phase-01/steps/S01.md): SDK 10.0.401 وحل slnx فارغ وglobal.json والهيكل وفحوص التوثيق متحقق منها. build exit 0 مع تحذير عدم وجود مشروع للاستعادة؛ ليس بناء Backend. Docker CLI وCompose متاحان لكن Engine غير متاح وLinux containers غير متحقق منها. [تسليم P01-S02](../planning/phase-01/handoffs/S01-to-S02.md) Draft؛ مراجعة المستخدم منتظرة. Backend وCI لم ينشآ. تفاصيل Frontend والخرائط والاستضافة والموضوعات المؤجلة تبقى حسب SCOPE.
+نتائج P00 التاريخية في مراجعة المرحلة وS04. نتائج P01-S01 في [ملف الخطوة](../planning/phase-01/steps/S01.md): SDK 10.0.401 وحل slnx فارغ وglobal.json والهيكل وفحوص التوثيق متحقق منها. build exit 0 مع تحذير عدم وجود مشروع للاستعادة؛ ليس بناء Backend. Docker Engine وLinux containers مؤجلان إلى P01-S06 بقرار D009 وليس Passed. [تسليم P01-S02](../planning/phase-01/handoffs/S01-to-S02.md) Ready بعد اعتماد المستخدم؛ المشاريع وCI لم تنشآ. تفاصيل Frontend والخرائط والاستضافة والموضوعات المؤجلة تبقى حسب SCOPE.
 
 ## بوابة الانتقال
 
-P01-S01 InReview بإذن المستخدم بتاريخ 2026-10-05؛ تحقق فعليًا من PR #1 merged والـCommit 4630e871dce0ca6d11d2ce2ad2230dada3abb1f2 على main. نتائج التنفيذ في ملف الخطوة؛ P01-S02 لم تبدأ.
+P01-S01 Done واعتماد المستخدم Approved بتاريخ 2026-10-05. إغلاق S01 يدمج في PR #2 قبل تنفيذ التالي؛ تحقق من main البعيد قبل البدء. المستخدم طلب رسالة تنفيذ S02 للـAgent ولم يأذن بتنفيذها في مهمة الإغلاق الحالية.
