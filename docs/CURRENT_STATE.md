@@ -4,25 +4,24 @@
 
 - Phase: P01
 - Step: P01-S02
-- Status: NotStarted
-- Scope: P01-S01 مغلقة؛ P01-S02 لم تبدأ.
-- ActiveStepFile: None؛ ينشأ ملف S02 عند بدء التنفيذ.
-- NextStep: P01-S02 بإذن تنفيذ مستقل للـAgent بعد التحقق من دمج PR #2.
+- Status: InReview
+- Scope: إنشاء مشاريع Clean Architecture واختبار اتجاهات الاعتماد فقط.
+- ActiveStepFile: planning/phase-01/steps/S02.md
+- NextStep: P01-S03؛ لا يبدأ قبل اعتماد S02 ودمجها وتسليم Ready.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## نقطة البداية لأي Agent
 
-اقرأ هذا الملف ثم [مراجعة P00](../planning/phase-00/PHASE_REVIEW.md) و[التسليم](../planning/phase-00/handoffs/S04-to-P01.md) و[القرارات](DECISIONS.md) و[النطاق](SCOPE.md) و[الخريطة](../planning/ROADMAP.md) و[Git workflow](GIT_WORKFLOW.md). المستخدم اعتمد S04 وإغلاق P00 ودمج PR #1 بطريقة Squash Merge بتاريخ 2026-10-04؛ الإذن مهمة الإغلاق السابقة كان إغلاق المرحلة فقط؛ المستخدم أذن P01-S01 بتاريخ 2026-10-05 بعد تحقق شروطها.
+اقرأ [S02](../planning/phase-01/steps/S02.md) و[التسليم](../planning/phase-01/handoffs/S02-to-S03.md) والقرارات والنطاق والخريطة وقواعد Git. المستخدم أذن تنفيذ S02 فقط بعد التحقق من main عند b5db21f3f41c4740d7dc511364249c8f5f7b7082، دمج PR #2. لا دمج S02 ولا بدء S03 في هذه المهمة.
 
 ## ما اكتمل
 
-P00-S01 إلى P00-S04 Done؛ مراجعة المرحلة Approved وتسليم P01-S01 Ready. D001–D008 وQ003-01 إلى Q003-06 محفوظة. مستندا المرجع المعتمدان متتبعان دون تعديل؛ مواد المصدر والاستخراج محفوظة محليًا ومستبعدة بأسباب موثقة.
-[PR #1](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/1) يجمع توثيق Git workflow وإغلاق P00؛ حالة الدمج ومعرفه النهائي يؤخذان من GitHub الفعلي، ولا يفترضان من اعتماد المراجعة.
+P00-S01 إلى P00-S04 Done ومراجعة P00 Approved وتسليمها Ready. P01-S01 Done وتسليم S02 Ready؛ التفاصيل التاريخية وقيود الحل الفارغ في S01 محفوظة. S02 أنشأت أربعة مشاريع إنتاج وثلاثة مشاريع اختبارات واتجاهات الاعتماد وControllers host دون endpoints. تفاصيل النتائج والحزم والقيود في ملف S02.
 
 ## التحقق والقيود
 
-نتائج P00 التاريخية في مراجعة المرحلة وS04. نتائج P01-S01 في [ملف الخطوة](../planning/phase-01/steps/S01.md): SDK 10.0.401 وحل slnx فارغ وglobal.json والهيكل وفحوص التوثيق متحقق منها. build exit 0 مع تحذير عدم وجود مشروع للاستعادة؛ ليس بناء Backend. Docker Engine وLinux containers مؤجلان إلى P01-S06 بقرار D009 وليس Passed. [تسليم P01-S02](../planning/phase-01/handoffs/S01-to-S02.md) Ready بعد اعتماد المستخدم؛ المشاريع وCI لم تنشآ. تفاصيل Frontend والخرائط والاستضافة والموضوعات المؤجلة تبقى حسب SCOPE.
+global.json وSDK 10.0.401 محفوظان. ArchitectureTests تفحص Project References وAssembly وتجارب رفض معزولة. UnitTests وIntegrationTests مجهزان دون اختبارات سلوك بعد. Docker Engine وLinux containers مؤجلان إلى P01-S06 وفق D009 وليس Passed؛ لم يشغل Docker. لا Modules أو MediatR أو Persistence أو Identity أو Business أو Frontend أو CI ضمن S02. D001–D009 وQ003-01 إلى Q003-06 محفوظة والمرجعان المعتمدان دون تعديل.
 
 ## بوابة الانتقال
 
-P01-S01 Done واعتماد المستخدم Approved بتاريخ 2026-10-05. إغلاق S01 يدمج في PR #2 قبل تنفيذ التالي؛ تحقق من main البعيد قبل البدء. المستخدم طلب رسالة تنفيذ S02 للـAgent ولم يأذن بتنفيذها في مهمة الإغلاق الحالية.
+P01-S02 InReview وتسليم P01-S03 Draft؛ Awaiting user review. يلزم اعتماد المستخدم قبل Done أو تسليم Ready، ولا يبدأ P01-S03 أو يدمج PR في المهمة الحالية.
