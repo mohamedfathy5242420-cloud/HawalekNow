@@ -48,6 +48,9 @@ if(Test-Path (Join-Path $Root 'planning/phase-00/steps/S04.md')){
   if(Test-Path (Join-Path $Root 'planning/phase-00/handoffs/S04-to-P01.md')){$files += 'planning/phase-00/handoffs/S04-to-P01.md'}
 }
 if(Test-Path (Join-Path $Root 'planning/phase-00/PHASE_REVIEW.md')){$files += 'planning/phase-00/PHASE_REVIEW.md'}
+foreach($candidate in @('README.md','backend/README.md','docker/README.md','planning/phase-01/steps/S01.md','planning/phase-01/handoffs/S01-to-S02.md')){
+  if(Test-Path (Join-Path $Root $candidate)){$files += $candidate}
+}
 $links=0
 foreach($file in $files){
   $path=Join-Path $Root $file
@@ -79,10 +82,28 @@ $currentStatus=[regex]::Match($state,'(?m)^- Status: (\w+)\r?$').Groups[1].Value
 $s04Path=Join-Path $Root 'planning/phase-00/steps/S04.md'
 $currentStep=[regex]::Match($state,'(?m)^- Step: (P\d{2}-S\d{2})\r?$').Groups[1].Value
 if($currentStep -eq 'P01-S01'){
-  foreach($field in @('- Phase: P01','- Status: NotStarted')){
-    if($state -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "P01 initial state mismatch: $field"}
-  }
-  if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path (Join-Path $Root 'planning/phase-01/steps/S01.md'))){throw 'P01 must remain NotStarted with no execution file'}
+  if($state -notmatch '(?m)^- Phase: P01\r?$'){throw 'P01 phase mismatch'}
+  $p01StepPath=Join-Path $Root 'planning/phase-01/steps/S01.md'
+  if($currentStatus -eq 'NotStarted'){
+    if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path $p01StepPath)){throw 'P01 must remain NotStarted with no execution file'}
+  }elseif($currentStatus -in @('InProgress','InReview')){
+    if($state -notmatch '(?m)^- ActiveStepFile: planning/phase-01/steps/S01.md\r?$' -or -not (Test-Path $p01StepPath)){throw 'Missing P01-S01 active file'}
+    $p01Step=Get-Content $p01StepPath -Raw
+    foreach($field in @("Status: $currentStatus",'Phase: P01','PreviousStep: P00-S04','NextStep: P01-S02')){
+      if($p01Step -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "P01-S01 state mismatch: $field"}
+    }
+    $stepTemplate=Get-Content (Join-Path $Root 'planning/templates/STEP_TEMPLATE.md') -Raw
+    foreach($h in [regex]::Matches($stepTemplate,'(?m)^## .+$')){if(-not $p01Step.Contains($h.Value.Trim())){throw 'P01-S01 missing template heading'}}
+    if($currentStatus -eq 'InReview'){
+      $p01Handoff=Get-Content (Join-Path $Root 'planning/phase-01/handoffs/S01-to-S02.md') -Raw
+      foreach($field in @('Status: Draft','From: P01-S01','To: P01-S02')){
+        if($p01Handoff -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "P01-S02 draft handoff mismatch: $field"}
+      }
+      $handoffTemplate=Get-Content (Join-Path $Root 'planning/templates/HANDOFF_TEMPLATE.md') -Raw
+      foreach($h in [regex]::Matches($handoffTemplate,'(?m)^## .+$')){if(-not $p01Handoff.Contains($h.Value.Trim())){throw 'P01 handoff missing template heading'}}
+      if($p01Step -notmatch 'Awaiting user review'){throw 'Missing P01 human review gate'}
+    }
+  }else{throw 'Unsupported P01-S01 transition; user review required before closure'}
   foreach($number in 1..4){
     $stepFile=Join-Path $Root ('planning/phase-00/steps/S{0:d2}.md' -f $number)
     $stepText=Get-Content $stepFile -Raw
