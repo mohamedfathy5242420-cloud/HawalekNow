@@ -13,7 +13,7 @@ OwnerStep: P00-S03
 
 كل خطوة تنتظر اكتمال ومراجعة سابقتها. أول خطوة في كل مرحلة تنتظر Phase Review وHandoff للمرحلة السابقة؛ الإغلاق يشمل Definition of Done الخاص بالمرحلة في المستند، وليس نجاح آخر اختبار فقط. اعتماد نهاية المرحلة السابقة يحقق أيضًا الاعتمادات الأقدم المذكورة في ملخص المراحل أدناه. لا يسمح الجدول بتشغيل خطوات بالتوازي.
 لكل صف: نفذ التحقق الأساسي المدرج، وحدد طبقات V1–V4 المناسبة في ملف الخطوة، وراجع Diff والسلوك مع المستخدم، وسجل اعتماده وHandoff وحدّث CURRENT_STATE قبل الانتقال. Commit وPR والدمج حسب [قواعد Git المعتمدة](../docs/GIT_WORKFLOW.md). منع Commit/Push في مهمة S03 كان استثناء تاريخيًا؛ اعتمد المستخدم S04 وإغلاق P00 وSquash Merge لـPR #1 بتاريخ 2026-10-04.
-الفحوص الآلية لا تعني اعتمادًا بشريًا. الخطوات اللاحقة فهرس تخطيط فقط؛ ملف كل خطوة يُنشأ عند بدئها. P00-S01 إلى P00-S04 Done؛ [مراجعة P00](phase-00/PHASE_REVIEW.md) Approved و[تسليم P01-S01](phase-00/handoffs/S04-to-P01.md) Ready. الحالة P01-S01 NotStarted؛ لا تنفيذ لها في مهمة الإغلاق.
+الفحوص الآلية لا تعني اعتمادًا بشريًا. الخطوات اللاحقة فهرس تخطيط فقط؛ ملف كل خطوة يُنشأ عند بدئها. P00-S01 إلى P00-S04 Done؛ [مراجعة P00](phase-00/PHASE_REVIEW.md) Approved و[تسليم P01-S01](phase-00/handoffs/S04-to-P01.md) Ready. P01-S01 Done؛ P01-S02 Done بعد اعتماد المستخدم بتاريخ 2026-10-06؛ [تسليم P01-S03](phase-01/handoffs/S02-to-S03.md) Ready. الحالة P01-S03 NotStarted؛ لا تنفيذ لها في مهمة إغلاق S02. Docker Engine مؤجل إلى P01-S06 وفق D009 وليس Passed.
 
 ## المراحل واعتمادات المصدر
 
@@ -109,6 +109,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S02 إنشاء مشاريع Clean Architecture
 
+- Status: Done؛ UserApproval: Approved؛ ApprovalDate: 2026-10-06؛ [نتائج الخطوة](phase-01/steps/S02.md).
+
 - الاعتمادات السابقة: [P01-S01](#p01-s01).
 - المخرج المطلوب: Domain وApplication وInfrastructure وApi ومشاريع الاختبار.
 - بوابة التحقق: V1 Direction checks وArchitecture Tests.
@@ -116,6 +118,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p01-s03"></a>
 
 ### P01-S03 تأسيس Modules والمشتركات
+
+- Status: NotStarted؛ لا ملف تنفيذ؛ البدء يحتاج إذنًا مستقلًا بعد تحقق دمج S02.
 
 - الاعتمادات السابقة: [P01-S02](#p01-s02).
 - المخرج المطلوب: حدود Identity وMerchants وCatalog وLocations وSearch وغيرها.
