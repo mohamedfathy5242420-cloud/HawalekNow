@@ -10,7 +10,7 @@
 
 | المسار | الغرض |
 | --- | --- |
-| [backend/](backend/README.md) | Solution باسم HawalekNow؛ فارغة في P01-S01؛ المشاريع والاختبارات في P01-S02 |
+| [backend/](backend/README.md) | Solution ومشاريع Clean Architecture والاختبارات؛ تفاصيل التشغيل في backend/README |
 | [docs/](docs/CURRENT_STATE.md) | حالة المشروع والقرارات والنطاق وقواعد Git |
 | [planning/](planning/ROADMAP.md) | الخريطة والقوالب والخطوات والتسليم وفاحصا التوثيق |
 | [docker/](docker/README.md) | مكان إعداد تشغيل الخدمات في P01-S06؛ لا Compose حاليًا |
@@ -22,26 +22,21 @@
 
 SDK المتاح والمختار .NET **10.0.401**. [global.json](global.json) يستخدم `latestPatch` داخل feature band `10.0.4xx` فقط، و`allowPrerelease: false`. لا انتقال تلقائي إلى band أحدث أو .NET major آخر. يفشل الاختيار عند غياب SDK متوافق؛ تغيير السياسة يحتاج مراجعة.
 
-Git وPowerShell لتشغيل فحوص التوثيق. يلزم Docker Engine بوضع Linux containers للخدمات لاحقًا. وفق D009 اعتمد المستخدم تأجيل تشغيل وفحص Engine إلى P01-S06؛ فحصه مؤجل وليس ناجحًا، ولا يمنع إنشاء مشاريع .NET واختبارات المعمارية المحلية. لا SQL Server أو Mailpit أو API أو CI منفذة في هذه الخطوة.
+Git وPowerShell لتشغيل فحوص التوثيق. يلزم Docker Engine بوضع Linux containers للخدمات لاحقًا. وفق D009 اعتمد المستخدم تأجيل تشغيل وفحص Engine إلى P01-S06؛ فحصه مؤجل وليس ناجحًا، ولا يمنع إنشاء مشاريع .NET واختبارات المعمارية المحلية. لا SQL Server أو Mailpit أو CI حاليًا؛ API host فقط دون ميزات تجارية.
 
 ## الأوامر المتاحة الآن
 
 من جذر المستودع:
 
 ```powershell
-dotnet --list-sdks
 dotnet --version
 dotnet sln backend/HawalekNow.slnx list
-dotnet build backend/HawalekNow.slnx
+dotnet restore backend/HawalekNow.slnx
+dotnet build backend/HawalekNow.slnx --no-restore
+dotnet test backend/HawalekNow.slnx --no-build --no-restore
 & ./planning/verify-roadmap.ps1
 & ./planning/verify-git-workflow.ps1
 git diff --check
-docker version
-docker compose version
-docker context show
-docker info --format '{{.OSType}}'
 ```
 
-الحل فارغ: فحص build لا يبني Backend ولا يختبر التطبيق، وقد يحذر من عدم وجود مشروع للاستعادة. لا أمر تشغيل API أو اختبارات أو `docker compose up` متاح بعد. على هذا الجهاز احتاج Git خيار `-c safe.directory=D:/HwalekNow` بسبب اختلاف الملكية؛ لا يلزم تغيير الإعداد العام.
-
-المعمارية المستهدفة Clean Architecture داخل Modular Monolith حسب D001؛ تفاصيل التنفيذ والحزم والخدمات تأتي في خطواتها المعتمدة. [P01-S01](planning/phase-01/steps/S01.md) يسجل الأدلة والقيود الحالية.
+[Backend](backend/README.md) يشرح الطبقات والاعتمادات وأمر تشغيل Api. [P01-S02](planning/phase-01/steps/S02.md) يسجل النتائج وحدود التحقق. Docker مؤجل وفق D009 إلى P01-S06. Git على هذا الجهاز يحتاج الخيار -c safe.directory=D:/HwalekNow بسبب اختلاف الملكية.

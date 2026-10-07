@@ -48,7 +48,7 @@ if(Test-Path (Join-Path $Root 'planning/phase-00/steps/S04.md')){
   if(Test-Path (Join-Path $Root 'planning/phase-00/handoffs/S04-to-P01.md')){$files += 'planning/phase-00/handoffs/S04-to-P01.md'}
 }
 if(Test-Path (Join-Path $Root 'planning/phase-00/PHASE_REVIEW.md')){$files += 'planning/phase-00/PHASE_REVIEW.md'}
-foreach($candidate in @('README.md','backend/README.md','docker/README.md','planning/phase-01/steps/S01.md','planning/phase-01/handoffs/S01-to-S02.md')){
+foreach($candidate in @('README.md','backend/README.md','docker/README.md','planning/phase-01/steps/S01.md','planning/phase-01/handoffs/S01-to-S02.md','planning/phase-01/steps/S02.md','planning/phase-01/handoffs/S02-to-S03.md')){
   if(Test-Path (Join-Path $Root $candidate)){$files += $candidate}
 }
 $links=0
@@ -75,16 +75,59 @@ foreach($kind in @('STEP','HANDOFF')){
 $s02=Get-Content (Join-Path $Root 'planning/phase-00/steps/S02.md') -Raw
 $s03=Get-Content (Join-Path $Root 'planning/phase-00/steps/S03.md') -Raw
 $state=Get-Content (Join-Path $Root 'docs/CURRENT_STATE.md') -Raw
-if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: (P00-S04|P01-S01|P01-S02)\r?$'){throw 'Closure state mismatch'}
+if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: (P00-S04|P01-S01|P01-S02|P01-S03)\r?$'){throw 'Closure state mismatch'}
 $handoff=Get-Content (Join-Path $Root 'planning/phase-00/handoffs/S03-to-S04.md') -Raw
 if($handoff -notmatch '(?m)^Status: Ready\r?$' -or $handoff -notmatch '(?m)^From: P00-S03\r?$' -or $handoff -notmatch '(?m)^To: P00-S04\r?$'){throw 'Closure handoff mismatch'}
 $currentStatus=[regex]::Match($state,'(?m)^- Status: (\w+)\r?$').Groups[1].Value
 $s04Path=Join-Path $Root 'planning/phase-00/steps/S04.md'
 $currentStep=[regex]::Match($state,'(?m)^- Step: (P\d{2}-S\d{2})\r?$').Groups[1].Value
-if($currentStep -in @('P01-S01','P01-S02')){
+if($currentStep -in @('P01-S01','P01-S02','P01-S03')){
   if($state -notmatch '(?m)^- Phase: P01\r?$'){throw 'P01 phase mismatch'}
-  if($currentStep -eq 'P01-S02'){
-    if($currentStatus -ne 'NotStarted' -or $state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path (Join-Path $Root 'planning/phase-01/steps/S02.md'))){throw 'P01-S02 must remain NotStarted in S01 closure'}
+  if($currentStep -in @('P01-S02','P01-S03')){
+    if($currentStep -eq 'P01-S03'){
+      if($currentStatus -ne 'NotStarted' -or $state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path (Join-Path $Root 'planning/phase-01/steps/S03.md'))){throw 'P01-S03 must remain NotStarted with no execution file during S02 closure'}
+      $approvedS02=Get-Content (Join-Path $Root 'planning/phase-01/steps/S02.md') -Raw
+      $readyS03=Get-Content (Join-Path $Root 'planning/phase-01/handoffs/S02-to-S03.md') -Raw
+      foreach($field in @('Status: Done','UserApproval: Approved','ApprovalDate: 2026-10-06','Phase: P01','PreviousStep: P01-S01','NextStep: P01-S03')){
+        if($approvedS02 -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "Closed P01-S02 mismatch: $field"}
+      }
+      foreach($field in @('Status: Ready','From: P01-S02','To: P01-S03','UserApproval: Approved','ApprovalDate: 2026-10-06')){
+        if($readyS03 -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "Ready P01-S03 handoff mismatch: $field"}
+      }
+      foreach($kind in @('STEP','HANDOFF')){
+        $template=Get-Content (Join-Path $Root "planning/templates/${kind}_TEMPLATE.md") -Raw
+        $actual=if($kind -eq 'STEP'){$approvedS02}else{$readyS03}
+        foreach($h in [regex]::Matches($template,'(?m)^## .+$')){if(-not $actual.Contains($h.Value.Trim())){throw 'P01-S02 closure missing template heading'}}
+        if(-not $actual.Contains('Docker') -or -not $actual.Contains('P01-S06') -or -not $actual.Contains('ليس Passed')){throw 'Missing S02 Docker deferral'}
+      }
+      if(-not $approvedS02.Contains('V4 Approved') -or -not $readyS03.Contains('V4 Approved')){throw 'Missing S02 user review evidence'}
+      $s02Block=[regex]::Match($map,'(?ms)^### P01-S02 .*?(?=^### |\z)').Value
+      if(-not $s02Block.Contains('Status: Done') -or -not $s02Block.Contains('2026-10-06')){throw 'Missing S02 roadmap closure'}
+      $s03Block=[regex]::Match($map,'(?ms)^### P01-S03 .*?(?=^### |\z)').Value
+      if(-not $s03Block.Contains('Status: NotStarted')){throw 'Missing S03 roadmap initial state'}
+    }else{
+    if($currentStatus -eq 'NotStarted'){
+      if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path (Join-Path $Root 'planning/phase-01/steps/S02.md'))){throw 'P01-S02 NotStarted must have no active file'}
+    }elseif($currentStatus -in @('InProgress','InReview')){
+      if($state -notmatch '(?m)^- ActiveStepFile: planning/phase-01/steps/S02.md\r?$'){throw 'Missing P01-S02 active file'}
+      $activeS02=Get-Content (Join-Path $Root 'planning/phase-01/steps/S02.md') -Raw
+      foreach($field in @("Status: $currentStatus",'Phase: P01','PreviousStep: P01-S01','NextStep: P01-S03')){
+        if($activeS02 -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "P01-S02 state mismatch: $field"}
+      }
+      $template=Get-Content (Join-Path $Root 'planning/templates/STEP_TEMPLATE.md') -Raw
+      foreach($h in [regex]::Matches($template,'(?m)^## .+$')){if(-not $activeS02.Contains($h.Value.Trim())){throw 'P01-S02 missing template heading'}}
+      if(Test-Path (Join-Path $Root 'planning/phase-01/steps/S03.md')){throw 'P01-S03 must not start during S02'}
+      if($currentStatus -eq 'InReview'){
+        $draftS03=Get-Content (Join-Path $Root 'planning/phase-01/handoffs/S02-to-S03.md') -Raw
+        foreach($field in @('Status: Draft','From: P01-S02','To: P01-S03')){
+          if($draftS03 -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "P01-S03 handoff mismatch: $field"}
+        }
+        $template=Get-Content (Join-Path $Root 'planning/templates/HANDOFF_TEMPLATE.md') -Raw
+        foreach($h in [regex]::Matches($template,'(?m)^## .+$')){if(-not $draftS03.Contains($h.Value.Trim())){throw 'P01-S03 handoff missing template heading'}}
+        if(-not $activeS02.Contains('Awaiting user review')){throw 'Missing P01-S02 human review gate'}
+      }
+    }else{throw 'Unsupported P01-S02 status; review required before closure'}
+    }
     $closedStep=Get-Content (Join-Path $Root 'planning/phase-01/steps/S01.md') -Raw
     $readyHandoff=Get-Content (Join-Path $Root 'planning/phase-01/handoffs/S01-to-S02.md') -Raw
     foreach($field in @('Status: Done','UserApproval: Approved','ApprovalDate: 2026-10-05','Phase: P01','PreviousStep: P00-S04','NextStep: P01-S02')){
