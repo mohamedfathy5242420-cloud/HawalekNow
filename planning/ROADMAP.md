@@ -119,7 +119,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S03 تأسيس Modules والمشتركات
 
-- Status: InReview؛ [ملف التنفيذ](phase-01/steps/S03.md) و[حدود الوحدات](../backend/MODULES.md) و[تسليم S04 Draft](phase-01/handoffs/S03-to-S04.md)؛ Awaiting user review. D010/D011 Approved بتاريخ 2026-10-11 يثبتان الملكية والوحدات الإضافية، دون اعتماد المخرج النهائي أو بدء S04.
+- Status: Done؛ UserApproval: Approved؛ ApprovalDate: 2026-10-11؛ [ملف التنفيذ](phase-01/steps/S03.md) و[حدود الوحدات](../backend/MODULES.md) و[تسليم S04 Ready](phase-01/handoffs/S03-to-S04.md). D010/D011 محفوظان؛ المستخدم اعتمد المخرج النهائي وأذن إغلاق S03 وSquash Merge لـPR #4 فقط، دون بدء S04.
 
 - الاعتمادات السابقة: [P01-S02](#p01-s02).
 - المخرج المطلوب: حدود Identity وMerchants وCatalog وLocations وSearch وغيرها.
@@ -128,6 +128,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p01-s04"></a>
 
 ### P01-S04 تأسيس CQRS pipeline
+
+- Status: NotStarted؛ لا ملف تنفيذ؛ البدء بإذن مستقل بعد تحقق دمج S03.
 
 - الاعتمادات السابقة: [P01-S03](#p01-s03).
 - المخرج المطلوب: MediatR 12.5 وFluentValidation وBehaviors للـValidation والـLogging والأداء.

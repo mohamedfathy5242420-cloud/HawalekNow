@@ -31,4 +31,4 @@ dotnet run --project backend/src/HawalekNow.Api --no-launch-profile --urls http:
 ```
 
 حزم مشاريع الاختبارات فقط، من قالب SDK المثبت: Microsoft.NET.Test.Sdk 17.14.1، xunit 2.9.3، xunit.runner.visualstudio 3.1.4، coverlet.collector 6.0.4. لا NuGet packages في مشاريع الإنتاج. ASP.NET يأتي من Web SDK وshared framework.
-Docker Engine وLinux containers مؤجلان إلى P01-S06 وفق D009 وليس Passed؛ لا تشغيل Docker ضمن S03. MediatR وPipeline وResult/ProblemDetails وPersistence وتنفيذ Identity والواجهة والميزات التجارية تنتظر خطواتها. [S03](../planning/phase-01/steps/S03.md) يسجل النتائج الفعلية وبوابة مراجعة المستخدم، و[تسليم S04](../planning/phase-01/handoffs/S03-to-S04.md) Draft؛ لم تبدأ S04.
+Docker Engine وLinux containers مؤجلان إلى P01-S06 وفق D009 وليس Passed؛ لا تشغيل Docker ضمن S03. MediatR وPipeline وResult/ProblemDetails وPersistence وتنفيذ Identity والواجهة والميزات التجارية تنتظر خطواتها. [S03](../planning/phase-01/steps/S03.md) Done بعد اعتماد المستخدم بتاريخ 2026-10-11 ويسجل نتائج التحقق، و[تسليم S04](../planning/phase-01/handoffs/S03-to-S04.md) Ready؛ P01-S04 NotStarted وبلا ملف تنفيذ.
