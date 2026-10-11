@@ -47,11 +47,25 @@ Updated: 2026-10-11
 ## المشترك الحقيقي
 
 المشترك مسؤولية تقنية أو مفهوم مستقل عن أي وحدة، له احتياج مثبت وقرار وملكية واضحة؛ تشابه أسماء أو استخدام نوع في وحدتين لا يكفي. Entity أو قاعدة اعتماد التاجر أو التصنيف أو OTP تظل في وحدتها. لا تجريدات EntityBase أو RepositoryBase أو Result أو IClock أو IFileStorage جديدة في S03.
-لا يوجد مجلد Shared أو كود مشترك إنتاجي في هذه الخطوة. عند إثبات الحاجة في خطوة لاحقة، يمكن إنشاء `Shared` داخل الطبقة المناسبة فقط مع Namespace `HawalekNow.<Layer>.Shared`؛ لا مشروع Shared جديد. المشترك لا يعتمد على Modules، والوحدة تعتمد على Shared باتجاهات الطبقات نفسها فقط. كل إضافة تذكر مستهلكها الحقيقي واختبارها وقرارها، ولا تفتح الباب لنسخ أنواع وحدات إليها.
+S03 لم تضف Shared؛ S04 تضيف المشترك التقني المثبت أدناه. عند إثبات الحاجة في خطوة لاحقة، يمكن إنشاء `Shared` داخل الطبقة المناسبة فقط مع Namespace `HawalekNow.<Layer>.Shared`؛ لا مشروع Shared جديد. المشترك لا يعتمد على Modules، والوحدة تعتمد على Shared باتجاهات الطبقات نفسها فقط. كل إضافة تذكر مستهلكها الحقيقي واختبارها وقرارها، ولا تفتح الباب لنسخ أنواع وحدات إليها.
 Result/ProblemDetails في P01-S05، Persistence في P02-S01، Audit في P04-S02، وIFileStorage في P04-S03 وفق القرارات؛ لا يبدأ أي منها هنا. SDK والمعمارية ثابتان وDocker مؤجل إلى P01-S06 وفق D009 وليس Passed.
 
 ## ما يحميه الفاحص وحدوده
 
 [ModuleBoundaryTests](tests/ArchitectureTests/ModuleBoundaryTests.cs) تستخدم [ModuleBoundaryInspector](tests/ArchitectureTests/ModuleBoundaryInspector.cs) لفحص قائمة المجلدات وNamespaces الموثقة، وكل مصدر C# فعلي خارج bin/obj، وتطابق Namespace مع ملكية مساره. تستخدم Roslyn compiler من الـSDK المثبت لتحليل الرموز والأنواع ومراجعها بما فيها الأسماء الكاملة وaliases وglobal usings والوراثة وAttributes وGenerics وتواقيع الأعضاء. لا PackageReference جديد؛ اعتماد compiler محصور في مشروع الاختبارات ومساراته مشتقة من MSBuildSDKsPath.
 فحص الطبقات يحمي source dependencies أيضًا، بما فيها وصول Api المباشر إلى Domain عبر مرجع transitive. العقود العابرة للوحدات محصورة في Application Contracts؛ لا تكشف Entities حتى في نفس الوحدة. مصادر مخالفة سليمة compilation في نسخ ذاكرة معزولة تثبت الرفض، والمصدر الحقيقي لا يعدل. baseline سليم قبل كل تجربة، وتجارب سماح تثبت أن العقد الصحيح واتجاهات الطبقات الطبيعية مقبولان.
-هذا فحص static مع compilation تحليلي داخل الاختبارات، وليس MSBuild بديلًا؛ Restore وBuild وفحوص ProjectReference/Assembly المستقلة تظل مطلوبة. لا يثبت SQL أو runtime workflows أو صحة الأعمال أو reflection/dynamic/string-based access أو queries على جداول وحدة أخرى؛ تضاف اختبارات مناسبة عند وجود الاستخدام. المجلدات لا تصنع عزل Assemblies، والوحدات لا تحتوي وظائف بعد. UnitTests وIntegrationTests لا اختبارات سلوك فيهما حاليًا.
+هذا فحص static مع compilation تحليلي داخل الاختبارات، وليس MSBuild بديلًا؛ Restore وBuild وفحوص ProjectReference/Assembly المستقلة تظل مطلوبة. لا يثبت SQL أو runtime workflows أو صحة الأعمال أو reflection/dynamic/string-based access أو queries على جداول وحدة أخرى؛ تضاف اختبارات مناسبة عند وجود الاستخدام. المجلدات لا تصنع عزل Assemblies، والوحدات لا تحتوي وظائف بعد. IntegrationTests تختبر CQRS وDI والتسجيل وHTTP middleware في S04؛ UnitTests لم تضف اختبارات بعد.
+
+## المشترك التقني المؤسس في S04
+
+OwnerStep: P01-S04؛ D002/D006 وQ003-05. لا تغيير لملكية الوحدات أو D010/D011.
+
+| الموضع | المسؤولية | المستهلك الفعلي ودليل الحاجة |
+| --- | --- | --- |
+| Application/Shared/DependencyInjection.cs | تسجيل MediatR وValidators وترتيب Behaviors | Api/Program.cs يستدعي AddApplication؛ IntegrationTests تستدعي نفس التسجيل مع assembly الاختبارات |
+| Application/Shared/Behaviors | Validation وLogging وPerformance لكل Send | MediatR DI يبنيها فعليًا في 18 اختبار تكامل؛ production host مسجل لكن لا Business requests بعد |
+| Application/Shared/Diagnostics | CorrelationContext scoped وtemplates تقنية ثابتة | LoggingBehavior يستهلك context وPerformanceBehavior يستهلك templates؛ Api middleware يهيئ context وfilter يستخدم المخطط |
+| Api/Shared/Diagnostics | HTTP correlation وSerilog sink policy | Program يركب middleware وإعداد السجل؛ IntegrationTests تختبرهما دون endpoints إنتاج |
+
+Application يستخدم ILogger abstraction ولا يعرف Serilog أو HttpContext؛ Api يربط implementation. CorrelationContext مفهوم تقني scoped ذو استخدام فعلي في middleware والـPipeline، دون interface بلا implementation. Shared لا يعتمد على Modules؛ لا Domain Shared أو Infrastructure Shared أو مشروع جديد. الأمثلة والـHandlers والـValidators التجريبية في IntegrationTests فقط. لا Contracts تجارية أو معاملات أو تخزين.
+فاحص المعمارية عالج namespace nullable للرموز المركبة من Roslyn مع استمرار فحص TypeArguments وContainingType؛ تجارب tuple سليمة ومخالفة تثبت استمرار المنع. قواعد الطبقات والوحدات لم تخفف.

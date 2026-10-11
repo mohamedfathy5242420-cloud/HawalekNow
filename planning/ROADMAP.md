@@ -129,7 +129,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S04 تأسيس CQRS pipeline
 
-- Status: NotStarted؛ لا ملف تنفيذ؛ البدء بإذن مستقل بعد تحقق دمج S03.
+- Status: InReview؛ [ملف التنفيذ](phase-01/steps/S04.md) و[تسليم S05 Draft](phase-01/handoffs/S04-to-S05.md)؛ Awaiting user review، بوابة دمج PR #4 متحققة.
 
 - الاعتمادات السابقة: [P01-S03](#p01-s03).
 - المخرج المطلوب: MediatR 12.5 وFluentValidation وBehaviors للـValidation والـLogging والأداء.
