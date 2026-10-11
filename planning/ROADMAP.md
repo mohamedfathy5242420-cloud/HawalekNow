@@ -119,7 +119,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S03 تأسيس Modules والمشتركات
 
-- Status: NotStarted؛ لا ملف تنفيذ؛ البدء يحتاج إذنًا مستقلًا بعد تحقق دمج S02.
+- Status: InReview؛ [ملف التنفيذ](phase-01/steps/S03.md) و[حدود الوحدات](../backend/MODULES.md) و[تسليم S04 Draft](phase-01/handoffs/S03-to-S04.md)؛ Awaiting user review. D010/D011 Approved بتاريخ 2026-10-11 يثبتان الملكية والوحدات الإضافية، دون اعتماد المخرج النهائي أو بدء S04.
 
 - الاعتمادات السابقة: [P01-S02](#p01-s02).
 - المخرج المطلوب: حدود Identity وMerchants وCatalog وLocations وSearch وغيرها.
