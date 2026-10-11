@@ -18,6 +18,18 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <!-- Test-only syntax/semantic analysis uses the compiler shipped with the pinned SDK. -->
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeAnalysis">
+      <HintPath>$(MSBuildSDKsPath)/../Roslyn/bincore/Microsoft.CodeAnalysis.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp">
+      <HintPath>$(MSBuildSDKsPath)/../Roslyn/bincore/Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\HawalekNow.Domain\HawalekNow.Domain.csproj" />
     <ProjectReference Include="..\..\src\HawalekNow.Application\HawalekNow.Application.csproj" />
