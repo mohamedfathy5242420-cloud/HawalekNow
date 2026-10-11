@@ -31,6 +31,7 @@ public sealed class ModuleBoundaryTests
 
     public static TheoryData<string, string, string, string, string> ForbiddenSources => new()
     {
+        { "Application", "Catalog", "Probe.cs", "public sealed class Probe { public (HawalekNow.Domain.Modules.Merchants.MerchantAccount Account, int Count) Data { get; set; } }", "Module dependency:" },
         { "Domain", "Catalog", "Probe.cs", "public sealed class Probe { public HawalekNow.Domain.Modules.Merchants.MerchantAccount? Account { get; set; } }", "Module dependency:" },
         { "Domain", "Catalog", "Probe.cs", "using Account = HawalekNow.Domain.Modules.Merchants.MerchantAccount; public sealed class Probe { public Account? Value { get; set; } }", "Module dependency:" },
         { "Domain", "Catalog", "Probe.cs", "using HawalekNow.Domain.Modules.Merchants; public sealed class Probe { }", "Module dependency:" },
@@ -66,6 +67,7 @@ public sealed class ModuleBoundaryTests
     }
 
     [Theory]
+    [InlineData("Application", "Catalog", "Probe.cs", "public sealed class Probe { public (int Number, string Text) Data { get; set; } }")]
     [InlineData("Domain", "Catalog", "Probe.cs", "public sealed class Probe { public Product? Value { get; set; } }")]
     [InlineData("Application", "Catalog", "Probe.cs", "public sealed class Probe { public HawalekNow.Domain.Modules.Catalog.Product? Value { get; set; } }")]
     [InlineData("Application", "Catalog", "Probe.cs", "using Status = HawalekNow.Application.Modules.Merchants.Contracts.MerchantStatus; public sealed record Probe(Status Status);")]

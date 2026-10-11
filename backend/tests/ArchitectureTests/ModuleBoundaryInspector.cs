@@ -147,8 +147,10 @@ internal static class ModuleBoundaryInspector
                     switch (type)
                     {
                         case INamedTypeSymbol named:
-                            CheckNamespace(named.ContainingNamespace.ToDisplayString(), true);
-                            var targetParts = named.ContainingNamespace.ToDisplayString().Split('.');
+                            // Synthesized tuple/anonymous symbols can have no namespace; still inspect all members' types.
+                            var targetNamespace = named.ContainingNamespace?.ToDisplayString() ?? "";
+                            CheckNamespace(targetNamespace, true);
+                            var targetParts = targetNamespace.Split('.');
                             if (!composition && targetParts.Length >= 5 && targetParts[0] == "HawalekNow" &&
                                 targetParts[1] == "Application" && targetParts[2] == "Modules" &&
                                 targetParts[3] != module && targetParts[4] == "Contracts" &&
