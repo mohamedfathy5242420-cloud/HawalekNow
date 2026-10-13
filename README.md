@@ -39,4 +39,4 @@ dotnet test backend/HawalekNow.slnx --no-build --no-restore
 git diff --check
 ```
 
-[Backend](backend/README.md) يشرح الطبقات والاعتمادات وأمر تشغيل Api، و[Modules](backend/MODULES.md) يوضح الملكية وقواعد التواصل والمشترك. [P01-S03](planning/phase-01/steps/S03.md) يسجل النتائج وحدود التحقق؛ الوحدات تأسيس مجلدات وNamespaces فقط دون وظائف تجارية. Docker مؤجل وفق D009 إلى P01-S06. Git على هذا الجهاز يحتاج الخيار -c safe.directory=D:/HwalekNow بسبب اختلاف الملكية.
+[Backend](backend/README.md) يشرح الطبقات والاعتمادات وأمر تشغيل Api، و[Modules](backend/MODULES.md) يوضح الملكية وقواعد التواصل والمشترك. [P01-S04](planning/phase-01/steps/S04.md) Done بعد اعتماد 2026-10-13: CQRS Pipeline وتسجيل آمن وCorrelation ID، و65 اختبار معمارية وتكامل؛ [الحزم والتراخيص](backend/PACKAGES.md). الوحدات بلا وظائف تجارية. Docker مؤجل وفق D009 إلى P01-S06. Git على هذا الجهاز يحتاج الخيار -c safe.directory=D:/HwalekNow بسبب اختلاف الملكية.

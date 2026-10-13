@@ -1,34 +1,39 @@
 # Backend
 
-.NET 10 Clean Architecture داخل Monorepo؛ SDK يحكمه [global.json](../global.json) دون تغيير.
+.NET 10 Clean Architecture داخل Modular Monolith؛ SDK 10.0.401 يحكمه [global.json](../global.json).
 
-| المشروع داخل src | المسؤولية | Project References |
+| المشروع | المسؤولية | Project References |
 | --- | --- | --- |
-| HawalekNow.Domain | قواعد المجال لاحقًا، مستقل عن الويب والتخزين | لا شيء |
-| HawalekNow.Application | حالات الاستخدام والعقود لاحقًا | Domain |
-| HawalekNow.Infrastructure | تنفيذ العقود والتكاملات لاحقًا | Application وDomain |
-| HawalekNow.Api | HTTP Controllers وتركيب الخدمات | Application وInfrastructure |
+| Domain | قواعد المجال لاحقًا؛ مستقل عن الويب والتخزين | لا شيء |
+| Application | حالات الاستخدام لاحقًا، وCQRS Pipeline التقني | Domain |
+| Infrastructure | تنفيذ العقود والتكاملات لاحقًا | Application وDomain |
+| Api | HTTP host وتركيب DI وSerilog وCorrelation ID | Application وInfrastructure |
 
-[الحل](HawalekNow.slnx) يضم المشاريع الأربعة وtests/UnitTests وtests/ArchitectureTests وtests/IntegrationTests.
-Domain وApplication وInfrastructure بلا أنواع إنتاج حاليًا. في كل طبقة مجلدات التسع Modules مع ملفات ملكية وNamespaces محجوزة، دون Marker classes. Api يستخدم AddControllers وMapControllers فقط؛ لا Controllers تجارية بعد، وبالتالي لا مسارات تطبيق مسجلة.
+[الحل](HawalekNow.slnx) يضم أربعة مشاريع إنتاج وUnitTests وArchitectureTests وIntegrationTests. [MODULES](MODULES.md) يحفظ ملكية التسع وحدات وD010/D011. الوحدات بلا Business types أو Contracts حاليًا؛ Shared في Application وApi له مستهلك فعلي موثق. Domain وInfrastructure بلا أنواع إنتاج. الأمثلة والـHandlers والـValidators في الاختبارات فقط، وMapControllers بلا endpoints تجارية أو تجريبية.
 
-[حدود الوحدات](MODULES.md) تحدد Identity وMerchants وCatalog وLocations وSearch وFavorites وReports وNotifications وAnalytics ومصادرها واتجاهات التواصل والمشترك الحقيقي. D010 يفصل تأكيد البريد في Identity عن MerchantAccount واعتماد التاجر في Merchants؛ D011 يثبت الوحدات الإضافية وعمليات Admin داخل الوحدة صاحبة البيانات، وصلاحية Admin داخل Identity. العقد بين الوحدات يؤسس داخل Application/Modules/Owner/Contracts عند الاستخدام؛ لا عقود أو Shared أو وظائف Business مضافة الآن.
-
-ArchitectureTests تفحص ProjectReference الفعلي والاتجاهات في Assemblies، وتمنع ASP.NET وEF Core في Domain. تجارب معزولة تحقن ProjectReference ممنوعًا وEF Core وASP.NET في نسخ مؤقتة وتثبت رفضها وبقاء الأصل دون تغيير.
-UnitTests وIntegrationTests مجهزان بـxUnit دون اختبارات شكلية؛ سيضاف السلوك الحقيقي في خطواته. لا اختبارات Containers الآن.
-
-ModuleBoundaryTests تفحص قائمة المجلدات والـNamespaces المحجوزة وتطابق أي مصدر C# مع المجلد والوحدة، واتجاهات اعتماد الأنواع وعقود Application وعدم اعتماد Shared على الوحدات. تستخدم Roslyn الموجود في SDK عبر References في مشروع الاختبارات فقط، دون تغيير SDK أو حزم NuGet. التجارب داخل الذاكرة تبدأ من baseline سليم، وتشمل السماح بعقد صحيح ورفض Entities وحدات أخرى وaliases والأسماء الكاملة وContracts التي تكشف التنفيذ ووصول Api المباشر إلى Domain أو Infrastructure خارج Program. أنواع التجارب لا تدخل مشاريع الإنتاج. المجلدات ليست عزل Assemblies؛ لا تواصل Runtime أو اختبارات سلوك لوحدات فارغة. بعد Build، الفحص التحليلي يستخدم GlobalUsings المولدة؛ فشل compilation التحليلي يفشل الاختبار ولا يسجل Passed.
-
-من جذر المستودع:
+## تشغيل والتحقق
 
 ```powershell
-dotnet restore backend/HawalekNow.slnx
-dotnet build backend/HawalekNow.slnx --no-restore
-dotnet test backend/HawalekNow.slnx --no-build --no-restore
-dotnet run --project backend/src/HawalekNow.Api --no-launch-profile --urls http://localhost:5080
-& ./planning/verify-roadmap.ps1
-& ./planning/verify-git-workflow.ps1
+ dotnet restore backend/HawalekNow.slnx --locked-mode
+ dotnet build backend/HawalekNow.slnx --no-restore --disable-build-servers -m:1
+ dotnet test backend/HawalekNow.slnx --no-build --no-restore --disable-build-servers -m:1
+ dotnet run --project backend/src/HawalekNow.Api --no-build --no-restore --no-launch-profile --urls http://localhost:5080
+ & ./planning/verify-roadmap.ps1
+ & ./planning/verify-git-workflow.ps1
 ```
 
-حزم مشاريع الاختبارات فقط، من قالب SDK المثبت: Microsoft.NET.Test.Sdk 17.14.1، xunit 2.9.3، xunit.runner.visualstudio 3.1.4، coverlet.collector 6.0.4. لا NuGet packages في مشاريع الإنتاج. ASP.NET يأتي من Web SDK وshared framework.
-Docker Engine وLinux containers مؤجلان إلى P01-S06 وفق D009 وليس Passed؛ لا تشغيل Docker ضمن S03. MediatR وPipeline وResult/ProblemDetails وPersistence وتنفيذ Identity والواجهة والميزات التجارية تنتظر خطواتها. [S03](../planning/phase-01/steps/S03.md) Done بعد اعتماد المستخدم بتاريخ 2026-10-11 ويسجل نتائج التحقق، و[تسليم S04](../planning/phase-01/handoffs/S03-to-S04.md) Ready؛ P01-S04 NotStarted وبلا ملف تنفيذ.
+[الحزم والتراخيص](PACKAGES.md): MediatR 12.5.0، FluentValidation وDI extensions 12.1.1، Logging.Abstractions 10.0.0، Serilog 4.3.0 وHosting 10.0.0 وConsole 6.0.0؛ exact ranges وlockfiles. حزم الاختبارات السابقة محفوظة: Microsoft.NET.Test.Sdk 17.14.1 وxunit 2.9.3 وrunner 3.1.4 وcoverlet 6.0.4. لا حزمة ويب في Application أو حزمة جديدة في Domain.
+
+## مسار الطلب والتسجيل الآمن
+
+Program يستدعي AddApplication؛ التسجيل يفحص assembly Application، ويمكن إضافة assemblies معروفة من composition root؛ الاختبارات تضيف assembly الاختبارات فقط. لا فحص لكل assemblies المحملة أو module implementation dependencies في Shared.
+ISender.Send يدخل Logging ثم Performance ثم Validation ثم Handler، والرجوع بالعكس. Performance يقيس مجموع التحقق والتنفيذ حتى لو فشل الطلب، دون threshold أو SLA تجاري مفترض. Validators transient وتنفذ بالتتابع بValidateAsync ونفس CancellationToken؛ أي فشل يمنع Handler. غياب Validator يسمح بالتنفيذ. الأخطاء والإلغاء تنتقل كما هي؛ لا تحويل HTTP قبل S05.
+Logger لا يسجل body أو response أو exception message/object أو ValidationFailure؛ يسجل RequestType وOutcome والمدة فقط داخل scope يحمل CorrelationId. Sink يقبل ثلاث templates ثابتة ومفاتيح وأنواع محددة ويمنع exceptions والخصائص الأخرى؛ السجلات العامة للـhost محجوبة في هذا الأساس المقصود، وتوسعتها تحتاج سياسة بيانات مراجعة. لا UseSerilogRequestLogging أو HTTP request logging أو configuration يعيد تفعيل providers أخرى. Console template يعرض CorrelationId، ولا منصة تجميع.
+X-Correlation-ID يقبل قيمة واحدة من 1 إلى 64 حرف ASCII من A-Z/a-z/0-9/-/_؛ القيم الأخرى أو المتعددة تستبدل Guid عشوائي N بطول 32. Middleware يهيئ context scoped ويرجع نفس المعرف في header، وnon-HTTP Send يستخدم fallback scoped. المعرف metadata غير موثوق للأمان؛ ليس هوية أو صلاحية أو idempotency key، ولا نعامل تطابقه كدليل على نفس المستخدم.
+
+## المعاملات والاختبارات والقيود
+
+D004: Workflow Step تعني Command أو Query؛ MediatR لا ينشئ Transaction. يمكن تنفيذ عدة خطوات داخل Transaction واحدة، وعدة Transactions ليست Atomic تلقائيًا. الحدود تتحدد مع Use Case؛ لا UoW أو Transaction Behavior أو Orchestrator في S04.
+47 ArchitectureTests تحمي ProjectReferences وAssembly وملكية المسارات وNamespaces واتجاهات الطبقات وعقود الوحدات مع تجارب رفض وسماح معزولة. Roslyn من SDK للاختبارات فقط؛ إصلاح namespace nullable للرموز المركبة لا يغير الحدود، واختبارا tuple يحفظان الرفض والسماح. static checks لا تثبت SQL أو reflection/dynamic.
+18 IntegrationTests تختبر Send وDI وValidators والـBehaviors والسرية والمدة والفشل والإلغاء وHTTP middleware وعزل scoped requests متزامنة. UnitTests بلا اختبارات حاليًا؛ لا نجاح شكلي لها. فحص HTTP host الحقيقي على مسار غير موجود أكد 404 وCorrelation ID دون إضافة endpoints؛ لا يدعي رحلة Business أو API error contract.
+[S04](../planning/phase-01/steps/S04.md) Done بعد اعتماد المستخدم بتاريخ 2026-10-13 و[تسليم S05](../planning/phase-01/handoffs/S04-to-S05.md) Ready؛ P01-S05 NotStarted وبلا ملف تنفيذ. Docker Engine وLinux containers مؤجلان إلى P01-S06 وفق D009 وليس Passed؛ لا تشغيل Docker. Result/ProblemDetails وGlobal Exception Handler في S05 بإذن مستقل لاحق، والتخزين والمعاملات في P02-S01.
