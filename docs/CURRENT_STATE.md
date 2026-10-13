@@ -1,18 +1,18 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-10-11
+آخر تحديث: 2026-10-13
 
 - Phase: P01
-- Step: P01-S04
-- Status: InReview
-- Scope: CQRS Pipeline وLogging آمن وCorrelation ID فقط؛ Awaiting user review.
-- ActiveStepFile: planning/phase-01/steps/S04.md
-- NextStep: P01-S05 بعد مراجعة واعتماد S04 ودمج PR الخاصة بها؛ لم تبدأ.
+- Step: P01-S05
+- Status: NotStarted
+- Scope: إغلاق S04 المعتمدة ودمج PR #5 فقط؛ لا تنفيذ S05.
+- ActiveStepFile: None؛ لا ينشأ ملف S05 في مهمة إغلاق S04.
+- NextStep: P01-S05 بإذن مستقل بعد التحقق من دمج PR #5.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## نقطة البداية لأي Agent
 
-اقرأ [S04](../planning/phase-01/steps/S04.md) و[حدود الوحدات](../backend/MODULES.md) و[الحزم](../backend/PACKAGES.md) و[تسليم S05](../planning/phase-01/handoffs/S04-to-S05.md) والقرارات والنطاق والخريطة وGit. المستخدم أذن تنفيذ S04 فقط وCommits وPush وDraft PR؛ لا دمج ولا S05 قبل مراجعته واعتماده.
+اقرأ [S04](../planning/phase-01/steps/S04.md) و[حدود الوحدات](../backend/MODULES.md) و[الحزم](../backend/PACKAGES.md) و[تسليم S05](../planning/phase-01/handoffs/S04-to-S05.md) والقرارات والنطاق والخريطة وGit. المستخدم اعتمد S04 بتاريخ 2026-10-13 عند da151d66b5c7c98ed0437d2e05899fcb8a3ed786 وأذن إغلاقها ودمج PR #5 فقط؛ لا تنفيذ S05. SHA الإغلاق والدمج يؤخذان من Git/GitHub الفعلي.
 
 ## ما اكتمل
 
@@ -26,4 +26,7 @@ D001–D011 وQ003-01 إلى Q003-06 وSDK 10.0.401 محفوظة. Docker Engine 
 
 ## بوابة الانتقال
 
-S03 Done وUserApproval Approved وتسليم S04 Ready محفوظة. S04 InReview وUserApproval Pending وتسليم S05 Draft؛ لا ملف تنفيذ S05. لا أسئلة قرار معلقة؛ مراجعة المستخدم مطلوبة، ولا دمج ضمن الإذن الحالي.
+S03 Done وUserApproval Approved وتسليم S04 Ready محفوظة. S04 Done وUserApproval Approved وApprovalDate 2026-10-13؛ تسليم S05 Ready. P01-S05 NotStarted بلا ملف تنفيذ؛ لا أسئلة قرار معلقة، ولا بدء S05 ضمن إذن الإغلاق.
+
+LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete
+سجلات Host العامة محجوبة؛ سياسة Pipeline محفوظة ولا يدعى اكتمال التشخيص التشغيلي.

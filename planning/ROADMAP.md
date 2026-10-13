@@ -129,7 +129,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S04 تأسيس CQRS pipeline
 
-- Status: InReview؛ [ملف التنفيذ](phase-01/steps/S04.md) و[تسليم S05 Draft](phase-01/handoffs/S04-to-S05.md)؛ Awaiting user review، بوابة دمج PR #4 متحققة.
+- Status: Done؛ UserApproval: Approved؛ ApprovalDate: 2026-10-13؛ [ملف التنفيذ](phase-01/steps/S04.md) و[تسليم S05 Ready](phase-01/handoffs/S04-to-S05.md)؛ اعتماد الرأس da151d66b5c7c98ed0437d2e05899fcb8a3ed786 وإذن Squash Merge لـPR #5 فقط؛ سياسة Logging محصورة في Pipeline وسجلات Host محجوبة، التشخيص التشغيلي غير مكتمل.
 
 - الاعتمادات السابقة: [P01-S03](#p01-s03).
 - المخرج المطلوب: MediatR 12.5 وFluentValidation وBehaviors للـValidation والـLogging والأداء.
@@ -140,6 +140,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p01-s05"></a>
 
 ### P01-S05 تأسيس Result وProblemDetails
+
+- Status: NotStarted؛ لا ملف تنفيذ؛ لا تبدأ في مهمة إغلاق S04.
 
 - الاعتمادات السابقة: [P01-S04](#p01-s04).
 - المخرج المطلوب: أخطاء API موحدة وGlobal Exception Handler.
