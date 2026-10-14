@@ -1,5 +1,7 @@
 # HawalekNow — حوالك ناو
 
+P01-S05 InReview بإذن 2026-10-14؛ [الخطوة](planning/phase-01/steps/S05.md) و[شرح Result وأخطاء HTTP](backend/API_ERRORS.md) و[تسليم S06 Draft](planning/phase-01/handoffs/S05-to-S06.md). S04 Done؛ لا بدء S06 قبل مراجعة واعتماد S05. الحالة الحالية في CURRENT_STATE.
+
 منصة لاكتشاف المنتجات والتجار القريبين في مصر ومقارنة السعر والتوافر لكل فرع ثم التواصل مباشرة مع التاجر. البيع يتم خارج المنصة؛ لا سلة أو دفع أو شحن داخلها.
 
 ## بداية أي Agent
