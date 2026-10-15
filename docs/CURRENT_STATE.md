@@ -1,6 +1,6 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-10-14
+آخر تحديث: 2026-10-15
 
 - Phase: P01
 - Step: P01-S05
@@ -28,5 +28,6 @@ D001–D011 وQ003-01 إلى Q003-06 وSDK 10.0.401 وMediatR 12.5.0 وFluentVal
 ## بوابة الانتقال
 
 S04 Done وUserApproval Approved وApprovalDate 2026-10-13؛ تسليم S05 Ready. S05 InReview و[تسليم S06](../planning/phase-01/handoffs/S05-to-S06.md) Draft فقط، Awaiting user review. لا أسئلة قرار معلقة ولا اعتماد بشري لـS05 حتى الآن؛ لا دمج أو S06.
+[Draft PR #6](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/6) مفتوحة ومرفوعة ومرتبطة بالمهمة؛ كود 99d569d وتوثيق 77db4c2، وربط التسليم النهائي من Git history. main ما زال 4ff304825aef95728cba293c79b32523ebbb71ea دون دمج.
 
 LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete
