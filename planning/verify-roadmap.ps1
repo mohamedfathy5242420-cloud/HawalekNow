@@ -48,7 +48,8 @@ if(Test-Path (Join-Path $Root 'planning/phase-00/steps/S04.md')){
   if(Test-Path (Join-Path $Root 'planning/phase-00/handoffs/S04-to-P01.md')){$files += 'planning/phase-00/handoffs/S04-to-P01.md'}
 }
 if(Test-Path (Join-Path $Root 'planning/phase-00/PHASE_REVIEW.md')){$files += 'planning/phase-00/PHASE_REVIEW.md'}
-foreach($candidate in @('README.md','backend/README.md','docker/README.md','planning/phase-01/steps/S01.md','planning/phase-01/handoffs/S01-to-S02.md','planning/phase-01/steps/S02.md','planning/phase-01/handoffs/S02-to-S03.md','planning/phase-01/steps/S03.md','planning/phase-01/handoffs/S03-to-S04.md','backend/MODULES.md','backend/PACKAGES.md','planning/phase-01/steps/S04.md','planning/phase-01/handoffs/S04-to-S05.md')){
+if(Test-Path (Join-Path $Root 'backend/API_ERRORS.md')){$files += 'backend/API_ERRORS.md'}
+foreach($candidate in @('README.md','backend/README.md','docker/README.md','planning/phase-01/steps/S01.md','planning/phase-01/handoffs/S01-to-S02.md','planning/phase-01/steps/S02.md','planning/phase-01/handoffs/S02-to-S03.md','planning/phase-01/steps/S03.md','planning/phase-01/handoffs/S03-to-S04.md','backend/MODULES.md','backend/PACKAGES.md','planning/phase-01/steps/S04.md','planning/phase-01/handoffs/S04-to-S05.md','planning/phase-01/steps/S05.md','planning/phase-01/handoffs/S05-to-S06.md')){
   if(Test-Path (Join-Path $Root $candidate)){$files += $candidate}
 }
 $moduleRoot=Join-Path $Root 'backend/src'
@@ -95,7 +96,32 @@ if($currentStep -in @('P01-S01','P01-S02','P01-S03','P01-S04','P01-S05')){
       if($currentStep -in @('P01-S04','P01-S05')){
         $activeS04Path=Join-Path $Root 'planning/phase-01/steps/S04.md'
         if($currentStep -eq 'P01-S05'){
-          if($currentStatus -ne 'NotStarted' -or $state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path (Join-Path $Root 'planning/phase-01/steps/S05.md'))){throw 'P01-S05 must remain NotStarted without execution file'}
+          $activeS05Path=Join-Path $Root 'planning/phase-01/steps/S05.md'
+          if($currentStatus -eq 'NotStarted'){
+            if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path $activeS05Path)){throw 'NotStarted S05 must have no execution file'}
+          }elseif($currentStatus -in @('InProgress','InReview')){
+            if($state -notmatch '(?m)^- ActiveStepFile: planning/phase-01/steps/S05.md\r?$'){throw 'Missing S05 active file'}
+            $activeS05=Get-Content $activeS05Path -Raw
+            foreach($field in @("Status: $currentStatus",'Phase: P01','PreviousStep: P01-S04','NextStep: P01-S06','LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete')){
+              if($activeS05 -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "S05 state mismatch: $field"}
+            }
+            $template=Get-Content (Join-Path $Root 'planning/templates/STEP_TEMPLATE.md') -Raw
+            foreach($h in [regex]::Matches($template,'(?m)^## .+$')){if(-not $activeS05.Contains($h.Value.Trim())){throw 'S05 missing template heading'}}
+            foreach($token in @('D002','D004','Q003-05','D009','D010','D011','12.5.0','12.1.1','Result','ProblemDetails','TestServer','Correlation','ليس Passed','Awaiting user review','4ff304825aef95728cba293c79b32523ebbb71ea')){
+              if(-not $activeS05.Contains($token)){throw "Missing S05 requirement: $token"}
+            }
+            if($activeS05 -match '(?m)^UserApproval: Approved\r?$' -or (Test-Path (Join-Path $Root 'planning/phase-01/steps/S06.md'))){throw 'S05 needs user review before closure or S06 execution'}
+            if($currentStatus -eq 'InReview'){
+              $draftS06=Get-Content (Join-Path $Root 'planning/phase-01/handoffs/S05-to-S06.md') -Raw
+              foreach($field in @('From: P01-S05','To: P01-S06','Status: Draft','LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete')){
+                if($draftS06 -notmatch ('(?m)^'+[regex]::Escape($field)+'\r?$')){throw "S06 draft mismatch: $field"}
+              }
+              $template=Get-Content (Join-Path $Root 'planning/templates/HANDOFF_TEMPLATE.md') -Raw
+              foreach($h in [regex]::Matches($template,'(?m)^## .+$')){if(-not $draftS06.Contains($h.Value.Trim())){throw 'S06 handoff missing template heading'}}
+              if($draftS06 -match '(?m)^UserApproval: Approved\r?$'){throw 'S06 handoff cannot claim user approval'}
+              foreach($token in @('D002','D004','Q003-05','D009','ليس Passed','Awaiting user review')){if(-not $draftS06.Contains($token)){throw "Missing S06 limit: $token"}}
+            }
+          }else{throw 'Unsupported S05 status; user approval required before closure'}
           $closedS04=Get-Content $activeS04Path -Raw
           $readyS05=Get-Content (Join-Path $Root 'planning/phase-01/handoffs/S04-to-S05.md') -Raw
           foreach($field in @('Status: Done','UserApproval: Approved','ApprovalDate: 2026-10-13','ReviewedHead: da151d66b5c7c98ed0437d2e05899fcb8a3ed786','Phase: P01','PreviousStep: P01-S03','NextStep: P01-S05')){
@@ -114,7 +140,7 @@ if($currentStep -in @('P01-S01','P01-S02','P01-S03','P01-S04','P01-S05')){
           }
           if(-not $state.Contains('LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete')){throw 'Missing current logging limit'}
           $s05Block=[regex]::Match($map,'(?ms)^### P01-S05 .*?(?=^### |\z)').Value
-          if(-not $s05Block.Contains('Status: NotStarted')){throw 'S05 roadmap initial state mismatch'}
+          if(-not $s05Block.Contains("Status: $currentStatus")){throw 'S05 roadmap state mismatch'}
         }elseif($currentStatus -eq 'NotStarted'){
           if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path $activeS04Path)){throw 'NotStarted S04 must have no execution file'}
         }elseif($currentStatus -in @('InProgress','InReview')){

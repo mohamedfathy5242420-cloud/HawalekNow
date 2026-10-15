@@ -1,32 +1,33 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-10-13
+آخر تحديث: 2026-10-15
 
 - Phase: P01
 - Step: P01-S05
-- Status: NotStarted
-- Scope: إغلاق S04 المعتمدة ودمج PR #5 فقط؛ لا تنفيذ S05.
-- ActiveStepFile: None؛ لا ينشأ ملف S05 في مهمة إغلاق S04.
-- NextStep: P01-S05 بإذن مستقل بعد التحقق من دمج PR #5.
+- Status: InReview
+- Scope: Result وProblemDetails وGlobal Exception Handler فقط؛ لا S06 أو Business.
+- ActiveStepFile: planning/phase-01/steps/S05.md
+- NextStep: P01-S06 بعد مراجعة واعتماد S05؛ لا تبدأ الآن.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## نقطة البداية لأي Agent
 
-اقرأ [S04](../planning/phase-01/steps/S04.md) و[حدود الوحدات](../backend/MODULES.md) و[الحزم](../backend/PACKAGES.md) و[تسليم S05](../planning/phase-01/handoffs/S04-to-S05.md) والقرارات والنطاق والخريطة وGit. المستخدم اعتمد S04 بتاريخ 2026-10-13 عند da151d66b5c7c98ed0437d2e05899fcb8a3ed786 وأذن إغلاقها ودمج PR #5 فقط؛ لا تنفيذ S05. SHA الإغلاق والدمج يؤخذان من Git/GitHub الفعلي.
+اقرأ [S05](../planning/phase-01/steps/S05.md) و[حدود الوحدات](../backend/MODULES.md) و[الحزم](../backend/PACKAGES.md) و[تسليم S05](../planning/phase-01/handoffs/S04-to-S05.md) والقرارات والنطاق والخريطة وGit. S04 Done وUserApproval Approved بتاريخ 2026-10-13 وتسليم S05 Ready. إذن المستخدم 2026-10-14 يشمل S05 وCommit وPush وDraft PR فقط؛ لا دمج أو S06.
 
 ## ما اكتمل
 
-P00 Approved وP01-S01/S02/S03 Done؛ تسليم S04 Ready. PR #4 merged=true على main عند 32594255fa62dff1b81c3565f3db6bfe84e9c714، مطابق Git المحلي والبعيد بعد fetch وls-remote بتاريخ 2026-10-11. شجرة بداية S04 نظيفة.
-S04 تؤسس MediatR 12.5.0 وFluentValidation 12.1.1 وLogging ثم Performance ثم Validation ثم Handler عبر DI؛ Serilog console يسمح بمخطط تقنية محدود، وCorrelationContext scoped مرتبط بـHTTP middleware. الأمثلة في IntegrationTests فقط، لا Business requests أو handlers أو endpoints إنتاج.
+P00 Approved وP01-S01/S02/S03/S04 Done. PR #5 merged=true وclosed وmerge_commit_sha=4ff304825aef95728cba293c79b32523ebbb71ea مطابق main المحلي والبعيد بعد fetch وls-remote بتاريخ 2026-10-14؛ شجرة البداية نظيفة. فرع S05: codex/p01-s05-standardize-results-and-api-errors.
+Application/Shared/Results مستقل عن HTTP، وApi/Shared/Errors يركب IExceptionHandler وProblemDetails وMVC/status pages. الأمثلة والـHandlers والـControllers في الاختبارات فقط. Logging/Performance/Validation وترتيب S04 محفوظة، ولا تحويل عام للـHandlers إلى Result.
 
 ## التحقق والقيود
 
-Restore وlocked-mode Restore نجحا؛ Build 0 warnings/errors. 47 ArchitectureTests و18 IntegrationTests نجحت، 0 failed/skipped؛ UnitTests لا اختبارات متاحة وليست تغطية Passed. اختبار host HTTP الحقيقي أكد 404 بلا endpoints وCorrelation ID مقبول أو Guid جديد للقيمة غير الصالحة؛ السجل لا يخرج بيانات HTTP. فاحصا التوثيق وGit وdiff تسجل نتائجها النهائية في S04.
-D001–D011 وQ003-01 إلى Q003-06 وSDK 10.0.401 محفوظة. Docker Engine وLinux containers مؤجلان إلى P01-S06 وفق D009 وليس Passed. لا SQL أو معاملات أو Result/ProblemDetails أو Global Exception Handler أو Persistence أو Identity أو Outbox أو Hangfire أو Frontend أو CI أو منصة Logs. سياسة السجل في S04 تقبل أحداث Pipeline الثلاثة فقط؛ لا تدعي تغطية مراقبة عامة أو حماية أي Logger مخصص خارج هذا المسار. الفحص المعماري static لا يغطي reflection/dynamic أو SQL.
+نتائج S04 بعد الدمج كما نقلها المستخدم: Restore فشل مرارًا داخل العزل ثم نجح خارجه دون تغيير الحزم؛ Build و65 اختبارًا وفاحصا التوثيق نجحت. هذا سجل مستقل عن الفشل السابق الذي لم يمح. إعادة baseline في S05: locked-mode Restore داخل العزل exit 0؛ Restore وlocked-mode بعد TestHost exit 0؛ Build 0 warnings/errors. اختبارات testhost داخل العزل تعذرت بمهلة اتصال وأعيدت خارجه: 47 ArchitectureTests و40 IntegrationTests و7 UnitTests، 94 passed و0 failed/skipped. فاحصا التوثيق وdiff نجحت وتفاصيل إعادة التحقق النهائية في S05.
+D001–D011 وQ003-01 إلى Q003-06 وSDK 10.0.401 وMediatR 12.5.0 وFluentValidation 12.1.1 محفوظة. Docker Engine وLinux containers مؤجلان إلى P01-S06 وفق D009 وليس Passed؛ SQL N/A. لا Persistence أو Identity أو Outbox أو Hangfire أو Frontend أو CI. الفحص المعماري static لا يغطي reflection/dynamic أو SQL.
+سياسة رسائل الأخطاء مغلقة: عناوين وأكواد ثابتة، بلا Exception.Message/StackTrace أو FluentValidation messages/AttemptedValue أو body/query/headers/path. التشخيص التشغيلي غير مكتمل؛ لا سجل Exceptions جديد أو Host logs. فلتر Pipeline لم يتوسع؛ تزال حقول scope الخاصة بالـHost قبل تطبيقه حتى تبقى أحداث Pipeline بنفس المخطط.
 
 ## بوابة الانتقال
 
-S03 Done وUserApproval Approved وتسليم S04 Ready محفوظة. S04 Done وUserApproval Approved وApprovalDate 2026-10-13؛ تسليم S05 Ready. P01-S05 NotStarted بلا ملف تنفيذ؛ لا أسئلة قرار معلقة، ولا بدء S05 ضمن إذن الإغلاق.
+S04 Done وUserApproval Approved وApprovalDate 2026-10-13؛ تسليم S05 Ready. S05 InReview و[تسليم S06](../planning/phase-01/handoffs/S05-to-S06.md) Draft فقط، Awaiting user review. لا أسئلة قرار معلقة ولا اعتماد بشري لـS05 حتى الآن؛ لا دمج أو S06.
+[Draft PR #6](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/6) مفتوحة ومرفوعة ومرتبطة بالمهمة؛ كود 99d569d وتوثيق 77db4c2، وربط التسليم النهائي من Git history. main ما زال 4ff304825aef95728cba293c79b32523ebbb71ea دون دمج.
 
 LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete
-سجلات Host العامة محجوبة؛ سياسة Pipeline محفوظة ولا يدعى اكتمال التشخيص التشغيلي.
