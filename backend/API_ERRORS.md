@@ -1,7 +1,7 @@
 # نتائج التطبيق وأخطاء HTTP — P01-S05
 
 OwnerStep: P01-S05
-Updated: 2026-10-19
+Updated: 2026-10-20
 
 ## الفكرة خطوة بخطوة
 
@@ -45,3 +45,5 @@ SafePipelineLogFilter لم يتغير: ثلاثة templates ومخطط مفات�
 [ResultTests](tests/UnitTests/ResultTests.cs) تختبر الحالات الصحيحة والخاطئة وValue؛ [ApiErrorTests](tests/IntegrationTests/ApiErrorTests.cs) ترسل HTTP حقيقي بـTestServer مع تسجيل ومكونات الإنتاج، وتغطي الجدول والسرية والـCorrelation وbinding ورؤوس HTTP والإلغاء الفعلي وresponse started. [PipelineTests](tests/IntegrationTests/PipelineTests.cs) تحفظ اختبارات S04 وترتيب النجاح والفشل والإلغاء. كل probes وControllers/Handlers داخل مشروع الاختبارات فقط؛ Program لا يسجل assembly الاختبارات. الاختبارات المعمارية باقية دون تعديل أو تخفيف.
 
 تصحيح مراجعة 2026-10-19: التنفيذ السابق استخدم OkObjectResult(null)، وMVC حوّل الرد إلى 204 بدل عقد 200 الموثق. اختبار HTTP الجديد فشل أولًا بـExpected OK / Actual NoContent، قبل تعديل كود الإنتاج. الإصلاح محلي في ToActionResult<T>: يستخدم JsonResult(null) مع status=200 وapplication/json للقيمة null فقط، ويترك OkObjectResult للقيمة العادية. لا تعديل للـformatters أو إعداد MVC العام، ولا منع Success(null). الاختبار يتحقق أيضًا أن Ok(null) العادي خارج تحويل Result يظل 204، وأن Status/Content-Type/body/Correlation ID مطابقة للعقد في حالات null والقيمة الفعلية وResult بدون بيانات. النتائج النهائية في سجل S05، والسجل التاريخي السابق محفوظ.
+
+تصحيح عزل IntegrationTests بتاريخ 2026-10-20: إعدادا PipelineTests.CreateProvider وApiErrorTests.StartAsync يستخدمان preserveStaticLogger: true. كل ServiceProvider/Test Host يحتفظ بالـLogger الخاص به ويمتلك التخلص منه، دون تبديل Log.Logger أو إغلاق Logger اختبار آخر. ده عزل للاختبارات فقط؛ إعداد Production وسياسة التسجيل وAssertions السرية والإلغاء وnull ما اتغيروش. [LoggerIsolationTests](tests/IntegrationTests/LoggerIsolationTests.cs) يشغّل نسختين بالتوازي للأربع تركيبات Provider/Host، ويفحص كل أحداث الـSinks ومعرفات Correlation ومرجع Logger العالمي، ويثبت استمرار تسجيل النسخة الثانية بعد إغلاق الأولى والتخلص من كل Sink مرة واحدة. لا تعطيل للتوازي أو قفل عام أو تصفية للأحداث المتسربة. نتائج الفشل والتشخيص والتشغيل المتكرر محفوظة في سجل S05.

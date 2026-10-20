@@ -1,6 +1,6 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-10-19
+آخر تحديث: 2026-10-20
 
 - Phase: P01
 - Step: P01-S05
@@ -26,6 +26,8 @@ D001–D011 وQ003-01 إلى Q003-06 وSDK 10.0.401 وMediatR 12.5.0 وFluentVal
 سياسة رسائل الأخطاء مغلقة: عناوين وأكواد ثابتة، بلا Exception.Message/StackTrace أو FluentValidation messages/AttemptedValue أو body/query/headers/path. التشخيص التشغيلي غير مكتمل؛ لا سجل Exceptions جديد أو Host logs. فلتر Pipeline لم يتوسع؛ تزال حقول scope الخاصة بالـHost قبل تطبيقه حتى تبقى أحداث Pipeline بنفس المخطط.
 
 ## بوابة الانتقال
+
+إعادة عزل السجلات 2026-10-20: أُعيد فشل الإلغاء وnull معًا وتأكد انتقال أحداث بين Sinks بسبب AddSerilog الافتراضي وLog.Logger المشترك. preserveStaticLogger: true في مصنعَي الاختبارات فقط؛ لا تعديل إنتاج أو Assertions أو توازٍ أو تصحيح null. Regression أربع حالات عزل ودورة حياة نجحت؛ الاختباران معًا نجحا في 5 تشغيلات، والحل كاملًا نجح 3 مرات متتالية: 47 Architecture و45 Integration و7 Unit=99 passed، 0 failed/skipped لكل مرة. البناء 0 warnings/errors، وسجل S05 يوثق الأدلة الفردية ونتائج الفاحصين. الـ95 أدناه نتائج مرحلة تصحيح null التاريخية؛ العدد الجاري بعد إضافة Regression هو 99. لا إغلاق أو دمج أو S06.
 
 تصحيح مراجعة null بتاريخ 2026-10-19 فقط على PR #6: بدأ من الرأس المراجع 00ba1c90133ad9c442bdca6a6015afd13c84690d بشجرة نظيفة ولا تغييرات لاحقة. اختبار TestServer فشل أولًا 200 مقابل 204، ثم نجح بعد JsonResult(null) محلي في تحويل Result<T>؛ لا تعديل MVC العام أو Success(null) أو الأخطاء/Logging. العدد الحالي 95 اختبارًا ناجحًا: 47 Architecture و41 Integration و7 Unit، صفر failed/skipped. Restore ناجح؛ locked-mode فشل داخل العزل بلا تشخيص ثم نجح خارجه؛ Build 0 warnings/errors؛ تفاصيل الفاحصين في S05. سجل 94 اختبارًا السابق أعلاه محفوظ كتاريخ تحقق. Commit التصحيح وSHA من Git history؛ لا دمج أو S06.
 

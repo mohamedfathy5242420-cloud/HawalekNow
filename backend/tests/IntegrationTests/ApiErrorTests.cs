@@ -23,13 +23,15 @@ namespace HawalekNow.IntegrationTests;
 
 public sealed class ApiErrorTests
 {
-    private static async Task<(WebApplication App, HttpClient Client, PipelineTests.EventSink Sink)> StartAsync()
+    internal static async Task<(WebApplication App, HttpClient Client, PipelineTests.EventSink Sink)> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Development" });
         builder.WebHost.UseTestServer();
         builder.Logging.ClearProviders();
         var sink = new PipelineTests.EventSink();
-        builder.Services.AddSerilog(configuration => configuration.ConfigureSafePipelineLogging().WriteTo.Sink(sink));
+        // Each host owns its logger; disposing it must not close another test's logger.
+        builder.Services.AddSerilog(configuration => configuration.ConfigureSafePipelineLogging().WriteTo.Sink(sink),
+            preserveStaticLogger: true);
         builder.Services.AddApplication(typeof(ApiErrorTests).Assembly);
         builder.Services.AddScoped<PipelineTests.Probe>();
         builder.Services.AddSingleton<ClientCancellationProbe>();
