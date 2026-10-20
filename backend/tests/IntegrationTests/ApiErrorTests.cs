@@ -145,12 +145,36 @@ public sealed class ApiErrorTests
             Prepare(client);
             var response = await client.GetAsync("/probe/success");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(42, await response.Content.ReadFromJsonAsync<int>());
+            Assert.Equal("42", await response.Content.ReadAsStringAsync());
             Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
             Assert.Equal("http-review-123", response.Headers.GetValues(CorrelationIdMiddleware.HeaderName).Single());
             var empty = await client.GetAsync("/probe/empty");
             Assert.Equal(HttpStatusCode.NoContent, empty.StatusCode);
             Assert.Equal("", await empty.Content.ReadAsStringAsync());
+            Assert.Null(empty.Content.Headers.ContentType);
+            Assert.Equal("http-review-123", empty.Headers.GetValues(CorrelationIdMiddleware.HeaderName).Single());
+        }
+    }
+
+    [Fact]
+    public async Task Successful_nullable_result_returns_200_with_json_null()
+    {
+        var (app, client, sink) = await StartAsync();
+        await using (app)
+        using (client)
+        {
+            Prepare(client);
+            var response = await client.GetAsync("/probe/null-success");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+            Assert.Equal("null", await response.Content.ReadAsStringAsync());
+            Assert.Equal("http-review-123", response.Headers.GetValues(CorrelationIdMiddleware.HeaderName).Single());
+            var mvcNull = await client.GetAsync("/probe/mvc-null");
+            Assert.Equal(HttpStatusCode.NoContent, mvcNull.StatusCode);
+            Assert.Null(mvcNull.Content.Headers.ContentType);
+            Assert.Equal("", await mvcNull.Content.ReadAsStringAsync());
+            Assert.Equal("http-review-123", mvcNull.Headers.GetValues(CorrelationIdMiddleware.HeaderName).Single());
+            AssertLogsSafe(sink);
         }
     }
 
@@ -305,6 +329,12 @@ public sealed class ErrorProbeController(ISender sender) : ControllerBase
 
     [HttpGet("success")]
     public IActionResult Success() => Result<int>.Success(42).ToActionResult(HttpContext);
+
+    [HttpGet("null-success")]
+    public IActionResult NullSuccess() => Result<string?>.Success(null).ToActionResult(HttpContext);
+
+    [HttpGet("mvc-null")]
+    public IActionResult MvcNull() => Ok(null);
 
     [HttpGet("empty")]
     public IActionResult EmptySuccess() => Result.Success().ToActionResult(HttpContext);

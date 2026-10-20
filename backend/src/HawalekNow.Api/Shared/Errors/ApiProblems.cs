@@ -51,8 +51,15 @@ public static class ApiProblems
     public static IActionResult ToActionResult(this Result result, HttpContext context) =>
         result.IsSuccess ? new NoContentResult() : AsObjectResult(FromError(context, result.Error!));
 
-    public static IActionResult ToActionResult<T>(this Result<T> result, HttpContext context) =>
-        result.IsSuccess ? new OkObjectResult(result.Value) : AsObjectResult(FromError(context, result.Error!));
+    public static IActionResult ToActionResult<T>(this Result<T> result, HttpContext context)
+    {
+        if (!result.IsSuccess) return AsObjectResult(FromError(context, result.Error!));
+        var value = result.Value;
+        // MVC's no-content formatter turns OkObjectResult(null) into 204. Preserve the Result<T> contract locally.
+        return value is null
+            ? new JsonResult(null) { StatusCode = StatusCodes.Status200OK, ContentType = "application/json" }
+            : new OkObjectResult(value);
+    }
 
     public static Task WriteAsync(HttpContext context, ProblemDetails problem, CancellationToken token) =>
         context.Response.WriteAsJsonAsync(problem, options: null, contentType: "application/problem+json", cancellationToken: token);

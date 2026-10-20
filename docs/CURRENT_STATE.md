@@ -1,6 +1,6 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-10-15
+آخر تحديث: 2026-10-19
 
 - Phase: P01
 - Step: P01-S05
@@ -26,6 +26,8 @@ D001–D011 وQ003-01 إلى Q003-06 وSDK 10.0.401 وMediatR 12.5.0 وFluentVal
 سياسة رسائل الأخطاء مغلقة: عناوين وأكواد ثابتة، بلا Exception.Message/StackTrace أو FluentValidation messages/AttemptedValue أو body/query/headers/path. التشخيص التشغيلي غير مكتمل؛ لا سجل Exceptions جديد أو Host logs. فلتر Pipeline لم يتوسع؛ تزال حقول scope الخاصة بالـHost قبل تطبيقه حتى تبقى أحداث Pipeline بنفس المخطط.
 
 ## بوابة الانتقال
+
+تصحيح مراجعة null بتاريخ 2026-10-19 فقط على PR #6: بدأ من الرأس المراجع 00ba1c90133ad9c442bdca6a6015afd13c84690d بشجرة نظيفة ولا تغييرات لاحقة. اختبار TestServer فشل أولًا 200 مقابل 204، ثم نجح بعد JsonResult(null) محلي في تحويل Result<T>؛ لا تعديل MVC العام أو Success(null) أو الأخطاء/Logging. العدد الحالي 95 اختبارًا ناجحًا: 47 Architecture و41 Integration و7 Unit، صفر failed/skipped. Restore ناجح؛ locked-mode فشل داخل العزل بلا تشخيص ثم نجح خارجه؛ Build 0 warnings/errors؛ تفاصيل الفاحصين في S05. سجل 94 اختبارًا السابق أعلاه محفوظ كتاريخ تحقق. Commit التصحيح وSHA من Git history؛ لا دمج أو S06.
 
 S04 Done وUserApproval Approved وApprovalDate 2026-10-13؛ تسليم S05 Ready. S05 InReview و[تسليم S06](../planning/phase-01/handoffs/S05-to-S06.md) Draft فقط، Awaiting user review. لا أسئلة قرار معلقة ولا اعتماد بشري لـS05 حتى الآن؛ لا دمج أو S06.
 [Draft PR #6](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/6) مفتوحة ومرفوعة ومرتبطة بالمهمة؛ كود 99d569d وتوثيق 77db4c2، وربط التسليم النهائي من Git history. main ما زال 4ff304825aef95728cba293c79b32523ebbb71ea دون دمج.
