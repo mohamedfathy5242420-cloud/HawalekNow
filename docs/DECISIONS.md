@@ -150,7 +150,21 @@ FoundationStep: P02-S01
 
 Status: Approved
 ApprovalDate: 2026-10-05
-DeferredTo: P01-S06
+VerificationStep: P01-S06
+
+حالة التنفيذ الجارية 2026-10-21: نُفّذ التأجيل بإذن S06 المستقل، ولا يمثل هذا تغيير اختيار SQL Server أو المعمارية أو إعداد الجهاز.
+
+EngineVerification: Passed
+ComposeVerification: Passed
+SqlVerification: Passed
+FullTextVerification: Passed
+MailpitVerification: Passed
+HealthVerification: Passed
+PersistenceVerification: Passed
+
+Server 29.7.2 وCompose 5.4.0 وLinux x86_64، 12 CPU و3910356992 bytes RAM. SQL 17.0.5015.4 وحزمتا المحرك وFTS 17.0.5015.4-1؛ اختبار فهرس فعلي وCONTAINS أعاد النتيجة المتوقعة. Mailpit v1.31.6 استقبل رسالة SMTP غير حساسة وأكدتها API. الخدمتان Healthy وآخر خمس Exit Codes لكل منهما 0؛ الصف ونتيجة البحث والبريد استمرت بعد restart وإعادة إنشاء Containers مع نفس Volumes. لا تشمل النتائج تخزين التطبيق أو بحث الأعمال أو OTP أو Production. [S06](../planning/phase-01/steps/S06.md) يوثق الصور والمصادر والفشل الأول وإصلاح السكربت وإعادة التحقق الفعلية؛ لا تمحى سجلات التأجيل أدناه.
+
+السجل التالي تاريخ اعتماد تأجيل S01، محفوظ كما حدث ولا يمثل نتيجة فحص S06 الجارية:
 
 المستخدم اعتمد تأجيل تشغيل وفحص Docker Engine وLinux containers إلى P01-S06. فحصه Deferred وليس Passed؛ لا يمنع إنشاء مشاريع .NET والاختبارات المحلية. اختبارات Containers وSQL تنتظر جاهزية الخدمات.
 اعتمد المستخدم إغلاق P01-S01 بعد المراجعة والدمج، ثم وجّه صراحة «لا متعملش p01 s02 خلص القبلها و قولي الرسالة الهبعتها لل agent». نطاق هذه المهمة إغلاق S01 ودمج PR #2 وتسليم رسالة تنفيذ S02، دون بدء S02 أو إنشاء مشاريعها.

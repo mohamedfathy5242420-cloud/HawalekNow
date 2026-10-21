@@ -8,6 +8,8 @@ function Assert-Ignore([string]$Path,[bool]$Expected){
   if($result -notin @(0,1)){throw "Git check-ignore failed: $Path (exit $result)"}
   if(($result -eq 0) -ne $Expected){throw "Ignore mismatch: $Path; expected ignored=$Expected"}
 }
+$blocked += 'docker/.env'
+$allowed += @('docker/.env.example','docker/compose.yaml','docker/sql/Dockerfile','docker/sql/.dockerignore','docker/local.ps1')
 foreach($path in $blocked){Assert-Ignore $path $true}
 foreach($path in $allowed){Assert-Ignore $path $false}
 $tracked=@(& git -c safe.directory=D:/HwalekNow -C $Root ls-files)
