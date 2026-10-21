@@ -1,6 +1,6 @@
 # خريطة مراحل HawalekNow واعتماداتها
 
-Updated: 2026-10-04
+Updated: 2026-10-21
 Status: Approved
 OwnerStep: P00-S03
 
@@ -13,7 +13,7 @@ OwnerStep: P00-S03
 
 كل خطوة تنتظر اكتمال ومراجعة سابقتها. أول خطوة في كل مرحلة تنتظر Phase Review وHandoff للمرحلة السابقة؛ الإغلاق يشمل Definition of Done الخاص بالمرحلة في المستند، وليس نجاح آخر اختبار فقط. اعتماد نهاية المرحلة السابقة يحقق أيضًا الاعتمادات الأقدم المذكورة في ملخص المراحل أدناه. لا يسمح الجدول بتشغيل خطوات بالتوازي.
 لكل صف: نفذ التحقق الأساسي المدرج، وحدد طبقات V1–V4 المناسبة في ملف الخطوة، وراجع Diff والسلوك مع المستخدم، وسجل اعتماده وHandoff وحدّث CURRENT_STATE قبل الانتقال. Commit وPR والدمج حسب [قواعد Git المعتمدة](../docs/GIT_WORKFLOW.md). منع Commit/Push في مهمة S03 كان استثناء تاريخيًا؛ اعتمد المستخدم S04 وإغلاق P00 وSquash Merge لـPR #1 بتاريخ 2026-10-04.
-الفحوص الآلية لا تعني اعتمادًا بشريًا. الخطوات اللاحقة فهرس تخطيط فقط؛ ملف كل خطوة يُنشأ عند بدئها. P00-S01 إلى P00-S04 Done؛ [مراجعة P00](phase-00/PHASE_REVIEW.md) Approved و[تسليم P01-S01](phase-00/handoffs/S04-to-P01.md) Ready. P01-S01 Done؛ P01-S02 Done بعد اعتماد المستخدم بتاريخ 2026-10-06؛ [تسليم P01-S03](phase-01/handoffs/S02-to-S03.md) Ready. الحالة P01-S05 InReview بعد إغلاق S03/S04؛ تسليم S06 Draft ولا يبدأ قبل الاعتماد. Docker Engine مؤجل إلى P01-S06 وفق D009 وليس Passed.
+الفحوص الآلية لا تعني اعتمادًا بشريًا. الخطوات اللاحقة فهرس تخطيط فقط؛ ملف كل خطوة يُنشأ عند بدئها. P00-S01 إلى P00-S04 Done؛ [مراجعة P00](phase-00/PHASE_REVIEW.md) Approved و[تسليم P01-S01](phase-00/handoffs/S04-to-P01.md) Ready. P01-S01 Done؛ P01-S02 Done بعد اعتماد المستخدم بتاريخ 2026-10-06؛ [تسليم P01-S03](phase-01/handoffs/S02-to-S03.md) Ready. الحالة P01-S06 NotStarted بعد اعتماد وإغلاق S05 بتاريخ 2026-10-21؛ تسليم S06 Ready بلا بدء تنفيذ. Docker Engine مؤجل إلى P01-S06 وفق D009 وليس Passed.
 
 ## المراحل واعتمادات المصدر
 
@@ -141,7 +141,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S05 تأسيس Result وProblemDetails
 
-- Status: InReview؛ [ملف التنفيذ](phase-01/steps/S05.md) و[تسليم S06 Draft](phase-01/handoffs/S05-to-S06.md)؛ إذن المستخدم 2026-10-14 يشمل S05 فقط وDraft PR، ولا دمج أو بدء S06. Awaiting user review.
+- Status: Done؛ UserApproval: Approved؛ ReviewStatus: Approved؛ ApprovalDate: 2026-10-21؛ ReviewedHead: 9b0150669b718a0012e7413fc5bcb4e78f2e1ba9؛ [ملف التنفيذ](phase-01/steps/S05.md) و[تسليم S06 Ready](phase-01/handoffs/S05-to-S06.md). اعتمد المستخدم تصحيح null وعزل السجل وأذن الإغلاق ودمج PR #6 فقط؛ لا بدء S06.
 
 - الاعتمادات السابقة: [P01-S04](#p01-s04).
 - المخرج المطلوب: أخطاء API موحدة وGlobal Exception Handler.
@@ -150,6 +150,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p01-s06"></a>
 
 ### P01-S06 تجهيز Docker Compose
+
+- Status: NotStarted؛ بلا ملف تنفيذ؛ لا تبدأ ضمن مهمة إغلاق S05 ولا يشغل Docker فيها.
 
 - الاعتمادات السابقة: [P01-S05](#p01-s05).
 - المخرج المطلوب: SQL Server Full Text وMailpit وVolumes وHealth Checks.

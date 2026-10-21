@@ -1,22 +1,22 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-10-20
+آخر تحديث: 2026-10-21
 
 - Phase: P01
-- Step: P01-S05
-- Status: InReview
-- Scope: Result وProblemDetails وGlobal Exception Handler فقط؛ لا S06 أو Business.
-- ActiveStepFile: planning/phase-01/steps/S05.md
-- NextStep: P01-S06 بعد مراجعة واعتماد S05؛ لا تبدأ الآن.
+- Step: P01-S06
+- Status: NotStarted
+- Scope: إغلاق S05 المعتمدة ودمج PR #6 فقط؛ لا تنفيذ S06 أو Docker أو Business.
+- ActiveStepFile: None؛ P01-S06 لم تبدأ ولا ملف تنفيذ لها.
+- NextStep: P01-S06 بإذن مستقل؛ لا تبدأ ضمن مهمة الإغلاق.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## نقطة البداية لأي Agent
 
-اقرأ [S05](../planning/phase-01/steps/S05.md) و[حدود الوحدات](../backend/MODULES.md) و[الحزم](../backend/PACKAGES.md) و[تسليم S05](../planning/phase-01/handoffs/S04-to-S05.md) والقرارات والنطاق والخريطة وGit. S04 Done وUserApproval Approved بتاريخ 2026-10-13 وتسليم S05 Ready. إذن المستخدم 2026-10-14 يشمل S05 وCommit وPush وDraft PR فقط؛ لا دمج أو S06.
+اقرأ [S05](../planning/phase-01/steps/S05.md) و[حدود الوحدات](../backend/MODULES.md) و[الحزم](../backend/PACKAGES.md) و[تسليم S06](../planning/phase-01/handoffs/S05-to-S06.md) والقرارات والنطاق والخريطة وGit. S05 Done وUserApproval Approved وReviewStatus Approved بتاريخ 2026-10-21 عند الرأس 9b0150669b718a0012e7413fc5bcb4e78f2e1ba9؛ تسليم S06 Ready. إذن المستخدم الحالي يشمل إغلاق S05 وReady for Review وSquash Merge لـPR #6 فقط، ولا يشمل S06 أو تشغيل Docker.
 
 ## ما اكتمل
 
-P00 Approved وP01-S01/S02/S03/S04 Done. PR #5 merged=true وclosed وmerge_commit_sha=4ff304825aef95728cba293c79b32523ebbb71ea مطابق main المحلي والبعيد بعد fetch وls-remote بتاريخ 2026-10-14؛ شجرة البداية نظيفة. فرع S05: codex/p01-s05-standardize-results-and-api-errors.
+P00 Approved وP01-S01/S02/S03/S04/S05 Done. PR #5 merged=true وclosed وmerge_commit_sha=4ff304825aef95728cba293c79b32523ebbb71ea قاعدة S05. بداية الإغلاق عند الرأس المعتمد مطابقة محليًا وعن بعد وPR بعد fetch، وشجرة العمل نظيفة. فرع S05: codex/p01-s05-standardize-results-and-api-errors؛ الاحتفاظ به مطلوب. الحالة وSHA الفعليان لـPR #6 والدمج يؤخذان من Git/GitHub وتقرير ختام الإغلاق، ولا تدعى نتيجة قبل حدوثها.
 Application/Shared/Results مستقل عن HTTP، وApi/Shared/Errors يركب IExceptionHandler وProblemDetails وMVC/status pages. الأمثلة والـHandlers والـControllers في الاختبارات فقط. Logging/Performance/Validation وترتيب S04 محفوظة، ولا تحويل عام للـHandlers إلى Result.
 
 ## التحقق والقيود
@@ -26,6 +26,10 @@ D001–D011 وQ003-01 إلى Q003-06 وSDK 10.0.401 وMediatR 12.5.0 وFluentVal
 سياسة رسائل الأخطاء مغلقة: عناوين وأكواد ثابتة، بلا Exception.Message/StackTrace أو FluentValidation messages/AttemptedValue أو body/query/headers/path. التشخيص التشغيلي غير مكتمل؛ لا سجل Exceptions جديد أو Host logs. فلتر Pipeline لم يتوسع؛ تزال حقول scope الخاصة بالـHost قبل تطبيقه حتى تبقى أحداث Pipeline بنفس المخطط.
 
 ## بوابة الانتقال
+
+الحالة الجارية: S05 Done وV4 Approved وReviewStatus Approved بتاريخ 2026-10-21؛ تسليم S06 Ready. P01-S06 NotStarted بلا ملف تنفيذ؛ لا تبدأ ضمن مهمة الإغلاق. Success(null) يظل 200 مع application/json وBody null وResult.Success() يظل 204؛ عزل Logger وSink والتوازي وسياسة Logging وقيد OperationalDiagnosticsIncomplete محفوظة. Docker مؤجل وفق D009 وليس Passed ولم يشغل. نتائج فحوص الإغلاق وقبل/بعد الدمج تؤخذ من سجل S05 وتقرير ختام المهمة الفعلي؛ أي مانع أو فشل يعلن ولا يتجاوز.
+
+### سجل المراجعات التاريخي قبل الاعتماد النهائي
 
 إعادة عزل السجلات 2026-10-20: أُعيد فشل الإلغاء وnull معًا وتأكد انتقال أحداث بين Sinks بسبب AddSerilog الافتراضي وLog.Logger المشترك. preserveStaticLogger: true في مصنعَي الاختبارات فقط؛ لا تعديل إنتاج أو Assertions أو توازٍ أو تصحيح null. Regression أربع حالات عزل ودورة حياة نجحت؛ الاختباران معًا نجحا في 5 تشغيلات، والحل كاملًا نجح 3 مرات متتالية: 47 Architecture و45 Integration و7 Unit=99 passed، 0 failed/skipped لكل مرة. البناء 0 warnings/errors، وسجل S05 يوثق الأدلة الفردية ونتائج الفاحصين. الـ95 أدناه نتائج مرحلة تصحيح null التاريخية؛ العدد الجاري بعد إضافة Regression هو 99. لا إغلاق أو دمج أو S06.
 
