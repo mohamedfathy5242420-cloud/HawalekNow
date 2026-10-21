@@ -1,32 +1,41 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-10-13
+آخر تحديث: 2026-10-21
 
 - Phase: P01
-- Step: P01-S05
+- Step: P01-S06
 - Status: NotStarted
-- Scope: إغلاق S04 المعتمدة ودمج PR #5 فقط؛ لا تنفيذ S05.
-- ActiveStepFile: None؛ لا ينشأ ملف S05 في مهمة إغلاق S04.
-- NextStep: P01-S05 بإذن مستقل بعد التحقق من دمج PR #5.
+- Scope: إغلاق S05 المعتمدة ودمج PR #6 فقط؛ لا تنفيذ S06 أو Docker أو Business.
+- ActiveStepFile: None؛ P01-S06 لم تبدأ ولا ملف تنفيذ لها.
+- NextStep: P01-S06 بإذن مستقل؛ لا تبدأ ضمن مهمة الإغلاق.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## نقطة البداية لأي Agent
 
-اقرأ [S04](../planning/phase-01/steps/S04.md) و[حدود الوحدات](../backend/MODULES.md) و[الحزم](../backend/PACKAGES.md) و[تسليم S05](../planning/phase-01/handoffs/S04-to-S05.md) والقرارات والنطاق والخريطة وGit. المستخدم اعتمد S04 بتاريخ 2026-10-13 عند da151d66b5c7c98ed0437d2e05899fcb8a3ed786 وأذن إغلاقها ودمج PR #5 فقط؛ لا تنفيذ S05. SHA الإغلاق والدمج يؤخذان من Git/GitHub الفعلي.
+اقرأ [S05](../planning/phase-01/steps/S05.md) و[حدود الوحدات](../backend/MODULES.md) و[الحزم](../backend/PACKAGES.md) و[تسليم S06](../planning/phase-01/handoffs/S05-to-S06.md) والقرارات والنطاق والخريطة وGit. S05 Done وUserApproval Approved وReviewStatus Approved بتاريخ 2026-10-21 عند الرأس 9b0150669b718a0012e7413fc5bcb4e78f2e1ba9؛ تسليم S06 Ready. إذن المستخدم الحالي يشمل إغلاق S05 وReady for Review وSquash Merge لـPR #6 فقط، ولا يشمل S06 أو تشغيل Docker.
 
 ## ما اكتمل
 
-P00 Approved وP01-S01/S02/S03 Done؛ تسليم S04 Ready. PR #4 merged=true على main عند 32594255fa62dff1b81c3565f3db6bfe84e9c714، مطابق Git المحلي والبعيد بعد fetch وls-remote بتاريخ 2026-10-11. شجرة بداية S04 نظيفة.
-S04 تؤسس MediatR 12.5.0 وFluentValidation 12.1.1 وLogging ثم Performance ثم Validation ثم Handler عبر DI؛ Serilog console يسمح بمخطط تقنية محدود، وCorrelationContext scoped مرتبط بـHTTP middleware. الأمثلة في IntegrationTests فقط، لا Business requests أو handlers أو endpoints إنتاج.
+P00 Approved وP01-S01/S02/S03/S04/S05 Done. PR #5 merged=true وclosed وmerge_commit_sha=4ff304825aef95728cba293c79b32523ebbb71ea قاعدة S05. بداية الإغلاق عند الرأس المعتمد مطابقة محليًا وعن بعد وPR بعد fetch، وشجرة العمل نظيفة. فرع S05: codex/p01-s05-standardize-results-and-api-errors؛ الاحتفاظ به مطلوب. الحالة وSHA الفعليان لـPR #6 والدمج يؤخذان من Git/GitHub وتقرير ختام الإغلاق، ولا تدعى نتيجة قبل حدوثها.
+Application/Shared/Results مستقل عن HTTP، وApi/Shared/Errors يركب IExceptionHandler وProblemDetails وMVC/status pages. الأمثلة والـHandlers والـControllers في الاختبارات فقط. Logging/Performance/Validation وترتيب S04 محفوظة، ولا تحويل عام للـHandlers إلى Result.
 
 ## التحقق والقيود
 
-Restore وlocked-mode Restore نجحا؛ Build 0 warnings/errors. 47 ArchitectureTests و18 IntegrationTests نجحت، 0 failed/skipped؛ UnitTests لا اختبارات متاحة وليست تغطية Passed. اختبار host HTTP الحقيقي أكد 404 بلا endpoints وCorrelation ID مقبول أو Guid جديد للقيمة غير الصالحة؛ السجل لا يخرج بيانات HTTP. فاحصا التوثيق وGit وdiff تسجل نتائجها النهائية في S04.
-D001–D011 وQ003-01 إلى Q003-06 وSDK 10.0.401 محفوظة. Docker Engine وLinux containers مؤجلان إلى P01-S06 وفق D009 وليس Passed. لا SQL أو معاملات أو Result/ProblemDetails أو Global Exception Handler أو Persistence أو Identity أو Outbox أو Hangfire أو Frontend أو CI أو منصة Logs. سياسة السجل في S04 تقبل أحداث Pipeline الثلاثة فقط؛ لا تدعي تغطية مراقبة عامة أو حماية أي Logger مخصص خارج هذا المسار. الفحص المعماري static لا يغطي reflection/dynamic أو SQL.
+نتائج S04 بعد الدمج كما نقلها المستخدم: Restore فشل مرارًا داخل العزل ثم نجح خارجه دون تغيير الحزم؛ Build و65 اختبارًا وفاحصا التوثيق نجحت. هذا سجل مستقل عن الفشل السابق الذي لم يمح. إعادة baseline في S05: locked-mode Restore داخل العزل exit 0؛ Restore وlocked-mode بعد TestHost exit 0؛ Build 0 warnings/errors. اختبارات testhost داخل العزل تعذرت بمهلة اتصال وأعيدت خارجه: 47 ArchitectureTests و40 IntegrationTests و7 UnitTests، 94 passed و0 failed/skipped. فاحصا التوثيق وdiff نجحت وتفاصيل إعادة التحقق النهائية في S05.
+D001–D011 وQ003-01 إلى Q003-06 وSDK 10.0.401 وMediatR 12.5.0 وFluentValidation 12.1.1 محفوظة. Docker Engine وLinux containers مؤجلان إلى P01-S06 وفق D009 وليس Passed؛ SQL N/A. لا Persistence أو Identity أو Outbox أو Hangfire أو Frontend أو CI. الفحص المعماري static لا يغطي reflection/dynamic أو SQL.
+سياسة رسائل الأخطاء مغلقة: عناوين وأكواد ثابتة، بلا Exception.Message/StackTrace أو FluentValidation messages/AttemptedValue أو body/query/headers/path. التشخيص التشغيلي غير مكتمل؛ لا سجل Exceptions جديد أو Host logs. فلتر Pipeline لم يتوسع؛ تزال حقول scope الخاصة بالـHost قبل تطبيقه حتى تبقى أحداث Pipeline بنفس المخطط.
 
 ## بوابة الانتقال
 
-S03 Done وUserApproval Approved وتسليم S04 Ready محفوظة. S04 Done وUserApproval Approved وApprovalDate 2026-10-13؛ تسليم S05 Ready. P01-S05 NotStarted بلا ملف تنفيذ؛ لا أسئلة قرار معلقة، ولا بدء S05 ضمن إذن الإغلاق.
+الحالة الجارية: S05 Done وV4 Approved وReviewStatus Approved بتاريخ 2026-10-21؛ تسليم S06 Ready. P01-S06 NotStarted بلا ملف تنفيذ؛ لا تبدأ ضمن مهمة الإغلاق. Success(null) يظل 200 مع application/json وBody null وResult.Success() يظل 204؛ عزل Logger وSink والتوازي وسياسة Logging وقيد OperationalDiagnosticsIncomplete محفوظة. Docker مؤجل وفق D009 وليس Passed ولم يشغل. نتائج فحوص الإغلاق وقبل/بعد الدمج تؤخذ من سجل S05 وتقرير ختام المهمة الفعلي؛ أي مانع أو فشل يعلن ولا يتجاوز.
+
+### سجل المراجعات التاريخي قبل الاعتماد النهائي
+
+إعادة عزل السجلات 2026-10-20: أُعيد فشل الإلغاء وnull معًا وتأكد انتقال أحداث بين Sinks بسبب AddSerilog الافتراضي وLog.Logger المشترك. preserveStaticLogger: true في مصنعَي الاختبارات فقط؛ لا تعديل إنتاج أو Assertions أو توازٍ أو تصحيح null. Regression أربع حالات عزل ودورة حياة نجحت؛ الاختباران معًا نجحا في 5 تشغيلات، والحل كاملًا نجح 3 مرات متتالية: 47 Architecture و45 Integration و7 Unit=99 passed، 0 failed/skipped لكل مرة. البناء 0 warnings/errors، وسجل S05 يوثق الأدلة الفردية ونتائج الفاحصين. الـ95 أدناه نتائج مرحلة تصحيح null التاريخية؛ العدد الجاري بعد إضافة Regression هو 99. لا إغلاق أو دمج أو S06.
+
+تصحيح مراجعة null بتاريخ 2026-10-19 فقط على PR #6: بدأ من الرأس المراجع 00ba1c90133ad9c442bdca6a6015afd13c84690d بشجرة نظيفة ولا تغييرات لاحقة. اختبار TestServer فشل أولًا 200 مقابل 204، ثم نجح بعد JsonResult(null) محلي في تحويل Result<T>؛ لا تعديل MVC العام أو Success(null) أو الأخطاء/Logging. العدد الحالي 95 اختبارًا ناجحًا: 47 Architecture و41 Integration و7 Unit، صفر failed/skipped. Restore ناجح؛ locked-mode فشل داخل العزل بلا تشخيص ثم نجح خارجه؛ Build 0 warnings/errors؛ تفاصيل الفاحصين في S05. سجل 94 اختبارًا السابق أعلاه محفوظ كتاريخ تحقق. Commit التصحيح وSHA من Git history؛ لا دمج أو S06.
+
+S04 Done وUserApproval Approved وApprovalDate 2026-10-13؛ تسليم S05 Ready. S05 InReview و[تسليم S06](../planning/phase-01/handoffs/S05-to-S06.md) Draft فقط، Awaiting user review. لا أسئلة قرار معلقة ولا اعتماد بشري لـS05 حتى الآن؛ لا دمج أو S06.
+[Draft PR #6](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/6) مفتوحة ومرفوعة ومرتبطة بالمهمة؛ كود 99d569d وتوثيق 77db4c2، وربط التسليم النهائي من Git history. main ما زال 4ff304825aef95728cba293c79b32523ebbb71ea دون دمج.
 
 LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete
-سجلات Host العامة محجوبة؛ سياسة Pipeline محفوظة ولا يدعى اكتمال التشخيص التشغيلي.

@@ -69,3 +69,8 @@ OwnerStep: P01-S04؛ D002/D006 وQ003-05. لا تغيير لملكية الوح�
 
 Application يستخدم ILogger abstraction ولا يعرف Serilog أو HttpContext؛ Api يربط implementation. CorrelationContext مفهوم تقني scoped ذو استخدام فعلي في middleware والـPipeline، دون interface بلا implementation. Shared لا يعتمد على Modules؛ لا Domain Shared أو Infrastructure Shared أو مشروع جديد. الأمثلة والـHandlers والـValidators التجريبية في IntegrationTests فقط. لا Contracts تجارية أو معاملات أو تخزين.
 فاحص المعمارية عالج namespace nullable للرموز المركبة من Roslyn مع استمرار فحص TypeArguments وContainingType؛ تجارب tuple سليمة ومخالفة تثبت استمرار المنع. قواعد الطبقات والوحدات لم تخفف.
+
+## المشترك التقني المؤسس في S05
+
+OwnerStep: P01-S05؛ D002 وQ003-05. Application/Shared/Results يملك Result وResult<T> وErrorKind/Error بدون HTTP؛ Api/Shared/Errors مستهلكه الحقيقي ويحوّله إلى IActionResult وProblemDetails. IExceptionHandler وMVC factory وstatus pages تقنية HTTP داخل Api فقط، وتستخدم CorrelationContext scoped الموجود. UnitTests تختبر invariants، وIntegrationTests تستعمل handlers/controllers داخل test assembly فقط عبر TestServer وتسجيل الإنتاج نفسه؛ لا اختبار assembly في Program. Domain/Infrastructure ووحدات Business بلا إضافات؛ لا تغيير للـProjectReferences أو قواعد الفاحص المعماري.
+Api/Shared/Diagnostics/RemoveHostMetadata يحذف RequestId/RequestPath/ConnectionId/ActionId/ActionName المضافة من scopes الخاصة بـASP.NET قبل فلتر S04؛ قائمة الأحداث والخصائص المسموحة لم تتوسع. الرفض للأسرار والخصائص الأخرى والاستثناءات محفوظ، ولا HTTP metadata في السجل. السجلات العامة محجوبة والتشخيص التشغيلي غير مكتمل.

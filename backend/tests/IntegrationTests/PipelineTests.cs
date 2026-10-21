@@ -15,12 +15,14 @@ namespace HawalekNow.IntegrationTests;
 
 public sealed class PipelineTests
 {
-    private static (ServiceProvider Provider, EventSink Sink) CreateProvider()
+    internal static (ServiceProvider Provider, EventSink Sink) CreateProvider()
     {
         var sink = new EventSink();
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddSerilog(configuration => configuration.ConfigureSafePipelineLogging().WriteTo.Sink(sink));
+        // Each provider owns its logger; never replace or close another test's static logger.
+        services.AddSerilog(configuration => configuration.ConfigureSafePipelineLogging().WriteTo.Sink(sink),
+            preserveStaticLogger: true);
         services.AddApplication(typeof(PipelineTests).Assembly);
         services.AddScoped<Probe>();
         return (services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true }), sink);
@@ -273,11 +275,14 @@ public sealed class PipelineTests
         Assert.All(sink.Events, value => Assert.Null(value.Exception));
     }
 
-    public sealed class EventSink : ILogEventSink
+    public sealed class EventSink : ILogEventSink, IDisposable
     {
         private readonly System.Collections.Concurrent.ConcurrentQueue<LogEvent> events = new();
+        private int disposeCount;
         public LogEvent[] Events => events.ToArray();
+        public int DisposeCount => Volatile.Read(ref disposeCount);
         public void Emit(LogEvent logEvent) => events.Enqueue(logEvent);
+        public void Dispose() => Interlocked.Increment(ref disposeCount);
     }
 
     public sealed class Probe
