@@ -43,3 +43,7 @@ D004: Workflow Step تعني Command أو Query؛ MediatR لا ينشئ Transact
 ## خدمات التطوير المحلية في S06
 
 [Docker README](../docker/README.md) يشرح SQL Server 2025 وFTS وMailpit وVolumes والفحص. لا ربط للتطبيق أو DbContext/Migrations/OTP في S06؛ التخزين الفعلي يبدأ في P02. سجلات التأجيل السابقة تخص خطواتها التاريخية؛ النتائج الجارية في [S06](../planning/phase-01/steps/S06.md).
+
+## إغلاق P01-S06 — 2026-10-22
+
+S06 Done بعد مراجعة المستخدم وV4 Approved؛ تسليم S07 Ready وP01-S07 NotStarted بلا ملف تنفيذ. الإغلاق توثيقي فقط؛ الخدمات والبيانات والصور محفوظة دون تغيير. فحوص الإغلاق للقراءة فقط وتفاصيلها في سجل S06؛ الجاهزية محلية ولا تعني تخزين التطبيق أو إعداد Production.

@@ -1,6 +1,6 @@
 # خريطة مراحل HawalekNow واعتماداتها
 
-Updated: 2026-10-21
+Updated: 2026-10-22
 Status: Approved
 OwnerStep: P00-S03
 
@@ -13,7 +13,7 @@ OwnerStep: P00-S03
 
 كل خطوة تنتظر اكتمال ومراجعة سابقتها. أول خطوة في كل مرحلة تنتظر Phase Review وHandoff للمرحلة السابقة؛ الإغلاق يشمل Definition of Done الخاص بالمرحلة في المستند، وليس نجاح آخر اختبار فقط. اعتماد نهاية المرحلة السابقة يحقق أيضًا الاعتمادات الأقدم المذكورة في ملخص المراحل أدناه. لا يسمح الجدول بتشغيل خطوات بالتوازي.
 لكل صف: نفذ التحقق الأساسي المدرج، وحدد طبقات V1–V4 المناسبة في ملف الخطوة، وراجع Diff والسلوك مع المستخدم، وسجل اعتماده وHandoff وحدّث CURRENT_STATE قبل الانتقال. Commit وPR والدمج حسب [قواعد Git المعتمدة](../docs/GIT_WORKFLOW.md). منع Commit/Push في مهمة S03 كان استثناء تاريخيًا؛ اعتمد المستخدم S04 وإغلاق P00 وSquash Merge لـPR #1 بتاريخ 2026-10-04.
-الفحوص الآلية لا تعني اعتمادًا بشريًا. الخطوات اللاحقة فهرس تخطيط فقط؛ ملف كل خطوة يُنشأ عند بدئها. P00-S01 إلى P00-S04 Done؛ [مراجعة P00](phase-00/PHASE_REVIEW.md) Approved و[تسليم P01-S01](phase-00/handoffs/S04-to-P01.md) Ready. P01-S01 Done؛ P01-S02 Done بعد اعتماد المستخدم بتاريخ 2026-10-06؛ [تسليم P01-S03](phase-01/handoffs/S02-to-S03.md) Ready. الحالة P01-S06 InReview بإذن مستقل بتاريخ 2026-10-21 بعد اعتماد S05 ودمج PR #6؛ تسليم S06 Ready من S05، وS07 لا تبدأ قبل مراجعة S06. فحوص D009 الفعلية تسجل في S06 بدل اعتبار التأجيل نجاحًا.
+الفحوص الآلية لا تعني اعتمادًا بشريًا. الخطوات اللاحقة فهرس تخطيط فقط؛ ملف كل خطوة يُنشأ عند بدئها. P00-S01 إلى P00-S04 Done؛ [مراجعة P00](phase-00/PHASE_REVIEW.md) Approved و[تسليم P01-S01](phase-00/handoffs/S04-to-P01.md) Ready. P01-S01 Done؛ P01-S02 Done بعد اعتماد المستخدم بتاريخ 2026-10-06؛ [تسليم P01-S03](phase-01/handoffs/S02-to-S03.md) Ready. S06 Done بعد اعتماد 2026-10-22؛ تسليم S07 Ready وP01-S07 NotStarted بلا ملف تنفيذ؛ لا تبدأ ضمن الإغلاق. فحوص D009 الفعلية تسجل في S06 بدل اعتبار التأجيل نجاحًا.
 
 ## المراحل واعتمادات المصدر
 
@@ -151,7 +151,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S06 تجهيز Docker Compose
 
-- Status: InReview؛ [ملف التنفيذ](phase-01/steps/S06.md)؛ إذن مستقل بتاريخ 2026-10-21، ولا تبدأ S07 قبل الاعتماد.
+- Status: Done؛ UserApproval: Approved؛ ReviewStatus: Approved؛ ApprovalDate: 2026-10-22؛ ReviewedHead: 6244fa36e1a802be07cb69b072093453e1ef5cc9؛ [ملف التنفيذ](phase-01/steps/S06.md) و[تسليم S07 Ready](phase-01/handoffs/S06-to-S07.md).
 
 - الاعتمادات السابقة: [P01-S05](#p01-s05).
 - المخرج المطلوب: SQL Server Full Text وMailpit وVolumes وHealth Checks.
@@ -160,6 +160,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p01-s07"></a>
 
 ### P01-S07 OpenAPI وScalar وAPI v1
+
+- Status: NotStarted؛ بلا ملف تنفيذ؛ لا تبدأ ضمن إغلاق S06.
 
 - الاعتمادات السابقة: [P01-S06](#p01-s06).
 - المخرج المطلوب: توثيق حي ومسارات api v1 وHealth endpoints.

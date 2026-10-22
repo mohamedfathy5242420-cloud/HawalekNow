@@ -1,6 +1,6 @@
 # HawalekNow — حوالك ناو
 
-P01-S05 Done بعد اعتماد 2026-10-21؛ [الخطوة](planning/phase-01/steps/S05.md) و[شرح Result وأخطاء HTTP](backend/API_ERRORS.md) و[تسليم S06 Ready](planning/phase-01/handoffs/S05-to-S06.md). P01-S06 InReview بإذن مستقل؛ [Docker والشرح بالمصري](docker/README.md) و[سجل S06](planning/phase-01/steps/S06.md). لا تبدأ S07 قبل مراجعة S06. الحالة الحالية في CURRENT_STATE.
+P01-S05 Done بعد اعتماد 2026-10-21؛ [الخطوة](planning/phase-01/steps/S05.md) و[شرح Result وأخطاء HTTP](backend/API_ERRORS.md) و[تسليم S06 Ready](planning/phase-01/handoffs/S05-to-S06.md). P01-S06 Done بعد اعتماد 2026-10-22؛ [Docker والشرح بالمصري](docker/README.md) و[سجل S06](planning/phase-01/steps/S06.md). تسليم S07 Ready؛ P01-S07 NotStarted بلا ملف تنفيذ ولا تبدأ ضمن الإغلاق. الحالة الحالية في CURRENT_STATE.
 
 منصة لاكتشاف المنتجات والتجار القريبين في مصر ومقارنة السعر والتوافر لكل فرع ثم التواصل مباشرة مع التاجر. البيع يتم خارج المنصة؛ لا سلة أو دفع أو شحن داخلها.
 

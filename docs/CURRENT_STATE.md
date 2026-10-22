@@ -1,18 +1,18 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-10-21
+آخر تحديث: 2026-10-22
 
 - Phase: P01
-- Step: P01-S06
-- Status: InReview
-- Scope: P01-S06 فقط؛ Docker Compose محلي لـSQL Server 2025 Full Text وMailpit والتحقق الفعلي.
-- ActiveStepFile: planning/phase-01/steps/S06.md
-- NextStep: P01-S07؛ لا تبدأ قبل اعتماد S06.
+- Step: P01-S07
+- Status: NotStarted
+- Scope: إغلاق S06 المعتمدة ودمج PR #7 فقط؛ لا بدء S07 أو تغيير خدمات أو بيانات.
+- ActiveStepFile: None؛ P01-S07 NotStarted بلا ملف تنفيذ.
+- NextStep: P01-S07 بإذن مستقل؛ لا تبدأ ضمن الإغلاق.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
-## تنفيذ S06 الجاري
+## اعتماد وإغلاق S06
 
-إذن المستخدم 2026-10-21 يبدأ S06 فقط ويحل محل منع البدء الوارد في سجلات إغلاق S05 التاريخية أدناه. PR #6 merged=true وmain مطابق 69a244f25381c4e6a47c2e0086392d7430580341. [S06](../planning/phase-01/steps/S06.md) يسجل التنفيذ الجاري، ولا اعتماد بشري له. Docker Engine 29.7.2 يعمل Linux x64؛ Compose وSQL وFull Text وMailpit وHealth واستمرار البيانات Passed بعد restart وrecreate مع تغير Container IDs. Build 0 warnings/errors و99 اختبارًا ناجحًا. S06 InReview وتسليم S07 Draft؛ Awaiting user review. ملف TARGET_SCHEDULE.md لم يعدل ولم يضم للتتبع.
+S06 Done وV4 Approved وReviewStatus Approved بتاريخ 2026-10-22 عند الرأس 6244fa36e1a802be07cb69b072093453e1ef5cc9؛ [S06](../planning/phase-01/steps/S06.md) و[تسليم S07 Ready](../planning/phase-01/handoffs/S06-to-S07.md). P01-S07 NotStarted بلا ملف تنفيذ. الإذن إغلاق ودمج PR #7 فقط؛ حالة PR وSHA الدمج ونتائج الفحوص بعده من Git/GitHub وتقرير الختام الفعلي. D009 ونتائج الاستمرار التاريخية محفوظة؛ فحص الخدمات الحالي قراءة فقط نجح (Healthy وloopback وSQL/FTS والرسالة الموجودة). لا تخزين تطبيق أو Production، ولا تغيير SDK/الحزم/Logging. جدول المستخدم محفوظ دون تعديل أو staging.
 
 ## سجل حالة إغلاق S05 قبل إذن S06 (تاريخي)
 

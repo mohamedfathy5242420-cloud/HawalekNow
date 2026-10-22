@@ -90,3 +90,7 @@ Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object 
 Missing local settings: شغّل Init مرة واحدة. Invalid settings/password: راجع سطر الإعداد والقيود بدون طباعة القيمة. Port allocated: اعرف صاحب المنفذ ووقف هنا بدل إيقاف خدمة تانية تلقائيًا. Pipe permission denied جوه العزل: اطلب صلاحية الأداة؛ لو Engine نفسه غير جاهز افتح Desktop يدويًا. Health timeout: راجع موارد Docker وتطابق كلمة المرور وإصدار الحزمة؛ لا تعتبر Running نجاحًا ولا تمسح الـVolume لإخفاء المشكلة. لا تطبع `docker compose config` كاملًا أو `docker inspect` كاملًا؛ كليهما قد يعرض السر. فحص health فقط آمن مثل `docker inspect --format '{{.State.Health.Status}}' <container-id>`.
 
 بيئة Production محتاجة تصميم مستقل: إدارة أسرار وصلاحيات SQL محدودة بدل sa، شبكة وTLS وهوية وصول، نسخ احتياطي واختبار استرجاع ومراقبة وتحديثات وسعة وترخيص نشر. ربط loopback وVolumes محلية وMailpit لا يحقق المتطلبات دي.
+
+## إغلاق P01-S06 — 2026-10-22
+
+S06 Done بعد مراجعة المستخدم وV4 Approved؛ تسليم S07 Ready وP01-S07 NotStarted بلا ملف تنفيذ. الإغلاق توثيقي فقط؛ الخدمات والبيانات والصور محفوظة دون تغيير. فحوص الإغلاق للقراءة فقط وتفاصيلها في سجل S06؛ الجاهزية محلية ولا تعني تخزين التطبيق أو إعداد Production.
