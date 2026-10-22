@@ -1,6 +1,6 @@
 # HawalekNow — حوالك ناو
 
-P01-S05 Done بعد اعتماد 2026-10-21؛ [الخطوة](planning/phase-01/steps/S05.md) و[شرح Result وأخطاء HTTP](backend/API_ERRORS.md) و[تسليم S06 Ready](planning/phase-01/handoffs/S05-to-S06.md). P01-S06 NotStarted بلا ملف تنفيذ، ولا تبدأ ضمن مهمة إغلاق S05. الحالة الحالية في CURRENT_STATE.
+P01-S05 Done بعد اعتماد 2026-10-21؛ [الخطوة](planning/phase-01/steps/S05.md) و[شرح Result وأخطاء HTTP](backend/API_ERRORS.md) و[تسليم S06 Ready](planning/phase-01/handoffs/S05-to-S06.md). P01-S06 Done بعد اعتماد 2026-10-22؛ [Docker والشرح بالمصري](docker/README.md) و[سجل S06](planning/phase-01/steps/S06.md). تسليم S07 Ready؛ P01-S07 NotStarted بلا ملف تنفيذ ولا تبدأ ضمن الإغلاق. الحالة الحالية في CURRENT_STATE.
 
 منصة لاكتشاف المنتجات والتجار القريبين في مصر ومقارنة السعر والتوافر لكل فرع ثم التواصل مباشرة مع التاجر. البيع يتم خارج المنصة؛ لا سلة أو دفع أو شحن داخلها.
 
@@ -15,7 +15,7 @@ P01-S05 Done بعد اعتماد 2026-10-21؛ [الخطوة](planning/phase-01/s
 | [backend/](backend/README.md) | Solution ومشاريع Clean Architecture والاختبارات؛ تفاصيل التشغيل في backend/README |
 | [docs/](docs/CURRENT_STATE.md) | حالة المشروع والقرارات والنطاق وقواعد Git |
 | [planning/](planning/ROADMAP.md) | الخريطة والقوالب والخطوات والتسليم وفاحصا التوثيق |
-| [docker/](docker/README.md) | مكان إعداد تشغيل الخدمات في P01-S06؛ لا Compose حاليًا |
+| [docker/](docker/README.md) | Compose محلي لـSQL Server 2025 Full Text وMailpit؛ أوامر التشغيل والفحص |
 | global.json | اختيار .NET SDK |
 
 الواجهة مؤجلة؛ لم ينشأ مجلد frontend أو Angular أو أدواته. مرجعا المتطلبات وخطة Backend في جذر المستودع محفوظان دون تعديل.
@@ -24,7 +24,7 @@ P01-S05 Done بعد اعتماد 2026-10-21؛ [الخطوة](planning/phase-01/s
 
 SDK المتاح والمختار .NET **10.0.401**. [global.json](global.json) يستخدم `latestPatch` داخل feature band `10.0.4xx` فقط، و`allowPrerelease: false`. لا انتقال تلقائي إلى band أحدث أو .NET major آخر. يفشل الاختيار عند غياب SDK متوافق؛ تغيير السياسة يحتاج مراجعة.
 
-Git وPowerShell لتشغيل فحوص التوثيق. يلزم Docker Engine بوضع Linux containers للخدمات لاحقًا. وفق D009 اعتمد المستخدم تأجيل تشغيل وفحص Engine إلى P01-S06؛ فحصه مؤجل وليس ناجحًا، ولا يمنع إنشاء مشاريع .NET واختبارات المعمارية المحلية. لا SQL Server أو Mailpit أو CI حاليًا؛ API host فقط دون ميزات تجارية.
+Git وPowerShell لتشغيل فحوص التوثيق. يلزم Docker Engine بوضع Linux containers للخدمات لاحقًا. فحص Engine الفعلي بدأ في P01-S06 وفق D009؛ نتائج SQL وFTS وMailpit تسجل في S06 بعد الاختبار. لا CI حاليًا؛ API host فقط دون ميزات تجارية.
 
 ## الأوامر المتاحة الآن
 
@@ -41,4 +41,4 @@ dotnet test backend/HawalekNow.slnx --no-build --no-restore
 git diff --check
 ```
 
-[Backend](backend/README.md) يشرح الطبقات والاعتمادات وأمر تشغيل Api، و[Modules](backend/MODULES.md) يوضح الملكية وقواعد التواصل والمشترك. [P01-S04](planning/phase-01/steps/S04.md) Done بعد اعتماد 2026-10-13: CQRS Pipeline وتسجيل آمن وCorrelation ID، و65 اختبار معمارية وتكامل؛ [الحزم والتراخيص](backend/PACKAGES.md). الوحدات بلا وظائف تجارية. Docker مؤجل وفق D009 إلى P01-S06. Git على هذا الجهاز يحتاج الخيار -c safe.directory=D:/HwalekNow بسبب اختلاف الملكية.
+[Backend](backend/README.md) يشرح الطبقات والاعتمادات وأمر تشغيل Api، و[Modules](backend/MODULES.md) يوضح الملكية وقواعد التواصل والمشترك. [P01-S04](planning/phase-01/steps/S04.md) Done بعد اعتماد 2026-10-13: CQRS Pipeline وتسجيل آمن وCorrelation ID، و65 اختبار معمارية وتكامل؛ [الحزم والتراخيص](backend/PACKAGES.md). الوحدات بلا وظائف تجارية. Docker ينفذ في P01-S06؛ نتائج الفحوص في سجلها. Git على هذا الجهاز يحتاج الخيار -c safe.directory=D:/HwalekNow بسبب اختلاف الملكية.

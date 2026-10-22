@@ -1,0 +1,47 @@
+name: hawaleknow-local
+services:
+  sql:
+    image: hawaleknow/sql-fts:17.0.5015.4-s06
+    build:
+      context: ./sql
+    platform: linux/amd64
+    environment:
+      ACCEPT_EULA: 'Y'
+      MSSQL_PID: EnterpriseDeveloper
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?Missing SQL password. Run ./docker/local.ps1 Init}
+      MSSQL_MEMORY_LIMIT_MB: '2048'
+    ports:
+      - '127.0.0.1:1433:1433'
+    volumes:
+      - sql-data:/var/opt/mssql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'SQLCMDPASSWORD="$${MSSQL_SA_PASSWORD}" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -C -b -l 5 -t 5 -Q "SET NOCOUNT ON; IF ISNULL(FULLTEXTSERVICEPROPERTY(''IsFullTextInstalled''), 0) <> 1 THROW 51000, ''Full Text unavailable'', 1; SELECT 1;" > /dev/null 2>&1'
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 90s
+    stop_grace_period: 60s
+  mailpit:
+    image: axllent/mailpit:v1.31.6@sha256:23fe39e81bde596a918000b3135c0f85dc8bb4c9ea6be274b051143f3e300387
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_DISABLE_VERSION_CHECK: 'true'
+      MP_BLOCK_REMOTE_CSS_AND_FONTS: 'true'
+      MP_SMTP_DISABLE_RDNS: 'true'
+    ports:
+      - '127.0.0.1:1025:1025'
+      - '127.0.0.1:8025:8025'
+    volumes:
+      - mailpit-data:/data
+    healthcheck:
+      test: ['CMD', '/mailpit', 'readyz']
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    stop_grace_period: 30s
+volumes:
+  sql-data:
+  mailpit-data:

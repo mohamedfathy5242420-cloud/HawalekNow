@@ -1,16 +1,22 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-10-21
+آخر تحديث: 2026-10-22
 
 - Phase: P01
-- Step: P01-S06
+- Step: P01-S07
 - Status: NotStarted
-- Scope: إغلاق S05 المعتمدة ودمج PR #6 فقط؛ لا تنفيذ S06 أو Docker أو Business.
-- ActiveStepFile: None؛ P01-S06 لم تبدأ ولا ملف تنفيذ لها.
-- NextStep: P01-S06 بإذن مستقل؛ لا تبدأ ضمن مهمة الإغلاق.
+- Scope: إغلاق S06 المعتمدة ودمج PR #7 فقط؛ لا بدء S07 أو تغيير خدمات أو بيانات.
+- ActiveStepFile: None؛ P01-S07 NotStarted بلا ملف تنفيذ.
+- NextStep: P01-S07 بإذن مستقل؛ لا تبدأ ضمن الإغلاق.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
-## نقطة البداية لأي Agent
+## اعتماد وإغلاق S06
+
+S06 Done وV4 Approved وReviewStatus Approved بتاريخ 2026-10-22 عند الرأس 6244fa36e1a802be07cb69b072093453e1ef5cc9؛ [S06](../planning/phase-01/steps/S06.md) و[تسليم S07 Ready](../planning/phase-01/handoffs/S06-to-S07.md). P01-S07 NotStarted بلا ملف تنفيذ. الإذن إغلاق ودمج PR #7 فقط؛ حالة PR وSHA الدمج ونتائج الفحوص بعده من Git/GitHub وتقرير الختام الفعلي. D009 ونتائج الاستمرار التاريخية محفوظة؛ فحص الخدمات الحالي قراءة فقط نجح (Healthy وloopback وSQL/FTS والرسالة الموجودة). لا تخزين تطبيق أو Production، ولا تغيير SDK/الحزم/Logging. جدول المستخدم محفوظ دون تعديل أو staging.
+
+## سجل حالة إغلاق S05 قبل إذن S06 (تاريخي)
+
+الفقرات التالية محفوظة كسجل سابق؛ عبارات NotStarted وDeferred ومنع بدء S06 فيها تخص إذن إغلاق S05 السابق. حالة التنفيذ الملزمة الآن في أعلى الملف وS06.
 
 اقرأ [S05](../planning/phase-01/steps/S05.md) و[حدود الوحدات](../backend/MODULES.md) و[الحزم](../backend/PACKAGES.md) و[تسليم S06](../planning/phase-01/handoffs/S05-to-S06.md) والقرارات والنطاق والخريطة وGit. S05 Done وUserApproval Approved وReviewStatus Approved بتاريخ 2026-10-21 عند الرأس 9b0150669b718a0012e7413fc5bcb4e78f2e1ba9؛ تسليم S06 Ready. إذن المستخدم الحالي يشمل إغلاق S05 وReady for Review وSquash Merge لـPR #6 فقط، ولا يشمل S06 أو تشغيل Docker.
 
