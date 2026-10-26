@@ -1,7 +1,7 @@
-# حزم تأسيس CQRS والتسجيل
+# حزم Backend والتوافق والتراخيص
 
 OwnerStep: P01-S04
-Updated: 2026-10-11
+Updated: 2026-10-26
 
 كل PackageReference جديد يستخدم نطاقًا exact مثل `[12.5.0]`، دون ترقية MediatR. ملفات packages.lock.json في Application وApi تثبت dependency graph وcontent hashes؛ استخدم `dotnet restore backend/HawalekNow.slnx --locked-mode` للتحقق. الـSDK وnet10.0 محفوظان.
 
@@ -25,3 +25,21 @@ Updated: 2026-10-11
 
 Microsoft.AspNetCore.TestHost **[10.0.0]** في IntegrationTests فقط؛ [صفحة النسخة الرسمية](https://www.nuget.org/packages/Microsoft.AspNetCore.TestHost/10.0.0) تثبت net10.0 وترخيص [MIT](https://licenses.nuget.org/MIT)، بلا dependencies NuGet إضافية. nuspec المستعادة تؤكد framework reference Microsoft.AspNetCore.App وnet10.0 وMIT؛ لا تغيير SDK أو runtime أو حزم الإنتاج. النسخة مثبتة ومتوافقة مع net10.0 وruntime المثبت 10.0.12، والتوافق العملي يختبر بـHTTP TestServer. لا Mvc.Testing لأن الاختبارات تحتاج host بمكونات الإنتاج المشتركة وControllers من assembly الاختبارات؛ TestHost وحدها تكفي. packages.lock.json الجديدة في IntegrationTests تثبت graph الفعلي، والحزم القديمة لم ترق. الـApi يستخدم IExceptionHandler وProblemDetails وMVC من shared framework دون حزمة إنتاج جديدة.
 [توثيق ASP.NET Core 10](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/error-handling?view=aspnetcore-10.0) و[مصدر middleware](https://github.com/dotnet/aspnetcore/blob/v10.0.0/src/Middleware/Diagnostics/src/ExceptionHandler/ExceptionHandlerMiddlewareImpl.cs) يوضحان suppress diagnostics و499 عند RequestAborted والإبقاء على response started؛ اختبارات HTTP تتحقق من السلوك هنا.
+
+## إضافة P01-S07
+
+الإضافة محصورة في Api واختبارات HTTP؛ لا SDK أو MediatR أو حزم الطبقات الأخرى تغيرت. فقرة S05 السابقة تاريخية: S07 تحتاج تشغيل Program الفعلي، لذلك تضيف Mvc.Testing بدل نسخ إعداد Host جديد يخفي أخطاء composition root.
+
+| الحزمة المباشرة | النسخة exact | الموضع والغرض | التوافق والترخيص والمصدر |
+| --- | --- | --- | --- |
+| Microsoft.AspNetCore.OpenApi | [10.0.12] | Api؛ توليد runtime من Controllers | net10.0 وMIT؛ نفس patch للـASP.NET runtime الموجود دون ترقية الجهاز؛ [NuGet النسخة](https://www.nuget.org/packages/Microsoft.AspNetCore.OpenApi/10.0.12) |
+| Scalar.AspNetCore | [2.18.3] | Api؛ واجهة وأصول JavaScript محلية | net10.0 متاح؛ لا dependencies NuGet وMIT؛ [NuGet النسخة](https://www.nuget.org/packages/Scalar.AspNetCore/2.18.3) و[ترخيص commit الحزمة](https://github.com/scalar/scalar/blob/74361961e3156ef7211395f01c20db733f87ad45/LICENSE) |
+| Microsoft.AspNetCore.Mvc.Testing | [10.0.0] | IntegrationTests فقط؛ WebApplicationFactory يشغل Program | net10.0 وMIT؛ الموافق TestHost [10.0.0] الموجود دون ترقيته؛ [NuGet النسخة](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing/10.0.0) |
+
+راجعت metadata وnuspec المستعادة: النسخ وTFMs وlicense expression=MIT وdependency ranges؛ Restore وlocked-mode Restore وBuild واختبارات Program تؤكد التوافق العملي مع runtime 10.0.12 وSDK 10.0.401. الإصدارات exact في csproj، والـgraph/content hashes في lockfiles Api وIntegrationTests. النسخة 10.0.12 اختيار لمطابقة بيئة المشروع القائمة، وليست ادعاء بأنها أحدث نسخة منشورة.
+
+الحزمة الانتقالية الجديدة في إنتاج Api هي Microsoft.OpenApi **2.12.0**، MIT، ويطلبها مولد Microsoft بالنطاق >=2.12.0 و<3.0.0؛ [NuGet](https://www.nuget.org/packages/Microsoft.OpenApi/2.12.0). لا Swashbuckle/NSwag أو Scalar transformer package إضافي أو Versioning أو build-time generator؛ runtime JSON يكفي الاستخدام الحالي. HealthCheckService وMVC من shared framework بلا حزمة Health خارجية.
+
+Mvc.Testing تضيف تبعيات اختبار فقط، كلها **10.0.0 وMIT** بحسب nuspec والـlockfile: Microsoft.Extensions.Configuration وConfiguration.Binder وConfiguration.CommandLine وConfiguration.EnvironmentVariables وConfiguration.FileExtensions وConfiguration.Json وConfiguration.UserSecrets، وDependencyModel وDiagnostics وFileProviders.Physical وFileSystemGlobbing وHosting، وLogging.Configuration وLogging.Console وLogging.Debug وLogging.EventLog وLogging.EventSource وOptions.ConfigurationExtensions، وSystem.Diagnostics.EventLog. لا تعني وجود الحزم تفعيل providers أو قراءة/تسجيل الأسرار؛ Program يحتفظ بـClearProviders وسياسة PipelineOnly. مراجعها الرسمية: [اعتمادات Mvc.Testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing/10.0.0#dependencies-body-tab)، [ترخيص runtime 10](https://github.com/dotnet/runtime/blob/v10.0.0/LICENSE.TXT)، [ترخيص ASP.NET 10](https://github.com/dotnet/aspnetcore/blob/v10.0.0/LICENSE.txt).
+
+مصادر الإعداد الرسمية: [OpenAPI لـASP.NET Core 10 وControllers](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/openapi/aspnetcore-openapi?view=aspnetcore-10.0)، [Scalar وDevelopment والأصول المحلية وDisableDefaultFonts](https://scalar.com/products/api-references/integrations/aspnetcore/integration)، [Health checks وحدود basic liveness](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-10.0)، [Integration tests وWebApplicationFactory](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0). [سجل S07](../planning/phase-01/steps/S07.md) يثبت النتائج والفشل والإصلاح؛ لا تحويل توافق NuGet النظري إلى ادعاء نجاح Runtime.

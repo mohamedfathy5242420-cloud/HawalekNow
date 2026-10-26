@@ -10,9 +10,12 @@ function Assert-Ignore([string]$Path,[bool]$Expected){
 }
 $blocked += 'docker/.env'
 $allowed += @('docker/.env.example','docker/compose.yaml','docker/sql/Dockerfile','docker/sql/.dockerignore','docker/local.ps1')
+$allowed += @('backend/postman/HawalekNow.P01-S07.postman_collection.json','backend/postman/HawalekNow.Local.postman_environment.json')
 foreach($path in $blocked){Assert-Ignore $path $true}
 foreach($path in $allowed){Assert-Ignore $path $false}
 $tracked=@(& git -c safe.directory=D:/HwalekNow -C $Root ls-files)
 if($LASTEXITCODE -ne 0){throw 'Cannot inspect tracked files'}
 foreach($path in $tracked){Assert-Ignore $path $false}
 Write-Output "PASS: $($blocked.Count) ignored and $($allowed.Count) allowed path samples; $($tracked.Count) tracked files are not ignored. No sample files created."
+# check-ignore returns 1 for correctly allowed paths. Report script success only after all assertions above.
+exit 0

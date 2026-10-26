@@ -1,16 +1,22 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-10-22
+آخر تحديث: 2026-10-26
 
 - Phase: P01
 - Step: P01-S07
-- Status: NotStarted
-- Scope: إغلاق S06 المعتمدة ودمج PR #7 فقط؛ لا بدء S07 أو تغيير خدمات أو بيانات.
-- ActiveStepFile: None؛ P01-S07 NotStarted بلا ملف تنفيذ.
-- NextStep: P01-S07 بإذن مستقل؛ لا تبدأ ضمن الإغلاق.
+- Status: InReview
+- Scope: P01-S07 فقط: OpenAPI وScalar وapi/v1 وLiveness وPostman؛ لا S08 أو CI أو Persistence أو تغيير Docker/البيانات.
+- ActiveStepFile: planning/phase-01/steps/S07.md
+- NextStep: P01-S08 NotStarted؛ ينتظر مراجعة واعتماد S07؛ تسليمه Draft فقط.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
-## اعتماد وإغلاق S06
+## تنفيذ S07 الجاري
+
+بدأ بإذن المستخدم 2026-10-26 بعد تحقق S06 Done وApproved وتسليم S07 Ready، وGitHub أكد PR #7 merged/closed وmain المحلي والبعيد 399fc94de412ba51b509591da63d32bdc997a36e. الفرع codex/p01-s07-document-and-version-api. [سجل S07](../planning/phase-01/steps/S07.md) و[شرح API وScalar وPostman](../backend/API_EXPLORATION.md). OpenAPI وScalar في Development فقط؛ GET /api/v1/health/live حياة التطبيق فقط ولا يفحص SQL/البريد. Readiness مؤجلة حتى يوجد شرط حقيقي. الاختبارات تستخدم Program الفعلي؛ 126 passed (47 Architecture +72 Integration +7 Unit)، بلا failed/skipped بعد تصحيح اختبار روابط Scalar النسبية؛ لا تغيير للاختبارات الـ99 السابقة أو عزل Logger أو التوازي. Restore وlocked-mode وBuild (0 warnings/errors) والاختبارات وفاحصا التوثيق وdiff نجحت؛ Scalar حملت JSON فعليًا، وPostman نفذ 10 طلبات/66 assertion بلا فشل. مراجعتك اليدوية Scalar/Postman وV4 Pending؛ تسليم S08 Draft، ولا Done أو اعتماد مفترض. الفشل والإصلاحات في S07. جدول المستخدم محفوظ ببصمة مطابقة وخارج Git. لا تغيير SDK أو MediatR أو Logging policy أو المعمارية أو الخدمات.
+
+## سجل اعتماد وإغلاق S06 السابق
+
+الفقرات التالية تاريخ إغلاق الخطوات السابقة؛ عبارات NotStarted ومنع بدء S07 تخص إذن الإغلاق السابق، والحالة الجارية في أعلى الملف.
 
 S06 Done وV4 Approved وReviewStatus Approved بتاريخ 2026-10-22 عند الرأس 6244fa36e1a802be07cb69b072093453e1ef5cc9؛ [S06](../planning/phase-01/steps/S06.md) و[تسليم S07 Ready](../planning/phase-01/handoffs/S06-to-S07.md). P01-S07 NotStarted بلا ملف تنفيذ. الإذن إغلاق ودمج PR #7 فقط؛ حالة PR وSHA الدمج ونتائج الفحوص بعده من Git/GitHub وتقرير الختام الفعلي. D009 ونتائج الاستمرار التاريخية محفوظة؛ فحص الخدمات الحالي قراءة فقط نجح (Healthy وloopback وSQL/FTS والرسالة الموجودة). لا تخزين تطبيق أو Production، ولا تغيير SDK/الحزم/Logging. جدول المستخدم محفوظ دون تعديل أو staging.
 

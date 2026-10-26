@@ -1,6 +1,6 @@
 # خريطة مراحل HawalekNow واعتماداتها
 
-Updated: 2026-10-22
+Updated: 2026-10-26
 Status: Approved
 OwnerStep: P00-S03
 
@@ -13,7 +13,7 @@ OwnerStep: P00-S03
 
 كل خطوة تنتظر اكتمال ومراجعة سابقتها. أول خطوة في كل مرحلة تنتظر Phase Review وHandoff للمرحلة السابقة؛ الإغلاق يشمل Definition of Done الخاص بالمرحلة في المستند، وليس نجاح آخر اختبار فقط. اعتماد نهاية المرحلة السابقة يحقق أيضًا الاعتمادات الأقدم المذكورة في ملخص المراحل أدناه. لا يسمح الجدول بتشغيل خطوات بالتوازي.
 لكل صف: نفذ التحقق الأساسي المدرج، وحدد طبقات V1–V4 المناسبة في ملف الخطوة، وراجع Diff والسلوك مع المستخدم، وسجل اعتماده وHandoff وحدّث CURRENT_STATE قبل الانتقال. Commit وPR والدمج حسب [قواعد Git المعتمدة](../docs/GIT_WORKFLOW.md). منع Commit/Push في مهمة S03 كان استثناء تاريخيًا؛ اعتمد المستخدم S04 وإغلاق P00 وSquash Merge لـPR #1 بتاريخ 2026-10-04.
-الفحوص الآلية لا تعني اعتمادًا بشريًا. الخطوات اللاحقة فهرس تخطيط فقط؛ ملف كل خطوة يُنشأ عند بدئها. P00-S01 إلى P00-S04 Done؛ [مراجعة P00](phase-00/PHASE_REVIEW.md) Approved و[تسليم P01-S01](phase-00/handoffs/S04-to-P01.md) Ready. P01-S01 Done؛ P01-S02 Done بعد اعتماد المستخدم بتاريخ 2026-10-06؛ [تسليم P01-S03](phase-01/handoffs/S02-to-S03.md) Ready. S06 Done بعد اعتماد 2026-10-22؛ تسليم S07 Ready وP01-S07 NotStarted بلا ملف تنفيذ؛ لا تبدأ ضمن الإغلاق. فحوص D009 الفعلية تسجل في S06 بدل اعتبار التأجيل نجاحًا.
+الفحوص الآلية لا تعني اعتمادًا بشريًا. الخطوات اللاحقة فهرس تخطيط فقط؛ ملف كل خطوة يُنشأ عند بدئها. P00-S01 إلى P00-S04 Done؛ [مراجعة P00](phase-00/PHASE_REVIEW.md) Approved و[تسليم P01-S01](phase-00/handoffs/S04-to-P01.md) Ready. P01-S01 Done؛ P01-S02 Done بعد اعتماد المستخدم بتاريخ 2026-10-06؛ [تسليم P01-S03](phase-01/handoffs/S02-to-S03.md) Ready. S06 Done بعد اعتماد 2026-10-22؛ تسليم S07 Ready؛ P01-S07 InReview بإذن مستقل 2026-10-26 وملف تنفيذ وتسليم S08 Draft؛ لا تبدأ S08 قبل الاعتماد. فحوص D009 الفعلية تسجل في S06 بدل اعتبار التأجيل نجاحًا.
 
 ## المراحل واعتمادات المصدر
 
@@ -161,7 +161,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S07 OpenAPI وScalar وAPI v1
 
-- Status: NotStarted؛ بلا ملف تنفيذ؛ لا تبدأ ضمن إغلاق S06.
+- Status: InReview؛ [سجل التنفيذ](phase-01/steps/S07.md) و[تسليم S08 Draft](phase-01/handoffs/S07-to-S08.md)؛ Awaiting user review. S06 Done وApproved وPR #7 مدموجة عند 399fc94de412ba51b509591da63d32bdc997a36e. OpenAPI/Scalar Development فقط، وLiveness دون ادعاء Readiness SQL/البريد. لا Versioning library أو Persistence أو S08.
 
 - الاعتمادات السابقة: [P01-S06](#p01-s06).
 - المخرج المطلوب: توثيق حي ومسارات api v1 وHealth endpoints.

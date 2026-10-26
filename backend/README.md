@@ -1,5 +1,7 @@
 # Backend
 
+P01-S07 InReview: [شرح OpenAPI وScalar وAPI v1 وHealth وPostman](API_EXPLORATION.md) و[سجل التنفيذ](../planning/phase-01/steps/S07.md). المسار المنفذ GET /api/v1/health/live فقط؛ التوثيق في Development، ولا Readiness للتبعيات أو وظائف Business. نتائج S04–S06 أدناه تاريخية تخص خطواتها.
+
 S05 يؤسس [نتائج التطبيق وسياسة أخطاء HTTP والشرح خطوة بخطوة](API_ERRORS.md)؛ [ملف التنفيذ](../planning/phase-01/steps/S05.md) يسجل التحقق والمراجعة. الحالة الجارية في CURRENT_STATE.
 
 .NET 10 Clean Architecture داخل Modular Monolith؛ SDK 10.0.401 يحكمه [global.json](../global.json).
