@@ -43,7 +43,6 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
-      DOTNET_INSTALL_DIR: ${{ runner.temp }}/dotnet
       DOTNET_CLI_TELEMETRY_OPTOUT: '1'
       DOTNET_NOLOGO: '1'
     steps:
@@ -52,14 +51,20 @@ jobs:
           persist-credentials: false
       - name: Read the pinned SDK
         id: sdk
-        run: echo "version=$(jq -r '.sdk.version' global.json)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "version=$(jq -r '.sdk.version' global.json)" >> "$GITHUB_OUTPUT"
+          echo "DOTNET_INSTALL_DIR=$RUNNER_TEMP/dotnet" >> "$GITHUB_ENV"
       - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           dotnet-version: ${{ steps.sdk.outputs.version }}
       - name: Verify the selected SDK
         run: test "$(dotnet --version)" = "$(jq -r '.sdk.version' global.json)"
       - name: Restore the locked dependency graph
-        run: dotnet restore backend/HawalekNow.slnx --locked-mode
+        run: |
+          while IFS= read -r -d '' project; do
+            test -f "${project%/*}/packages.lock.json"
+          done < <(find backend/src backend/tests -name '*.csproj' -not -path '*/obj/*' -not -path '*/bin/*' -print0)
+          dotnet restore backend/HawalekNow.slnx --locked-mode
       - name: Build
         run: dotnet build backend/HawalekNow.slnx --configuration Release --no-restore
       - name: Test with the normal parallelization settings
