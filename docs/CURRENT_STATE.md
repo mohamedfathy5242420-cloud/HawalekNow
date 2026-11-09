@@ -4,7 +4,7 @@
 
 - Phase: P01
 - Step: P01-S08
-- Status: InProgress
+- Status: InReview
 - ExecutionMode: Phase
 - UserApproval: Pending
 - V4: Pending
@@ -15,9 +15,11 @@
 
 ## التنفيذ الجاري وفق D012
 
-إذن المستخدم يشمل المتبقي من P01 بالتتابع في مهمة واحدة. S01–S06 Done واعتماداتها التاريخية محفوظة. S07 InReview وExecutionStatus Verified؛ [تسليمها الداخلي](../planning/phase-01/handoffs/S07-to-S08.md) InternalReady دون اعتماد بشري مفترض. [S08](../planning/phase-01/steps/S08.md) InProgress؛ [مراجعة P01](../planning/phase-01/PHASE_REVIEW.md) تجمع المتطلبات والأدلة، و[تسليم P02](../planning/phase-01/handoffs/S08-to-P02.md) Draft. [الأدلة المنظمة](../planning/phase-01/verification.json) تفصل Passed عن Pending/Failed/Unavailable. V4 وتجربة Scalar/Postman والشرح التفصيلي والاعتماد Pending.
+اكتمل تنفيذ المتبقي من P01 والتحقق التقني وفق D012؛ المرحلة InReview. S01–S06 Done واعتماداتها التاريخية محفوظة. S07 و[S08](../planning/phase-01/steps/S08.md) InReview وExecutionStatus Verified وVerificationStatus Passed؛ [التسليم الداخلي](../planning/phase-01/handoffs/S07-to-S08.md) InternalReady دون اعتماد بشري مفترض. [مراجعة P01](../planning/phase-01/PHASE_REVIEW.md) تجمع المتطلبات والأدلة و[تسليم P02](../planning/phase-01/handoffs/S08-to-P02.md) Draft. [الأدلة المنظمة](../planning/phase-01/verification.json) تسجل النتائج الفعلية. V4 وتجربة Scalar/Postman والشرح التفصيلي واعتماد المرحلة Pending؛ لا دمج أو بدء P02.
 
 2026-11-09: Git/GitHub أكدا الرأس c29bde521e80ef13492c2c89265ebb4a41cf6d72 وmain=399fc94de412ba51b509591da63d32bdc997a36e وPR #8 open/Draft دون تغيير لاحق. نفس الفرع codex/p01-s07-document-and-version-api سيجمع المتبقي دون دمج. baseline خارج العزل: locked-mode Restore وBuild صفر warnings/errors و126 اختبارًا (47 Architecture +72 Integration +7 Unit) بلا failed/skipped. Format فشل exit 2 بمخالفات whitespace؛ إصلاحه والتحقق النهائي في S08. لا نجاح CI مفترض.
+
+نتائج التسليم: locked-mode Restore وRelease Build صفر warnings/errors و126 اختبارًا (47+72+7) وFormat وفاحصا التوثيق وgit diff --check ناجحة محليًا. بوابة المرحلة رفضت 23 حالة خاطئة، وsmoke رفض 8 عقود خاطئة ثم نجح على حاوية API فعلية non-root/read-only بلا بيانات. بُنيت صورتا API وSQL؛ SQL محليًا من cache وداخل CI من runner مستقل. Scalar أعادت تحميل JSON فعليًا في المتصفح. [PR Run 42587912225](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42587912225) على head=d9ab9199d346d733b35c20b171ee564dfbda5003 اكتمل success، والـJobs الثلاث success؛ سجل Linux أكد 126 passed بلا failed/skipped. الفشل الأول وتصحيح Workflow والـsmoke موثقة في S08، ولا يستنتج منها اعتماد بشري. رأس توثيق التسليم يعاد فحصه في CI قبل التقرير النهائي.
 
 Docker: موارد HawalekNow السابقة متوقفة (SQL exit 137 وMailpit exit 0 منذ أسبوعين وقت الفحص)، والـVolumes والـContainers الأصلية موجودة؛ لا تشغيل أو إعادة إنشاء أو حذف. فحوص SQL/FTS/SMTP/الاستمرار الناجحة في S06 تاريخية، وليست Health حالية. الخدمات العاملة تخص مشروعًا آخر ولا تُمس. جدول TARGET_SCHEDULE.md خارج التتبع وبصمته 26DC5102E591FA55D245C9294C3B2222B72DD6A57EA2E32AC29F999FDB5C2403 محفوظة. LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete.
 

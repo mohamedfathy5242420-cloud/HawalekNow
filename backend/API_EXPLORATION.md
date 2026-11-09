@@ -31,7 +31,6 @@ Health بيرجع الحالة فقط، وCache-Control: no-store. لا أسما
 من جذر المستودع؛ التطبيق لا يحتاج تشغيل SQL/Mailpit للخطوة دي ولا يغيرهما:
 
 ```powershell
-dotnet restore backend/HawalekNow.slnx
 dotnet restore backend/HawalekNow.slnx --locked-mode
 dotnet build backend/HawalekNow.slnx --no-restore --disable-build-servers -m:1
 dotnet run --project backend/src/HawalekNow.Api --no-build --no-restore --no-launch-profile -- --environment Development --urls http://127.0.0.1:5080

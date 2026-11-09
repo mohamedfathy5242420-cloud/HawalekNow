@@ -1,6 +1,6 @@
 # Backend
 
-P01 وفق D012: S07 Verified وInReview، S08 InProgress و[مراجعة المرحلة](../planning/phase-01/PHASE_REVIEW.md) تجمع الأدلة والمراجعات البشرية Pending. [CI وبناء وتشغيل API داخل Docker](CI.md) و[Scalar/Postman](API_EXPLORATION.md). GET /api/v1/health/live فقط؛ التوثيق Development دون Readiness أو Business. نتائج S04–S06 أدناه تاريخية تخص خطواتها.
+P01 InReview وفق D012: S07 وS08 Verified تقنيًا، و[مراجعة المرحلة](../planning/phase-01/PHASE_REVIEW.md) تضم CI ناجحًا و126 اختبارًا ومراجعات المستخدم Pending. [CI وبناء وتشغيل API داخل Docker](CI.md) و[Scalar/Postman](API_EXPLORATION.md). GET /api/v1/health/live فقط؛ التوثيق Development دون Readiness أو Business. نتائج S04–S06 أدناه تاريخية تخص خطواتها.
 
 S05 يؤسس [نتائج التطبيق وسياسة أخطاء HTTP والشرح خطوة بخطوة](API_ERRORS.md)؛ [ملف التنفيذ](../planning/phase-01/steps/S05.md) يسجل التحقق والمراجعة. الحالة الجارية في CURRENT_STATE.
 

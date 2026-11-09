@@ -1,6 +1,6 @@
 # HawalekNow — حوالك ناو
 
-P01 قيد الاستكمال وفق D012: S01–S06 Done تاريخيًا، S07 Verified وInReview، وS08 InProgress في نفس Draft PR #8. [مراجعة المرحلة](planning/phase-01/PHASE_REVIEW.md) و[CI وDocker API](backend/CI.md) و[Scalar/Postman](backend/API_EXPLORATION.md). اعتماد المستخدم وV4 Pending، وتسليم P02 Draft؛ لا دمج أو بدء P02. [الحالة الحالية](docs/CURRENT_STATE.md).
+P01 InReview وفق D012: S01–S06 Done تاريخيًا، S07 وS08 Verified تقنيًا وInReview في نفس Draft PR #8؛ CI ناجح على PR فعلي و126 اختبارًا بلا فشل أو تخطٍّ. [مراجعة المرحلة](planning/phase-01/PHASE_REVIEW.md) و[CI وDocker API](backend/CI.md) و[Scalar/Postman](backend/API_EXPLORATION.md). اعتماد المستخدم وV4 Pending وتسليم P02 Draft؛ لا دمج أو بدء P02. [الحالة الحالية](docs/CURRENT_STATE.md).
 
 منصة لاكتشاف المنتجات والتجار القريبين في مصر ومقارنة السعر والتوافر لكل فرع ثم التواصل مباشرة مع التاجر. البيع يتم خارج المنصة؛ لا سلة أو دفع أو شحن داخلها.
 
@@ -43,4 +43,4 @@ dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore
 git diff --check
 ```
 
-[Backend](backend/README.md) يشرح الطبقات والاعتمادات وأمر تشغيل Api، و[Modules](backend/MODULES.md) يوضح الملكية وقواعد التواصل والمشترك. [P01-S04](planning/phase-01/steps/S04.md) Done بعد اعتماد 2026-10-13: CQRS Pipeline وتسجيل آمن وCorrelation ID، و65 اختبار معمارية وتكامل؛ [الحزم والتراخيص](backend/PACKAGES.md). الوحدات بلا وظائف تجارية. Docker ينفذ في P01-S06؛ نتائج الفحوص في سجلها. Git على هذا الجهاز يحتاج الخيار -c safe.directory=D:/HwalekNow بسبب اختلاف الملكية.
+[Backend](backend/README.md) يشرح الطبقات والتشغيل، و[Modules](backend/MODULES.md) يوضح الملكية، و[الحزم والتراخيص](backend/PACKAGES.md) تسجل النسخ والتوافق. الحل الحالي يضم 126 اختبارًا، والوحدات بلا وظائف تجارية. خدمات Docker وFTS والاستمرار في S06 لها أدلة تاريخية؛ حالتها الحالية في مراجعة P01. Git على هذا الجهاز يحتاج -c safe.directory=D:/HwalekNow لاختلاف الملكية؛ الفاحص يحسب المسار الفعلي ليعمل على Linux وWindows.

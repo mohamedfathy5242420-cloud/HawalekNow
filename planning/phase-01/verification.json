@@ -18,7 +18,7 @@
       "name": "ScalarBrowser",
       "status": "Passed",
       "exitCode": 0,
-      "command": "S07 browser loaded actual document, 2026-10-26; see S07 record"
+      "command": "2026-11-09 browser: HawalekNow API / OpenAPI 3.1.1 / GET health / 200,500,503 contracts loaded"
     },
     {
       "name": "PostmanTool",
@@ -28,75 +28,75 @@
     },
     {
       "name": "Restore",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode"
     },
     {
       "name": "Build",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore"
     },
     {
       "name": "Tests",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet test backend/HawalekNow.slnx --configuration Release --no-build --no-restore"
     },
     {
       "name": "Format",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
     },
     {
       "name": "Roadmap",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1 (76 steps / 75 edges / 429 links)"
     },
     {
       "name": "GitRules",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1"
     },
     {
       "name": "PhaseGates",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/test-phase-gates.ps1 (23 rejections, positive baselines)"
     },
     {
       "name": "Diff",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git diff --check; git diff --cached --check"
     },
     {
       "name": "DockerApi",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "docker build --pull --tag hawaleknow/api:p01-ci --file backend/Dockerfile ."
     },
     {
       "name": "DockerSql",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "docker build --pull --platform linux/amd64 --tag hawaleknow/sql-fts:p01-ci docker/sql (existing build layer cached)"
     },
     {
       "name": "DockerSmoke",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./docker/smoke-api.ps1 -Image hawaleknow/api:p01-ci; ./docker/test-smoke-contracts.ps1"
     },
     {
       "name": "CI",
-      "status": "Pending",
-      "exitCode": null,
-      "command": "Not yet completed"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub REST: completed PR workflow 42587912225; all three jobs success"
     }
   ],
   "tests": {
@@ -109,10 +109,29 @@
   },
   "ci": {
     "event": "pull_request",
-    "conclusion": "pending",
-    "runId": null,
-    "headSha": null,
-    "url": null,
-    "jobs": []
+    "conclusion": "success",
+    "runId": 42587912225,
+    "headSha": "d9ab9199d346d733b35c20b171ee564dfbda5003",
+    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42587912225",
+    "jobs": [
+      {
+        "id": 129062077464,
+        "name": "API and SQL image builds",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42587912225/job/129062077464"
+      },
+      {
+        "id": 129062077841,
+        "name": "Documentation and Git rules",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42587912225/job/129062077841"
+      },
+      {
+        "id": 129062077875,
+        "name": "Restore, build, tests and format",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42587912225/job/129062077875"
+      }
+    ]
   }
 }
