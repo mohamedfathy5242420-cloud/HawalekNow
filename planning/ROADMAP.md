@@ -173,7 +173,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S08 GitHub Actions baseline
 
-- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ [ملف التنفيذ](phase-01/steps/S08.md) و[مراجعة P01](phase-01/PHASE_REVIEW.md) و[تسليم P02 Draft](phase-01/handoffs/S08-to-P02.md)؛ CI ناجح على PR فعلي، UserApproval وV4 Pending.
+- Status: InProgress؛ ExecutionStatus: InProgress؛ VerificationStatus: Failed؛ [ملف التنفيذ](phase-01/steps/S08.md) و[مراجعة P01](phase-01/PHASE_REVIEW.md) و[تسليم P02 Draft](phase-01/handoffs/S08-to-P02.md)؛ CI ناجح على PR فعلي، UserApproval وV4 Pending.
 
 - الاعتمادات السابقة: [P01-S07](#p01-s07).
 - المخرج المطلوب: Restore وBuild وTests وFormat وDocker build.

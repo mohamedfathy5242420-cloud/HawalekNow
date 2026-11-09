@@ -94,9 +94,9 @@
     },
     {
       "name": "CI",
-      "status": "Passed",
-      "exitCode": 0,
-      "command": "GitHub REST: completed PR workflow 42587912225; all three jobs success"
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "PR Run 42589061395 backend test failure; 125 passed/1 failed; format not run"
     }
   ],
   "tests": {
@@ -109,28 +109,28 @@
   },
   "ci": {
     "event": "pull_request",
-    "conclusion": "success",
-    "runId": 42587912225,
-    "headSha": "d9ab9199d346d733b35c20b171ee564dfbda5003",
-    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42587912225",
+    "conclusion": "failure",
+    "runId": 42589061395,
+    "headSha": "59c76b35b0fecadbaee380e6a717a23d37d5d34c",
+    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42589061395",
     "jobs": [
       {
-        "id": 129062077464,
-        "name": "API and SQL image builds",
-        "conclusion": "success",
-        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42587912225/job/129062077464"
-      },
-      {
-        "id": 129062077841,
+        "id": 129065904035,
         "name": "Documentation and Git rules",
         "conclusion": "success",
-        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42587912225/job/129062077841"
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42589061395/job/129065904035"
       },
       {
-        "id": 129062077875,
+        "id": 129065904313,
         "name": "Restore, build, tests and format",
-        "conclusion": "success",
-        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42587912225/job/129062077875"
+        "conclusion": "failure",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42589061395/job/129065904313"
+      },
+      {
+        "id": 129065904502,
+        "name": "API and SQL image builds",
+        "conclusion": null,
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42589061395/job/129065904502"
       }
     ]
   }

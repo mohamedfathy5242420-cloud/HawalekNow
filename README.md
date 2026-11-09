@@ -1,6 +1,6 @@
 # HawalekNow — حوالك ناو
 
-P01 InReview وفق D012: S01–S06 Done تاريخيًا، S07 وS08 Verified تقنيًا وInReview في نفس Draft PR #8؛ CI ناجح على PR فعلي و126 اختبارًا بلا فشل أو تخطٍّ. [مراجعة المرحلة](planning/phase-01/PHASE_REVIEW.md) و[CI وDocker API](backend/CI.md) و[Scalar/Postman](backend/API_EXPLORATION.md). اعتماد المستخدم وV4 Pending وتسليم P02 Draft؛ لا دمج أو بدء P02. [الحالة الحالية](docs/CURRENT_STATE.md).
+P01 InProgress مؤقتًا: CI لرأس التسليم 59c76b3 كشف سباقًا في fixture اختبار started response؛ يجري إصلاحه بإشارة صريحة دون تغيير إنتاج أو Assertions أو التوازي. [S08 والفشل والإعادة](planning/phase-01/steps/S08.md) و[مراجعة P01](planning/phase-01/PHASE_REVIEW.md). نجاح CI السابق موثق تاريخيًا؛ لا اعتماد أو دمج أو P02. مراجعات المستخدم Pending.
 
 منصة لاكتشاف المنتجات والتجار القريبين في مصر ومقارنة السعر والتوافر لكل فرع ثم التواصل مباشرة مع التاجر. البيع يتم خارج المنصة؛ لا سلة أو دفع أو شحن داخلها.
 

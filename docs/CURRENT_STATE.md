@@ -4,7 +4,7 @@
 
 - Phase: P01
 - Step: P01-S08
-- Status: InReview
+- Status: InProgress
 - ExecutionMode: Phase
 - UserApproval: Pending
 - V4: Pending
@@ -15,7 +15,7 @@
 
 ## التنفيذ الجاري وفق D012
 
-اكتمل تنفيذ المتبقي من P01 والتحقق التقني وفق D012؛ المرحلة InReview. S01–S06 Done واعتماداتها التاريخية محفوظة. S07 و[S08](../planning/phase-01/steps/S08.md) InReview وExecutionStatus Verified وVerificationStatus Passed؛ [التسليم الداخلي](../planning/phase-01/handoffs/S07-to-S08.md) InternalReady دون اعتماد بشري مفترض. [مراجعة P01](../planning/phase-01/PHASE_REVIEW.md) تجمع المتطلبات والأدلة و[تسليم P02](../planning/phase-01/handoffs/S08-to-P02.md) Draft. [الأدلة المنظمة](../planning/phase-01/verification.json) تسجل النتائج الفعلية. V4 وتجربة Scalar/Postman والشرح التفصيلي واعتماد المرحلة Pending؛ لا دمج أو بدء P02.
+الحالة الجارية InProgress لتصحيح سباق fixture اختبار started response الذي كشفه CI لرأس التسليم 59c76b3. نجاح التشغيل السابق تاريخي؛ لا ادعاء نجاح هذا الرأس. S01–S06 Done واعتماداتها التاريخية محفوظة. S07 InReview وVerified تقنيًا، و[S08](../planning/phase-01/steps/S08.md) InProgress وVerificationStatus Failed حتى الإعادة؛ [التسليم الداخلي](../planning/phase-01/handoffs/S07-to-S08.md) InternalReady دون اعتماد بشري مفترض. [مراجعة P01](../planning/phase-01/PHASE_REVIEW.md) تجمع المتطلبات والأدلة و[تسليم P02](../planning/phase-01/handoffs/S08-to-P02.md) Draft. [الأدلة المنظمة](../planning/phase-01/verification.json) تسجل النتائج الفعلية. V4 وتجربة Scalar/Postman والشرح التفصيلي واعتماد المرحلة Pending؛ لا دمج أو بدء P02.
 
 2026-11-09: Git/GitHub أكدا الرأس c29bde521e80ef13492c2c89265ebb4a41cf6d72 وmain=399fc94de412ba51b509591da63d32bdc997a36e وPR #8 open/Draft دون تغيير لاحق. نفس الفرع codex/p01-s07-document-and-version-api سيجمع المتبقي دون دمج. baseline خارج العزل: locked-mode Restore وBuild صفر warnings/errors و126 اختبارًا (47 Architecture +72 Integration +7 Unit) بلا failed/skipped. Format فشل exit 2 بمخالفات whitespace؛ إصلاحه والتحقق النهائي في S08. لا نجاح CI مفترض.
 
