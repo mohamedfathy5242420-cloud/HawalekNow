@@ -54,7 +54,7 @@
       "name": "Roadmap",
       "status": "Passed",
       "exitCode": 0,
-      "command": "./planning/verify-roadmap.ps1 (76 steps / 75 edges / 429 links)"
+      "command": "./planning/verify-roadmap.ps1 (76 source steps, 75 dependency edges, exact state/verification fields)"
     },
     {
       "name": "GitRules",
@@ -66,7 +66,7 @@
       "name": "PhaseGates",
       "status": "Passed",
       "exitCode": 0,
-      "command": "./planning/test-phase-gates.ps1 (23 rejections, positive baselines)"
+      "command": "./planning/test-phase-gates.ps1 (24 invalid transitions rejected; both positive baselines accepted)"
     },
     {
       "name": "Diff",
@@ -94,9 +94,9 @@
     },
     {
       "name": "CI",
-      "status": "Failed",
-      "exitCode": 1,
-      "command": "PR Run 42589061395 backend test failure; 125 passed/1 failed; format not run"
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub REST: completed PR Run 42590737562 on 31099febf1008441bd84ed1c8efe5cf48443c06f; all three jobs success"
     }
   ],
   "tests": {
@@ -109,28 +109,28 @@
   },
   "ci": {
     "event": "pull_request",
-    "conclusion": "failure",
-    "runId": 42589061395,
-    "headSha": "59c76b35b0fecadbaee380e6a717a23d37d5d34c",
-    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42589061395",
+    "conclusion": "success",
+    "runId": 42590737562,
+    "headSha": "31099febf1008441bd84ed1c8efe5cf48443c06f",
+    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42590737562",
     "jobs": [
       {
-        "id": 129065904035,
+        "id": 129071437306,
+        "name": "Restore, build, tests and format",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42590737562/job/129071437306"
+      },
+      {
+        "id": 129071437703,
         "name": "Documentation and Git rules",
         "conclusion": "success",
-        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42589061395/job/129065904035"
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42590737562/job/129071437703"
       },
       {
-        "id": 129065904313,
-        "name": "Restore, build, tests and format",
-        "conclusion": "failure",
-        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42589061395/job/129065904313"
-      },
-      {
-        "id": 129065904502,
+        "id": 129071437826,
         "name": "API and SQL image builds",
-        "conclusion": null,
-        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42589061395/job/129065904502"
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42590737562/job/129071437826"
       }
     ]
   }

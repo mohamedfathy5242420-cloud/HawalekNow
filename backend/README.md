@@ -1,6 +1,6 @@
 # Backend
 
-P01 InProgress لإصلاح سباق fixture اختبار started response الذي كشفه CI للرأس 59c76b3؛ لا تعديل إنتاج أو Logger أو Assertions أو التوازي. [S08](../planning/phase-01/steps/S08.md) و[مراجعة المرحلة](../planning/phase-01/PHASE_REVIEW.md) توثقان الفشل والإعادة، ومراجعات المستخدم Pending. [CI/Docker](CI.md) و[Scalar/Postman](API_EXPLORATION.md)؛ نتائج S04–S06 أدناه تاريخية.
+P01 InReview وفق D012: S07/S08 Verified تقنيًا وCI ناجح و126 اختبارًا بلا فشل أو تخطٍّ. [مراجعة المرحلة](../planning/phase-01/PHASE_REVIEW.md) تجمع الأدلة والفشل والإصلاح ومراجعات المستخدم Pending. [CI/Docker](CI.md) و[Scalar/Postman](API_EXPLORATION.md). GET /api/v1/health/live فقط؛ التوثيق Development دون Readiness أو Business. نتائج S04–S06 أدناه تاريخية.
 
 S05 يؤسس [نتائج التطبيق وسياسة أخطاء HTTP والشرح خطوة بخطوة](API_ERRORS.md)؛ [ملف التنفيذ](../planning/phase-01/steps/S05.md) يسجل التحقق والمراجعة. الحالة الجارية في CURRENT_STATE.
 
