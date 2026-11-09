@@ -1,0 +1,118 @@
+{
+  "phase": "P01",
+  "updated": "2026-11-09",
+  "checks": [
+    {
+      "name": "S07Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --no-restore (2026-11-09 baseline)"
+    },
+    {
+      "name": "S07Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet test backend/HawalekNow.slnx --no-build --no-restore (2026-11-09 baseline)"
+    },
+    {
+      "name": "ScalarBrowser",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "S07 browser loaded actual document, 2026-10-26; see S07 record"
+    },
+    {
+      "name": "PostmanTool",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "S07 Postman Desktop Local: 10 requests/66 assertions, 2026-10-26; human review Pending"
+    },
+    {
+      "name": "Restore",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    },
+    {
+      "name": "Build",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    },
+    {
+      "name": "Tests",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    },
+    {
+      "name": "Format",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    },
+    {
+      "name": "Roadmap",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    },
+    {
+      "name": "GitRules",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    },
+    {
+      "name": "PhaseGates",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    },
+    {
+      "name": "Diff",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    },
+    {
+      "name": "DockerApi",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    },
+    {
+      "name": "DockerSql",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    },
+    {
+      "name": "DockerSmoke",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    },
+    {
+      "name": "CI",
+      "status": "Pending",
+      "exitCode": null,
+      "command": "Not yet completed"
+    }
+  ],
+  "tests": {
+    "passed": 126,
+    "failed": 0,
+    "skipped": 0,
+    "architecture": 47,
+    "integration": 72,
+    "unit": 7
+  },
+  "ci": {
+    "event": "pull_request",
+    "conclusion": "pending",
+    "runId": null,
+    "headSha": null,
+    "url": null,
+    "jobs": []
+  }
+}

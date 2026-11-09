@@ -1,0 +1,20 @@
+# Allow only inputs needed to restore/publish production projects.
+**
+!global.json
+!backend/
+!backend/src/
+!backend/src/**/
+!backend/src/**/*.csproj
+!backend/src/**/packages.lock.json
+!backend/src/**/*.cs
+!backend/src/**/appsettings.json
+!backend/src/**/appsettings.Development.json
+# Exclude generated inputs even when their extension matches an allow rule.
+**/bin/**
+**/obj/**
+**/.env*
+**/secrets.json
+**/appsettings.*.Local.json
+**/*.pfx
+**/*.key
+**/.git/**

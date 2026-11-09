@@ -1,12 +1,12 @@
 # HawalekNow — حوالك ناو
 
-P01-S06 Done وApproved؛ PR #7 مدموجة. P01-S07 InReview: [السجل](planning/phase-01/steps/S07.md) و[شرح OpenAPI وScalar وapi/v1 وHealth وPostman بالمصري](backend/API_EXPLORATION.md). S08 NotStarted وتسليمها Draft؛ اعتماد المستخدم ما زال Pending. الحالة الحالية في [CURRENT_STATE](docs/CURRENT_STATE.md).
+P01 قيد الاستكمال وفق D012: S01–S06 Done تاريخيًا، S07 Verified وInReview، وS08 InProgress في نفس Draft PR #8. [مراجعة المرحلة](planning/phase-01/PHASE_REVIEW.md) و[CI وDocker API](backend/CI.md) و[Scalar/Postman](backend/API_EXPLORATION.md). اعتماد المستخدم وV4 Pending، وتسليم P02 Draft؛ لا دمج أو بدء P02. [الحالة الحالية](docs/CURRENT_STATE.md).
 
 منصة لاكتشاف المنتجات والتجار القريبين في مصر ومقارنة السعر والتوافر لكل فرع ثم التواصل مباشرة مع التاجر. البيع يتم خارج المنصة؛ لا سلة أو دفع أو شحن داخلها.
 
 ## بداية أي Agent
 
-اقرأ [CURRENT_STATE](docs/CURRENT_STATE.md) أولًا، ثم [DECISIONS](docs/DECISIONS.md) و[SCOPE](docs/SCOPE.md) و[GIT_WORKFLOW](docs/GIT_WORKFLOW.md) و[ROADMAP](planning/ROADMAP.md)، وملف الخطوة والتسليم السابق المشار إليهما في الحالة. نفذ خطوة واحدة فقط بإذن المستخدم، وحدث نتائج التحقق الفعلية قبل التسليم.
+اقرأ [CURRENT_STATE](docs/CURRENT_STATE.md) ثم [DECISIONS](docs/DECISIONS.md) و[SCOPE](docs/SCOPE.md) و[GIT_WORKFLOW](docs/GIT_WORKFLOW.md) و[ROADMAP](planning/ROADMAP.md)، وملف الخطوة والتسليم السابق. وفق D012 نفذ خطوات المرحلة المأذونة بالتتابع بعد نجاح التحقق التقني؛ المراجعة والاعتماد على مستوى المرحلة. لا تبدأ التالية أو تدمج قبل إذنها واعتماد السابقة.
 
 ## هيكل المستودع
 
@@ -24,7 +24,7 @@ P01-S06 Done وApproved؛ PR #7 مدموجة. P01-S07 InReview: [السجل](pla
 
 SDK المتاح والمختار .NET **10.0.401**. [global.json](global.json) يستخدم `latestPatch` داخل feature band `10.0.4xx` فقط، و`allowPrerelease: false`. لا انتقال تلقائي إلى band أحدث أو .NET major آخر. يفشل الاختيار عند غياب SDK متوافق؛ تغيير السياسة يحتاج مراجعة.
 
-Git وPowerShell لتشغيل فحوص التوثيق. يلزم Docker Engine بوضع Linux containers للخدمات لاحقًا. فحص Engine الفعلي بدأ في P01-S06 وفق D009؛ نتائج SQL وFTS وMailpit تسجل في S06 بعد الاختبار. لا CI حاليًا؛ API host فقط دون ميزات تجارية.
+Git وPowerShell 7 لفحوص التوثيق، وDocker Linux/amd64 للخدمات والصور. نتائج SQL/FTS/Mailpit والاستمرار التاريخية في S06؛ لا تفترض صحة خدمة متوقفة. [Workflow P01](.github/workflows/p01-baseline.yml) يتحقق على GitHub دون أسرار أو نشر؛ نتائجه الفعلية في مراجعة المرحلة. API بلا ميزات تجارية.
 
 ## الأوامر المتاحة الآن
 
@@ -33,11 +33,13 @@ Git وPowerShell لتشغيل فحوص التوثيق. يلزم Docker Engine ب
 ```powershell
 dotnet --version
 dotnet sln backend/HawalekNow.slnx list
-dotnet restore backend/HawalekNow.slnx
+dotnet restore backend/HawalekNow.slnx --locked-mode
 dotnet build backend/HawalekNow.slnx --no-restore
 dotnet test backend/HawalekNow.slnx --no-build --no-restore
+dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore
 & ./planning/verify-roadmap.ps1
 & ./planning/verify-git-workflow.ps1
+& ./planning/test-phase-gates.ps1
 git diff --check
 ```
 

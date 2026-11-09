@@ -32,7 +32,9 @@ public static class ApiProblems
         };
         return new ProblemDetails
         {
-            Status = status, Title = title, Type = "about:blank",
+            Status = status,
+            Title = title,
+            Type = "about:blank",
             Extensions =
             {
                 ["code"] = code,

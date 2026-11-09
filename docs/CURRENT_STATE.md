@@ -1,16 +1,29 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-10-26
+آخر تحديث: 2026-11-09
 
 - Phase: P01
-- Step: P01-S07
-- Status: InReview
-- Scope: P01-S07 فقط: OpenAPI وScalar وapi/v1 وLiveness وPostman؛ لا S08 أو CI أو Persistence أو تغيير Docker/البيانات.
-- ActiveStepFile: planning/phase-01/steps/S07.md
-- NextStep: P01-S08 NotStarted؛ ينتظر مراجعة واعتماد S07؛ تسليمه Draft فقط.
+- Step: P01-S08
+- Status: InProgress
+- ExecutionMode: Phase
+- UserApproval: Pending
+- V4: Pending
+- Scope: استكمال P01-S07 ثم P01-S08 وCI وDocker للتطبيق ومراجعة متطلبات P01 وفق D012؛ لا دمج أو P02 أو تعديل بيانات الخدمات.
+- ActiveStepFile: planning/phase-01/steps/S08.md
+- NextStep: PhaseReview لـP01 ثم P02-S01 NotStarted؛ تسليم P02 Draft فقط.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
-## تنفيذ S07 الجاري
+## التنفيذ الجاري وفق D012
+
+إذن المستخدم يشمل المتبقي من P01 بالتتابع في مهمة واحدة. S01–S06 Done واعتماداتها التاريخية محفوظة. S07 InReview وExecutionStatus Verified؛ [تسليمها الداخلي](../planning/phase-01/handoffs/S07-to-S08.md) InternalReady دون اعتماد بشري مفترض. [S08](../planning/phase-01/steps/S08.md) InProgress؛ [مراجعة P01](../planning/phase-01/PHASE_REVIEW.md) تجمع المتطلبات والأدلة، و[تسليم P02](../planning/phase-01/handoffs/S08-to-P02.md) Draft. [الأدلة المنظمة](../planning/phase-01/verification.json) تفصل Passed عن Pending/Failed/Unavailable. V4 وتجربة Scalar/Postman والشرح التفصيلي والاعتماد Pending.
+
+2026-11-09: Git/GitHub أكدا الرأس c29bde521e80ef13492c2c89265ebb4a41cf6d72 وmain=399fc94de412ba51b509591da63d32bdc997a36e وPR #8 open/Draft دون تغيير لاحق. نفس الفرع codex/p01-s07-document-and-version-api سيجمع المتبقي دون دمج. baseline خارج العزل: locked-mode Restore وBuild صفر warnings/errors و126 اختبارًا (47 Architecture +72 Integration +7 Unit) بلا failed/skipped. Format فشل exit 2 بمخالفات whitespace؛ إصلاحه والتحقق النهائي في S08. لا نجاح CI مفترض.
+
+Docker: موارد HawalekNow السابقة متوقفة (SQL exit 137 وMailpit exit 0 منذ أسبوعين وقت الفحص)، والـVolumes والـContainers الأصلية موجودة؛ لا تشغيل أو إعادة إنشاء أو حذف. فحوص SQL/FTS/SMTP/الاستمرار الناجحة في S06 تاريخية، وليست Health حالية. الخدمات العاملة تخص مشروعًا آخر ولا تُمس. جدول TARGET_SCHEDULE.md خارج التتبع وبصمته 26DC5102E591FA55D245C9294C3B2222B72DD6A57EA2E32AC29F999FDB5C2403 محفوظة. LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete.
+
+## سجل تنفيذ S07 السابق — تاريخي
+
+كل بوابات انتظار Step أو منع S08 أو غياب CI في السجل التالي تخص وقتها السابق؛ D012 والحالة العليا يحكمان التنفيذ الجاري. النتائج والاعتمادات التاريخية لم تُعدّل.
 
 بدأ بإذن المستخدم 2026-10-26 بعد تحقق S06 Done وApproved وتسليم S07 Ready، وGitHub أكد PR #7 merged/closed وmain المحلي والبعيد 399fc94de412ba51b509591da63d32bdc997a36e. الفرع codex/p01-s07-document-and-version-api؛ [Draft PR #8](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/8) مفتوحة ومرفوعة ومرتبطة بالمهمة، دون دمج. [سجل S07](../planning/phase-01/steps/S07.md) و[شرح API وScalar وPostman](../backend/API_EXPLORATION.md). OpenAPI وScalar في Development فقط؛ GET /api/v1/health/live حياة التطبيق فقط ولا يفحص SQL/البريد. Readiness مؤجلة حتى يوجد شرط حقيقي. الاختبارات تستخدم Program الفعلي؛ 126 passed (47 Architecture +72 Integration +7 Unit)، بلا failed/skipped بعد تصحيح اختبار روابط Scalar النسبية؛ لا تغيير للاختبارات الـ99 السابقة أو عزل Logger أو التوازي. Restore وlocked-mode وBuild (0 warnings/errors) والاختبارات وفاحصا التوثيق وdiff نجحت؛ Scalar حملت JSON فعليًا، وPostman نفذ 10 طلبات/66 assertion بلا فشل. مراجعتك اليدوية Scalar/Postman وV4 Pending؛ تسليم S08 Draft، ولا Done أو اعتماد مفترض. الفشل والإصلاحات في S07. جدول المستخدم محفوظ ببصمة مطابقة وخارج Git. لا تغيير SDK أو MediatR أو Logging policy أو المعمارية أو الخدمات.
 

@@ -15,50 +15,50 @@ public sealed class ApiDocumentTransformer : IOpenApiDocumentTransformer
             "Unmatched routes return 404 and unsupported methods return 405 as application/problem+json " +
             "with type, title, status, code and correlationId; no request path or internal diagnostics.";
         foreach (var path in document.Paths.Values)
-        foreach (var operation in path.Operations?.Values.AsEnumerable() ?? [])
-        {
-            operation.Parameters ??= [];
-            operation.Parameters.Add(new OpenApiParameter
+            foreach (var operation in path.Operations?.Values.AsEnumerable() ?? [])
             {
-                Name = CorrelationIdMiddleware.HeaderName,
-                In = ParameterLocation.Header,
-                Required = false,
-                Description = "Optional untrusted correlation metadata. Invalid or multiple values are replaced with a generated ID.",
-                Schema = new OpenApiSchema { Type = JsonSchemaType.String, MinLength = 1, MaxLength = 64, Pattern = "^[A-Za-z0-9_-]+$" }
-            });
-            foreach (var response in operation.Responses?.Values.OfType<OpenApiResponse>() ?? [])
-            {
-                response.Headers ??= new Dictionary<string, IOpenApiHeader>();
-                response.Headers[CorrelationIdMiddleware.HeaderName] = new OpenApiHeader
+                operation.Parameters ??= [];
+                operation.Parameters.Add(new OpenApiParameter
                 {
-                    Description = "The effective correlation ID for this response.",
+                    Name = CorrelationIdMiddleware.HeaderName,
+                    In = ParameterLocation.Header,
+                    Required = false,
+                    Description = "Optional untrusted correlation metadata. Invalid or multiple values are replaced with a generated ID.",
                     Schema = new OpenApiSchema { Type = JsonSchemaType.String, MinLength = 1, MaxLength = 64, Pattern = "^[A-Za-z0-9_-]+$" }
-                };
-            }
-            if (operation.Responses?.TryGetValue("500", out var error) == true && error is OpenApiResponse errorResponse)
-            {
-                errorResponse.Content = new Dictionary<string, OpenApiMediaType>
+                });
+                foreach (var response in operation.Responses?.Values.OfType<OpenApiResponse>() ?? [])
                 {
-                    ["application/problem+json"] = new()
+                    response.Headers ??= new Dictionary<string, IOpenApiHeader>();
+                    response.Headers[CorrelationIdMiddleware.HeaderName] = new OpenApiHeader
                     {
-                        Schema = new OpenApiSchema
+                        Description = "The effective correlation ID for this response.",
+                        Schema = new OpenApiSchema { Type = JsonSchemaType.String, MinLength = 1, MaxLength = 64, Pattern = "^[A-Za-z0-9_-]+$" }
+                    };
+                }
+                if (operation.Responses?.TryGetValue("500", out var error) == true && error is OpenApiResponse errorResponse)
+                {
+                    errorResponse.Content = new Dictionary<string, OpenApiMediaType>
+                    {
+                        ["application/problem+json"] = new()
                         {
-                            Type = JsonSchemaType.Object,
-                            AdditionalPropertiesAllowed = false,
-                            Required = new HashSet<string> { "type", "title", "status", "code", "correlationId" },
-                            Properties = new Dictionary<string, IOpenApiSchema>
+                            Schema = new OpenApiSchema
                             {
-                                ["type"] = new OpenApiSchema { Type = JsonSchemaType.String },
-                                ["title"] = new OpenApiSchema { Type = JsonSchemaType.String },
-                                ["status"] = new OpenApiSchema { Type = JsonSchemaType.Integer },
-                                ["code"] = new OpenApiSchema { Type = JsonSchemaType.String },
-                                ["correlationId"] = new OpenApiSchema { Type = JsonSchemaType.String }
+                                Type = JsonSchemaType.Object,
+                                AdditionalPropertiesAllowed = false,
+                                Required = new HashSet<string> { "type", "title", "status", "code", "correlationId" },
+                                Properties = new Dictionary<string, IOpenApiSchema>
+                                {
+                                    ["type"] = new OpenApiSchema { Type = JsonSchemaType.String },
+                                    ["title"] = new OpenApiSchema { Type = JsonSchemaType.String },
+                                    ["status"] = new OpenApiSchema { Type = JsonSchemaType.Integer },
+                                    ["code"] = new OpenApiSchema { Type = JsonSchemaType.String },
+                                    ["correlationId"] = new OpenApiSchema { Type = JsonSchemaType.String }
+                                }
                             }
                         }
-                    }
-                };
+                    };
+                }
             }
-        }
         return Task.CompletedTask;
     }
 }

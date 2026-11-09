@@ -1,7 +1,7 @@
 # حزم Backend والتوافق والتراخيص
 
 OwnerStep: P01-S04
-Updated: 2026-10-26
+Updated: 2026-11-09
 
 كل PackageReference جديد يستخدم نطاقًا exact مثل `[12.5.0]`، دون ترقية MediatR. ملفات packages.lock.json في Application وApi تثبت dependency graph وcontent hashes؛ استخدم `dotnet restore backend/HawalekNow.slnx --locked-mode` للتحقق. الـSDK وnet10.0 محفوظان.
 
@@ -43,3 +43,7 @@ Microsoft.AspNetCore.TestHost **[10.0.0]** في IntegrationTests فقط؛ [صف�
 Mvc.Testing تضيف تبعيات اختبار فقط، كلها **10.0.0 وMIT** بحسب nuspec والـlockfile: Microsoft.Extensions.Configuration وConfiguration.Binder وConfiguration.CommandLine وConfiguration.EnvironmentVariables وConfiguration.FileExtensions وConfiguration.Json وConfiguration.UserSecrets، وDependencyModel وDiagnostics وFileProviders.Physical وFileSystemGlobbing وHosting، وLogging.Configuration وLogging.Console وLogging.Debug وLogging.EventLog وLogging.EventSource وOptions.ConfigurationExtensions، وSystem.Diagnostics.EventLog. لا تعني وجود الحزم تفعيل providers أو قراءة/تسجيل الأسرار؛ Program يحتفظ بـClearProviders وسياسة PipelineOnly. مراجعها الرسمية: [اعتمادات Mvc.Testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing/10.0.0#dependencies-body-tab)، [ترخيص runtime 10](https://github.com/dotnet/runtime/blob/v10.0.0/LICENSE.TXT)، [ترخيص ASP.NET 10](https://github.com/dotnet/aspnetcore/blob/v10.0.0/LICENSE.txt).
 
 مصادر الإعداد الرسمية: [OpenAPI لـASP.NET Core 10 وControllers](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/openapi/aspnetcore-openapi?view=aspnetcore-10.0)، [Scalar وDevelopment والأصول المحلية وDisableDefaultFonts](https://scalar.com/products/api-references/integrations/aspnetcore/integration)، [Health checks وحدود basic liveness](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-10.0)، [Integration tests وWebApplicationFactory](https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-10.0). [سجل S07](../planning/phase-01/steps/S07.md) يثبت النتائج والفشل والإصلاح؛ لا تحويل توافق NuGet النظري إلى ادعاء نجاح Runtime.
+
+## مراجعة P01-S08
+
+لا PackageReference أو نسخة حزمة تغيرت. أضيفت lockfiles الناقصة إلى Domain وInfrastructure وUnitTests وArchitectureTests بنفس graph المستعاد، بينما lockfiles Application وApi وIntegrationTests السابقة لم تتغير. `dotnet restore backend/HawalekNow.slnx --locked-mode` أعيد بنجاح مع Release Build و126 اختبارًا؛ Roslyn المرجع للاختبارات من SDK 10.0.401 نفسه. تراخيص Actions وصور .NET وروابط المصدر في [CI](CI.md)، وSQL/Mailpit في Docker README. لا ترخيص أو إعداد Production يفترض من نجاح البناء.

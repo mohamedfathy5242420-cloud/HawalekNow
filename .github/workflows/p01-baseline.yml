@@ -1,0 +1,84 @@
+name: P01 baseline
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: p01-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  documentation:
+    name: Documentation and Git rules
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Verify roadmap and phase gates
+        run: ./planning/verify-roadmap.ps1
+      - name: Verify Git rules
+        run: ./planning/verify-git-workflow.ps1
+      - name: Exercise phase gate rejection cases
+        run: ./planning/test-phase-gates.ps1
+      - name: Verify Docker smoke response parsing and rejection
+        run: ./docker/test-smoke-contracts.ps1
+      - name: Check whitespace in the commit
+        run: |
+          git show --format= --check HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Git diff whitespace check failed.' }
+
+  backend:
+    name: Restore, build, tests and format
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DOTNET_INSTALL_DIR: ${{ runner.temp }}/dotnet
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_NOLOGO: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Read the pinned SDK
+        id: sdk
+        run: echo "version=$(jq -r '.sdk.version' global.json)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: ${{ steps.sdk.outputs.version }}
+      - name: Verify the selected SDK
+        run: test "$(dotnet --version)" = "$(jq -r '.sdk.version' global.json)"
+      - name: Restore the locked dependency graph
+        run: dotnet restore backend/HawalekNow.slnx --locked-mode
+      - name: Build
+        run: dotnet build backend/HawalekNow.slnx --configuration Release --no-restore
+      - name: Test with the normal parallelization settings
+        run: dotnet test backend/HawalekNow.slnx --configuration Release --no-build --no-restore
+      - name: Verify format without modifying files
+        run: dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore
+
+  docker:
+    name: API and SQL image builds
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the application image
+        run: docker build --pull --tag hawaleknow/api:p01-ci --file backend/Dockerfile .
+      - name: Verify application startup and environment gates in Docker
+        shell: pwsh
+        run: ./docker/smoke-api.ps1 -Image hawaleknow/api:p01-ci
+      - name: Build the existing SQL Full Text image
+        run: docker build --pull --platform linux/amd64 --tag hawaleknow/sql-fts:p01-ci docker/sql

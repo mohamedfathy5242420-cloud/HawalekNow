@@ -1,6 +1,6 @@
 # خريطة مراحل HawalekNow واعتماداتها
 
-Updated: 2026-10-26
+Updated: 2026-11-09
 Status: Approved
 OwnerStep: P00-S03
 
@@ -11,9 +11,9 @@ OwnerStep: P00-S03
 
 ## طريقة التنفيذ وبوابة الانتقال
 
-كل خطوة تنتظر اكتمال ومراجعة سابقتها. أول خطوة في كل مرحلة تنتظر Phase Review وHandoff للمرحلة السابقة؛ الإغلاق يشمل Definition of Done الخاص بالمرحلة في المستند، وليس نجاح آخر اختبار فقط. اعتماد نهاية المرحلة السابقة يحقق أيضًا الاعتمادات الأقدم المذكورة في ملخص المراحل أدناه. لا يسمح الجدول بتشغيل خطوات بالتوازي.
-لكل صف: نفذ التحقق الأساسي المدرج، وحدد طبقات V1–V4 المناسبة في ملف الخطوة، وراجع Diff والسلوك مع المستخدم، وسجل اعتماده وHandoff وحدّث CURRENT_STATE قبل الانتقال. Commit وPR والدمج حسب [قواعد Git المعتمدة](../docs/GIT_WORKFLOW.md). منع Commit/Push في مهمة S03 كان استثناء تاريخيًا؛ اعتمد المستخدم S04 وإغلاق P00 وSquash Merge لـPR #1 بتاريخ 2026-10-04.
-الفحوص الآلية لا تعني اعتمادًا بشريًا. الخطوات اللاحقة فهرس تخطيط فقط؛ ملف كل خطوة يُنشأ عند بدئها. P00-S01 إلى P00-S04 Done؛ [مراجعة P00](phase-00/PHASE_REVIEW.md) Approved و[تسليم P01-S01](phase-00/handoffs/S04-to-P01.md) Ready. P01-S01 Done؛ P01-S02 Done بعد اعتماد المستخدم بتاريخ 2026-10-06؛ [تسليم P01-S03](phase-01/handoffs/S02-to-S03.md) Ready. S06 Done بعد اعتماد 2026-10-22؛ تسليم S07 Ready؛ P01-S07 InReview بإذن مستقل 2026-10-26 وملف تنفيذ وتسليم S08 Draft؛ لا تبدأ S08 قبل الاعتماد. فحوص D009 الفعلية تسجل في S06 بدل اعتبار التأجيل نجاحًا.
+وفق D012 بتاريخ 2026-11-09 تنفذ المرحلة المأذونة في مهمة واحدة، وخطواتها بالتتابع دون توازٍ وبعد نجاح تنفيذ وتحقق السابقة. يحتفظ كل صف بمعرفه ومخرجاته واعتماداته وطبقات V1–V4 وDefinition of Done الأصلية. ExecutionStatus Verified وInternalReady يسمحان بالتقدم داخل المرحلة مع UserApproval وV4 Pending إلى مراجعة المرحلة؛ لا يعنيان Done أو اعتمادًا بشريًا.
+أول خطوة في المرحلة التالية تنتظر Phase Review واعتماد المستخدم وHandoff Ready وإذن البدء؛ الإغلاق يشمل Definition of Done للمرحلة من المصدر كله. لكل صف راجع Diff ووثق التحقق الفعلي والفشل والقيود، واجمع مراجعة المستخدم والشرح المفصل في المرحلة. Commit وDraft PR والدمج وفق [Git](../docs/GIT_WORKFLOW.md)؛ لا إذن دمج أو P02 في استكمال P01.
+الفحوص الآلية لا تعني اعتمادًا بشريًا. السجلات والاعتمادات السابقة لـP00 وP01-S01–S06 محفوظة كما حدثت؛ بوابات Step القديمة تخص تاريخها. S07 InReview وVerified تقنيًا، وتسليم S08 InternalReady؛ S08 InProgress ضمن إذن P01. [مراجعة P01](phase-01/PHASE_REVIEW.md) تجمع المراجعات المؤجلة و[تسليم P02](phase-01/handoffs/S08-to-P02.md) Draft؛ لا ملف تنفيذ P02. فحوص D009 في S06 تاريخية ولا تعتبر تأجيلًا Passed أو Health حالية.
 
 ## المراحل واعتمادات المصدر
 
@@ -52,7 +52,7 @@ Q003-01 إلى Q003-06 Approved في [سجل القرارات](../docs/DECISIONS
 
 D001: الحدود واتجاه الاعتماد وModular Monolith ثابتة. D002: MediatR 12.5.0 وFluentValidation وProblemDetails كما هي؛ 12.5 في صف المصدر اختصار، والنسخة الملزمة 12.5.0.
 D003: DbContext واحد وGuid v7 وRowVersion حسب الحاجة. D004: P01-S04 يتضمن شرح Command/Query وحدود المعاملة، ولا ينشئ Orchestrator عامًا بدون احتياج؛ Use Cases لاحقًا توثق Atomic أو Workflow متعدد المعاملات.
-D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/Outbox/Audit والتخزين والبحث والتقنيات لا تتغير؛ القرارات Q003 المعتمدة تصحح توقيت التأسيس وتحدد اختبارات الحد الأدنى وحدود ضمان التسليم. D007: خطوة واحدة ومراجعة بشرية. D008: كل المعرفات الأصلية محفوظة، وقواعد Git اعتمدت في P00-S04 بتاريخ 2026-10-04.
+D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/Outbox/Audit والتخزين والبحث والتقنيات لا تتغير؛ القرارات Q003 المعتمدة تصحح توقيت التأسيس وتحدد اختبارات الحد الأدنى وحدود ضمان التسليم. D007 يصف الأسلوب التاريخي؛ D012 يجمع التنفيذ والمراجعة على مستوى المرحلة مع ترتيب الخطوات. D008: كل المعرفات الأصلية محفوظة، وقواعد Git اعتمدت في P00-S04 بتاريخ 2026-10-04.
 لا Frontend أو استضافة أو Redis أو دفع في هذه الخطوة. يوجد Angular 22 كاختيار مبدئي في المصدر؛ سجل القرارات يثبت Angular ويؤجل التفاصيل، ولا تُرقّى نسخة أو تُعتمد تفاصيل هنا.
 
 ## فهرس الخطوات
@@ -161,7 +161,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S07 OpenAPI وScalar وAPI v1
 
-- Status: InReview؛ [سجل التنفيذ](phase-01/steps/S07.md) و[تسليم S08 Draft](phase-01/handoffs/S07-to-S08.md)؛ Awaiting user review. S06 Done وApproved وPR #7 مدموجة عند 399fc94de412ba51b509591da63d32bdc997a36e. OpenAPI/Scalar Development فقط، وLiveness دون ادعاء Readiness SQL/البريد. لا Versioning library أو Persistence أو S08.
+- Status: InReview؛ ExecutionStatus: Verified؛ UserApproval: Pending؛ [السجل](phase-01/steps/S07.md) و[تسليم S08 InternalReady](phase-01/handoffs/S07-to-S08.md). D012 يسمح بالتقدم الداخلي؛ Awaiting user review على مستوى P01. OpenAPI/Scalar Development فقط وLiveness دون Readiness SQL/البريد؛ لا Persistence أو Versioning library.
 
 - الاعتمادات السابقة: [P01-S06](#p01-s06).
 - المخرج المطلوب: توثيق حي ومسارات api v1 وHealth endpoints.
@@ -172,6 +172,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p01-s08"></a>
 
 ### P01-S08 GitHub Actions baseline
+
+- Status: InProgress؛ [ملف التنفيذ](phase-01/steps/S08.md) و[مراجعة P01](phase-01/PHASE_REVIEW.md) و[تسليم P02 Draft](phase-01/handoffs/S08-to-P02.md)؛ UserApproval وV4 Pending.
 
 - الاعتمادات السابقة: [P01-S07](#p01-s07).
 - المخرج المطلوب: Restore وBuild وTests وFormat وDocker build.
