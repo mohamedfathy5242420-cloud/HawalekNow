@@ -161,7 +161,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S07 OpenAPI وScalar وAPI v1
 
-- Status: InReview؛ ExecutionStatus: Verified؛ UserApproval: Pending؛ [السجل](phase-01/steps/S07.md) و[تسليم S08 InternalReady](phase-01/handoffs/S07-to-S08.md). D012 يسمح بالتقدم الداخلي؛ Awaiting user review على مستوى P01. OpenAPI/Scalar Development فقط وLiveness دون Readiness SQL/البريد؛ لا Persistence أو Versioning library.
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ [السجل](phase-01/steps/S07.md) و[تسليم S08 InternalReady](phase-01/handoffs/S07-to-S08.md). D012 يسمح بالتقدم الداخلي؛ Awaiting user review على مستوى P01. OpenAPI/Scalar Development فقط وLiveness دون Readiness SQL/البريد؛ لا Persistence أو Versioning library.
 
 - الاعتمادات السابقة: [P01-S06](#p01-s06).
 - المخرج المطلوب: توثيق حي ومسارات api v1 وHealth endpoints.

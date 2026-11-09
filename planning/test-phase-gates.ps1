@@ -46,6 +46,11 @@ Reject 'internal progress without internal handoff' 'planning/phase-01/handoffs/
 Reject 'invented step approval' $stepPath { param($t) $t -replace 'UserApproval: Pending', 'UserApproval: Approved' }
 Reject 'invented step Done' $stepPath { param($t) $t -replace '(?m)^Status: [^\r\n]+', 'Status: Done' }
 Reject 'duplicate status field' $stepPath { param($t) $t + "`nStatus: InReview`n" }
+Reject 'roadmap disagrees with the step state' 'planning/ROADMAP.md' {
+    param($t)
+    $block = [regex]::Match($t, '(?ms)^### P01-S08 .*?(?=^### |\z)').Value
+    $t.Replace($block, ($block -replace '(?m)^- Status: [^؛\r\n]+', '- Status: Done'))
+}
 Reject 'historical approval removed' 'planning/phase-01/steps/S06.md' { param($t) $t -replace 'UserApproval: Approved', 'UserApproval: Pending' }
 Reject 'Passed with failed command' $evidencePath {
     param($t) $e = $t | ConvertFrom-Json; $e.checks[0].exitCode = 1; $e | ConvertTo-Json -Depth 12
@@ -64,7 +69,12 @@ $originalEvidence = Read-Fixture $evidencePath
 Write-Fixture $statePath ($originalState -replace '(?m)^- Status: [^\r\n]+', '- Status: InReview')
 Write-Fixture $stepPath ($originalStep -replace '(?m)^Status: [^\r\n]+', 'Status: InReview' -replace '(?m)^ExecutionStatus: [^\r\n]+', 'ExecutionStatus: Verified' -replace '(?m)^VerificationStatus: [^\r\n]+', 'VerificationStatus: Passed')
 Write-Fixture $reviewPath ($originalReview -replace '(?m)^Status: [^\r\n]+', 'Status: InReview')
-Write-Fixture 'planning/ROADMAP.md' ((Read-Fixture 'planning/ROADMAP.md') -replace '(?m)^- Status: InProgress؛ \[ملف التنفيذ\]\(phase-01/steps/S08.md\)', '- Status: InReview؛ [ملف التنفيذ](phase-01/steps/S08.md)')
+$fixtureMap = Read-Fixture 'planning/ROADMAP.md'
+$s08Block = [regex]::Match($fixtureMap, '(?ms)^### P01-S08 .*?(?=^### |\z)').Value
+if (-not $s08Block) { throw 'Cannot find S08 for the synthetic review baseline.' }
+$reviewBlock = $s08Block -replace '(?m)^- Status: [^؛\r\n]+', '- Status: InReview'
+$reviewBlock = $reviewBlock.Replace('ExecutionStatus: InProgress', 'ExecutionStatus: Verified').Replace('VerificationStatus: Failed', 'VerificationStatus: Passed')
+Write-Fixture 'planning/ROADMAP.md' ($fixtureMap.Replace($s08Block, $reviewBlock))
 $e = $originalEvidence | ConvertFrom-Json
 foreach ($check in $e.checks) { $check.status = 'Passed'; $check.exitCode = 0; $check.command = 'SYNTHETIC FIXTURE ONLY' }
 $e.ci = [pscustomobject]@{event = 'pull_request'; conclusion = 'success'; runId = 1; headSha = ('a' * 40); url = 'https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/1'; jobs = @('Documentation and Git rules', 'Restore, build, tests and format', 'API and SQL image builds') | ForEach-Object { @{name = $_; conclusion = 'success'} } }

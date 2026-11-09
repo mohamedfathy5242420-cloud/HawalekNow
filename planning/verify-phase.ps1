@@ -106,8 +106,13 @@ Require (-not (Test-Path $future) -or @(Get-ChildItem -LiteralPath $future -Recu
 $map = Read-Record 'planning/ROADMAP.md'
 foreach ($id in @('P01-S07', 'P01-S08')) {
     $block = [regex]::Match($map, '(?ms)^### ' + $id + ' .*?(?=^### |\z)').Value
-    $expected = if ($id -eq 'P01-S07') { 'InReview' } else { Field $s08 'Status' }
-    Require ($block.Contains("Status: $expected")) "Roadmap state differs: $id"
+    $step = if ($id -eq 'P01-S07') { $s07 } else { $s08 }
+    $mapStatus = [regex]::Matches($block, '(?m)^- Status: ([^؛\r\n]+)(?:؛|\r?$)')
+    Require ($mapStatus.Count -eq 1 -and $mapStatus[0].Groups[1].Value -eq (Field $step 'Status')) "Roadmap state differs: $id"
+    foreach ($name in @('ExecutionStatus', 'VerificationStatus')) {
+        $values = [regex]::Matches($block, '(?m)(?:^|؛ )' + $name + ': ([^؛\r\n]+)(?:؛|\r?$)')
+        Require ($values.Count -eq 1 -and $values[0].Groups[1].Value -eq (Field $step $name)) "Roadmap $name differs: $id"
+    }
 }
 Write-Output 'PASS: D012 sequential internal progress; human review Pending; real CI required for S08 Verified; failed/unrun checks cannot claim Passed; P02 remains unstarted.'
 Write-Output 'LIMIT: recorded evidence consistency only; this script does not execute .NET/Docker or query GitHub. CI and runtime evidence must be collected separately.'
