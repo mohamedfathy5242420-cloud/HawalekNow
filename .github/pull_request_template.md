@@ -2,11 +2,15 @@
 
 اشرح المشكلة والمخرج النهائي وحدود التغيير.
 
-## معرف الخطوة
+## المرحلة وخطواتها
 
-Step: Pxx-Syy
-Step file:
-Handoff:
+Phase: Pxx
+Steps: Pxx-Syy
+Step files:
+Phase review:
+Next-phase handoff (Draft):
+UserApproval: Pending
+V4: Pending
 
 ## أدلة التحقق
 
@@ -27,5 +31,5 @@ Handoff:
 
 - [ ] راجعت Diff والملفات المضافة والأسرار والاستبعادات.
 - [ ] حدثت الحالة وHandoff بنتائج فعلية.
-- [ ] راجع المستخدم المخرج واعتمد الانتقال عند الحاجة.
+- [ ] راجع المستخدم المرحلة واعتمدها صراحة؛ نجاح CI لا يحقق هذا البند.
 - [ ] تحقق المطلوب للإغلاق؛ لا force push على main.

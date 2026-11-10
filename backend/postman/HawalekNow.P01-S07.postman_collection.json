@@ -1,0 +1,308 @@
+{
+  "item": [
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Content-Type text/plain', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('text/plain'));",
+              "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+              "pm.test('Correlation echoed', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.equal(pm.environment.get('correlationId')));",
+              "pm.test('Basic liveness only', () => pm.expect(pm.response.text()).to.equal('Healthy'));",
+              "pm.test('No cache', () => pm.expect(pm.response.headers.get('Cache-Control')).to.equal('no-store'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{correlationId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/health/live"
+      },
+      "name": "Liveness - supplied correlation"
+    },
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Content-Type text/plain', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('text/plain'));",
+              "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+              "pm.test('Generated ID', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[a-f0-9]{32}$/));",
+              "pm.test('Minimal body', () => pm.expect(pm.response.text()).to.equal('Healthy'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/v1/health/live"
+      },
+      "name": "Liveness - generated correlation"
+    },
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Content-Type text/plain', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('text/plain'));",
+              "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+              "pm.test('Invalid ID replaced', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[a-f0-9]{32}$/));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Correlation-ID",
+            "value": "invalid value"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/health/live"
+      },
+      "name": "Liveness - invalid correlation replaced"
+    },
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('Content-Type application/problem+json', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/problem+json'));",
+              "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+              "const p = pm.response.json();",
+              "pm.test('Safe ProblemDetails shape', () => pm.expect(Object.keys(p).sort()).to.eql(['code','correlationId','status','title','type']));",
+              "pm.test('Correlation matches body', () => pm.expect(p.correlationId).to.equal(pm.response.headers.get('X-Correlation-ID')));",
+              "pm.test('Problem status matches HTTP', () => pm.expect(p.status).to.equal(pm.response.code));",
+              "pm.test('about:blank', () => pm.expect(p.type).to.equal('about:blank'));",
+              "pm.test('Correlation echoed', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.equal(pm.environment.get('correlationId')));",
+              "pm.test('Not found code', () => pm.expect(p.code).to.equal('resource.not_found'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{correlationId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/missing"
+      },
+      "name": "Missing route - ProblemDetails"
+    },
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('Content-Type application/problem+json', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/problem+json'));",
+              "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+              "const p = pm.response.json();",
+              "pm.test('Safe ProblemDetails shape', () => pm.expect(Object.keys(p).sort()).to.eql(['code','correlationId','status','title','type']));",
+              "pm.test('Correlation matches body', () => pm.expect(p.correlationId).to.equal(pm.response.headers.get('X-Correlation-ID')));",
+              "pm.test('Problem status matches HTTP', () => pm.expect(p.status).to.equal(pm.response.code));",
+              "pm.test('about:blank', () => pm.expect(p.type).to.equal('about:blank'));",
+              "pm.test('Correlation echoed', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.equal(pm.environment.get('correlationId')));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{correlationId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/health/live"
+      },
+      "name": "Unversioned route - ProblemDetails"
+    },
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('Content-Type application/problem+json', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/problem+json'));",
+              "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+              "const p = pm.response.json();",
+              "pm.test('Safe ProblemDetails shape', () => pm.expect(Object.keys(p).sort()).to.eql(['code','correlationId','status','title','type']));",
+              "pm.test('Correlation matches body', () => pm.expect(p.correlationId).to.equal(pm.response.headers.get('X-Correlation-ID')));",
+              "pm.test('Problem status matches HTTP', () => pm.expect(p.status).to.equal(pm.response.code));",
+              "pm.test('about:blank', () => pm.expect(p.type).to.equal('about:blank'));",
+              "pm.test('Correlation echoed', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.equal(pm.environment.get('correlationId')));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{correlationId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v2/health/live"
+      },
+      "name": "Unsupported v2 - ProblemDetails"
+    },
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+              "pm.test('Content-Type application/problem+json', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/problem+json'));",
+              "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+              "const p = pm.response.json();",
+              "pm.test('Safe ProblemDetails shape', () => pm.expect(Object.keys(p).sort()).to.eql(['code','correlationId','status','title','type']));",
+              "pm.test('Correlation matches body', () => pm.expect(p.correlationId).to.equal(pm.response.headers.get('X-Correlation-ID')));",
+              "pm.test('Problem status matches HTTP', () => pm.expect(p.status).to.equal(pm.response.code));",
+              "pm.test('about:blank', () => pm.expect(p.type).to.equal('about:blank'));",
+              "pm.test('Correlation echoed', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.equal(pm.environment.get('correlationId')));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{correlationId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/health/ready"
+      },
+      "name": "Readiness is not implemented"
+    },
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 405', () => pm.response.to.have.status(405));",
+              "pm.test('Content-Type application/problem+json', () => pm.expect(pm.response.headers.get('Content-Type')).to.include('application/problem+json'));",
+              "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+              "const p = pm.response.json();",
+              "pm.test('Safe ProblemDetails shape', () => pm.expect(Object.keys(p).sort()).to.eql(['code','correlationId','status','title','type']));",
+              "pm.test('Correlation matches body', () => pm.expect(p.correlationId).to.equal(pm.response.headers.get('X-Correlation-ID')));",
+              "pm.test('Problem status matches HTTP', () => pm.expect(p.status).to.equal(pm.response.code));",
+              "pm.test('about:blank', () => pm.expect(p.type).to.equal('about:blank'));",
+              "pm.test('Correlation echoed', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.equal(pm.environment.get('correlationId')));",
+              "pm.test('Allow GET', () => pm.expect(pm.response.headers.get('Allow')).to.include('GET'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{correlationId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/health/live"
+      },
+      "name": "Unsupported method - 405 and Allow"
+    },
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const expected = Number(pm.environment.get('docsStatus'));",
+              "pm.test('Environment documentation status', () => pm.response.to.have.status(expected));",
+              "pm.test('Environment Content-Type', () => pm.expect(pm.response.headers.get('Content-Type')).to.include(expected === 200 ? 'application/json' : 'application/problem+json'));",
+              "pm.test('Correlation echoed', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.equal(pm.environment.get('correlationId')));",
+              "if (expected === 404) { const p = pm.response.json(); pm.test('Hidden docs use safe 404', () => { pm.expect(p.code).to.equal('resource.not_found'); pm.expect(p.status).to.equal(404); pm.expect(p.correlationId).to.equal(pm.response.headers.get('X-Correlation-ID')); }); }",
+              "if (expected === 200) { const d = pm.response.json(); pm.test('Real paths only', () => pm.expect(Object.keys(d.paths)).to.eql(['/api/v1/health/live'])); pm.test('Health contracts', () => pm.expect(Object.keys(d.paths['/api/v1/health/live'].get.responses).sort()).to.eql(['200','500','503'])); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{correlationId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/openapi/v1.json"
+      },
+      "name": "OpenAPI - environment gate"
+    },
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const expected = Number(pm.environment.get('docsStatus'));",
+              "pm.test('Environment documentation status', () => pm.response.to.have.status(expected));",
+              "pm.test('Environment Content-Type', () => pm.expect(pm.response.headers.get('Content-Type')).to.include(expected === 200 ? 'text/html' : 'application/problem+json'));",
+              "pm.test('Correlation echoed', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.equal(pm.environment.get('correlationId')));",
+              "if (expected === 404) { const p = pm.response.json(); pm.test('Hidden docs use safe 404', () => { pm.expect(p.code).to.equal('resource.not_found'); pm.expect(p.status).to.equal(404); pm.expect(p.correlationId).to.equal(pm.response.headers.get('X-Correlation-ID')); }); }",
+              "if (expected === 200) { pm.test('Document reference configured', () => pm.expect(pm.response.text()).to.include('openapi/v1.json')); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Correlation-ID",
+            "value": "{{correlationId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/scalar"
+      },
+      "name": "Scalar - environment gate (HTML only)"
+    }
+  ],
+  "info": {
+    "description": "Actual local endpoints only. Liveness does not test SQL/email. No readiness, credentials or tokens. Scalar HTML test does not prove browser rendering: follow API_EXPLORATION.md. Set docsStatus=200 in Development and 404 in Production.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "name": "HawalekNow P01-S07 local API"
+  }
+}

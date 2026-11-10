@@ -4,6 +4,11 @@ From: Pxx-Syy
 To: Pxx-Szz أو PhaseReview
 Updated: YYYY-MM-DD
 Status: Draft
+ExecutionMode: Phase
+UserApproval: Pending
+ReviewStatus: Pending
+
+داخل المرحلة فقط: يجوز InternalReady بعد نجاح التنفيذ والتحقق السابق. بين المراحل: Draft حتى اعتماد المرحلة وإذن بدء التالية؛ لا اعتماد يستنتج من CI.
 
 ## ما اكتمل
 
@@ -29,4 +34,4 @@ PR: NotCreated إلى حين إنشائه
 
 ## بداية العمل التالية
 
-اقرأ CURRENT_STATE ثم الخطوة التالية والقرارات المطلوبة، ونفذ خطوة واحدة مع الشرح والتحقق.
+اقرأ CURRENT_STATE والقرارات والخطوة التالية، ونفذ الخطوات داخل المرحلة المأذونة بالتتابع مع التحقق وفق D012؛ لا تبدأ المرحلة التالية دون إذنها واعتماد السابقة.

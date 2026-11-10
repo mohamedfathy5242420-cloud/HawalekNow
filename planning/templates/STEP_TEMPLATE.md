@@ -5,6 +5,14 @@ Updated: YYYY-MM-DD
 Phase: Pxx
 PreviousStep: Pxx-Syy أو None
 NextStep: Pxx-Syy أو PhaseReview
+ExecutionMode: Phase
+ExecutionStatus: NotStarted
+VerificationStatus: Pending
+UserApproval: Pending
+ReviewStatus: Pending
+V4: Pending
+
+وفق D012: اكتمال التنفيذ والتحقق التقني يسمح بالانتقال الداخلي بالتتابع تحت إذن المرحلة؛ تبقى مراجعة المستخدم للمرحلة Pending. لا Done أو اعتماد بشري مفترض.
 
 ## الهدف والسبب
 
@@ -20,7 +28,7 @@ NextStep: Pxx-Syy أو PhaseReview
 
 ## الشرح قبل التنفيذ
 
-حدد المفهوم الجديد ومثالًا مرتبطًا بالمشروع. قدمه للمستخدم قبل تطبيقه.
+حدد المفهوم الجديد ومثالًا مرتبطًا بالمشروع. سجل الشرح المقدم وما ينتظر جلسة الشرح المخصصة؛ التقرير لا يعوض التجربة التعليمية.
 
 ## تسلسل التنفيذ
 
@@ -46,6 +54,7 @@ NextStep: Pxx-Syy أو PhaseReview
 - نجاح طبقات التحقق المطلوبة وتوثيق أي طبقة غير منطبقة.
 - مراجعة التغييرات وعدم توسيع النطاق بلا قرار.
 - اكتمال المراجعة البشرية المطلوبة وتوثيقها.
+- يجوز تسليم التنفيذ InReview وExecutionStatus Verified مع V4 Pending إلى قائمة مراجعة المرحلة؛ إغلاق المرحلة يحتاج الاعتماد الفعلي.
 - تحديث CURRENT_STATE وإعداد Handoff.
 
 ## سجل التنفيذ والمراجعة

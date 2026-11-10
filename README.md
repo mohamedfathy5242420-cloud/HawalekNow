@@ -1,12 +1,12 @@
 # HawalekNow — حوالك ناو
 
-P01-S05 Done بعد اعتماد 2026-10-21؛ [الخطوة](planning/phase-01/steps/S05.md) و[شرح Result وأخطاء HTTP](backend/API_ERRORS.md) و[تسليم S06 Ready](planning/phase-01/handoffs/S05-to-S06.md). P01-S06 Done بعد اعتماد 2026-10-22؛ [Docker والشرح بالمصري](docker/README.md) و[سجل S06](planning/phase-01/steps/S06.md). تسليم S07 Ready؛ P01-S07 NotStarted بلا ملف تنفيذ ولا تبدأ ضمن الإغلاق. الحالة الحالية في CURRENT_STATE.
+P01 Done ومراجعتها Approved بقرار المستخدم D013 بتاريخ 2026-11-10، المشروط بنجاح فحوص الإغلاق قبل دمج PR #8 وبعده. [سجل الإغلاق](planning/phase-01/CLOSURE.md) و[مراجعة المرحلة](planning/phase-01/PHASE_REVIEW.md) و[الحالة الحالية](docs/CURRENT_STATE.md). تسليم P02 Ready وP02 NotStarted دون تنفيذ. تجربة المستخدم الشخصية Scalar/Postman والشرح الكامل Deferred عن بوابة الإغلاق بقراره، وليست Passed؛ [تعليمات التجربة](backend/API_EXPLORATION.md) محفوظة.
 
 منصة لاكتشاف المنتجات والتجار القريبين في مصر ومقارنة السعر والتوافر لكل فرع ثم التواصل مباشرة مع التاجر. البيع يتم خارج المنصة؛ لا سلة أو دفع أو شحن داخلها.
 
 ## بداية أي Agent
 
-اقرأ [CURRENT_STATE](docs/CURRENT_STATE.md) أولًا، ثم [DECISIONS](docs/DECISIONS.md) و[SCOPE](docs/SCOPE.md) و[GIT_WORKFLOW](docs/GIT_WORKFLOW.md) و[ROADMAP](planning/ROADMAP.md)، وملف الخطوة والتسليم السابق المشار إليهما في الحالة. نفذ خطوة واحدة فقط بإذن المستخدم، وحدث نتائج التحقق الفعلية قبل التسليم.
+اقرأ [CURRENT_STATE](docs/CURRENT_STATE.md) ثم [DECISIONS](docs/DECISIONS.md) و[SCOPE](docs/SCOPE.md) و[GIT_WORKFLOW](docs/GIT_WORKFLOW.md) و[ROADMAP](planning/ROADMAP.md)، وملف الخطوة والتسليم السابق. وفق D012 نفذ خطوات المرحلة المأذونة بالتتابع بعد نجاح التحقق التقني؛ المراجعة والاعتماد على مستوى المرحلة. لا تبدأ التالية أو تدمج قبل إذنها واعتماد السابقة.
 
 ## هيكل المستودع
 
@@ -24,7 +24,7 @@ P01-S05 Done بعد اعتماد 2026-10-21؛ [الخطوة](planning/phase-01/s
 
 SDK المتاح والمختار .NET **10.0.401**. [global.json](global.json) يستخدم `latestPatch` داخل feature band `10.0.4xx` فقط، و`allowPrerelease: false`. لا انتقال تلقائي إلى band أحدث أو .NET major آخر. يفشل الاختيار عند غياب SDK متوافق؛ تغيير السياسة يحتاج مراجعة.
 
-Git وPowerShell لتشغيل فحوص التوثيق. يلزم Docker Engine بوضع Linux containers للخدمات لاحقًا. فحص Engine الفعلي بدأ في P01-S06 وفق D009؛ نتائج SQL وFTS وMailpit تسجل في S06 بعد الاختبار. لا CI حاليًا؛ API host فقط دون ميزات تجارية.
+Git وPowerShell 7 لفحوص التوثيق، وDocker Linux/amd64 للخدمات والصور. نتائج SQL/FTS/Mailpit والاستمرار التاريخية في S06؛ لا تفترض صحة خدمة متوقفة. [Workflow P01](.github/workflows/p01-baseline.yml) يتحقق على GitHub دون أسرار أو نشر؛ نتائجه الفعلية في مراجعة المرحلة. API بلا ميزات تجارية.
 
 ## الأوامر المتاحة الآن
 
@@ -33,12 +33,14 @@ Git وPowerShell لتشغيل فحوص التوثيق. يلزم Docker Engine ب
 ```powershell
 dotnet --version
 dotnet sln backend/HawalekNow.slnx list
-dotnet restore backend/HawalekNow.slnx
+dotnet restore backend/HawalekNow.slnx --locked-mode
 dotnet build backend/HawalekNow.slnx --no-restore
 dotnet test backend/HawalekNow.slnx --no-build --no-restore
+dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore
 & ./planning/verify-roadmap.ps1
 & ./planning/verify-git-workflow.ps1
+& ./planning/test-phase-gates.ps1
 git diff --check
 ```
 
-[Backend](backend/README.md) يشرح الطبقات والاعتمادات وأمر تشغيل Api، و[Modules](backend/MODULES.md) يوضح الملكية وقواعد التواصل والمشترك. [P01-S04](planning/phase-01/steps/S04.md) Done بعد اعتماد 2026-10-13: CQRS Pipeline وتسجيل آمن وCorrelation ID، و65 اختبار معمارية وتكامل؛ [الحزم والتراخيص](backend/PACKAGES.md). الوحدات بلا وظائف تجارية. Docker ينفذ في P01-S06؛ نتائج الفحوص في سجلها. Git على هذا الجهاز يحتاج الخيار -c safe.directory=D:/HwalekNow بسبب اختلاف الملكية.
+[Backend](backend/README.md) يشرح الطبقات والتشغيل، و[Modules](backend/MODULES.md) يوضح الملكية، و[الحزم والتراخيص](backend/PACKAGES.md) تسجل النسخ والتوافق. الحل الحالي يضم 126 اختبارًا، والوحدات بلا وظائف تجارية. خدمات Docker وFTS والاستمرار في S06 لها أدلة تاريخية؛ حالتها الحالية في مراجعة P01. Git على هذا الجهاز يحتاج -c safe.directory=D:/HwalekNow لاختلاف الملكية؛ الفاحص يحسب المسار الفعلي ليعمل على Linux وWindows.

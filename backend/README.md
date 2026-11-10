@@ -1,5 +1,7 @@
 # Backend
 
+P01 InReview وفق D012: S07/S08 Verified تقنيًا وCI ناجح و126 اختبارًا بلا فشل أو تخطٍّ. [مراجعة المرحلة](../planning/phase-01/PHASE_REVIEW.md) تجمع الأدلة والفشل والإصلاح ومراجعات المستخدم Pending. [CI/Docker](CI.md) و[Scalar/Postman](API_EXPLORATION.md). GET /api/v1/health/live فقط؛ التوثيق Development دون Readiness أو Business. نتائج S04–S06 أدناه تاريخية.
+
 S05 يؤسس [نتائج التطبيق وسياسة أخطاء HTTP والشرح خطوة بخطوة](API_ERRORS.md)؛ [ملف التنفيذ](../planning/phase-01/steps/S05.md) يسجل التحقق والمراجعة. الحالة الجارية في CURRENT_STATE.
 
 .NET 10 Clean Architecture داخل Modular Monolith؛ SDK 10.0.401 يحكمه [global.json](../global.json).
@@ -19,9 +21,11 @@ S05 يؤسس [نتائج التطبيق وسياسة أخطاء HTTP والشر�
  dotnet restore backend/HawalekNow.slnx --locked-mode
  dotnet build backend/HawalekNow.slnx --no-restore --disable-build-servers -m:1
  dotnet test backend/HawalekNow.slnx --no-build --no-restore --disable-build-servers -m:1
+ dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore
  dotnet run --project backend/src/HawalekNow.Api --no-build --no-restore --no-launch-profile --urls http://localhost:5080
  & ./planning/verify-roadmap.ps1
  & ./planning/verify-git-workflow.ps1
+ & ./planning/test-phase-gates.ps1
 ```
 
 [الحزم والتراخيص](PACKAGES.md): MediatR 12.5.0، FluentValidation وDI extensions 12.1.1، Logging.Abstractions 10.0.0، Serilog 4.3.0 وHosting 10.0.0 وConsole 6.0.0؛ exact ranges وlockfiles. حزم الاختبارات السابقة محفوظة: Microsoft.NET.Test.Sdk 17.14.1 وxunit 2.9.3 وrunner 3.1.4 وcoverlet 6.0.4. لا حزمة ويب في Application أو حزمة جديدة في Domain.

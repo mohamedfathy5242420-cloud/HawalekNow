@@ -35,6 +35,7 @@ public sealed class ApiErrorTests
         builder.Services.AddApplication(typeof(ApiErrorTests).Assembly);
         builder.Services.AddScoped<PipelineTests.Probe>();
         builder.Services.AddSingleton<ClientCancellationProbe>();
+        builder.Services.AddSingleton<StartedResponseProbe>();
         builder.Services.AddApiErrorHandling().AddApplicationPart(typeof(ErrorProbeController).Assembly);
         var app = builder.Build();
         app.UseApiErrorHandling();
@@ -57,10 +58,13 @@ public sealed class ApiErrorTests
             throw new IOException("disconnect-secret");
         });
         app.MapGet("/unrelated-cancellation", () => { throw new OperationCanceledException("exception-secret"); });
-        app.MapGet("/started", async (HttpContext context) =>
+        app.MapGet("/started", async (HttpContext context, StartedResponseProbe probe) =>
         {
             await context.Response.WriteAsync("already-started");
             await context.Response.Body.FlushAsync();
+            // TestHost may discard buffered bytes when the request faults. Let the client
+            // observe the started response before triggering the fault being tested.
+            await probe.AllowFailure.Task.WaitAsync(TimeSpan.FromSeconds(10), context.RequestAborted);
             throw new InvalidOperationException("exception-secret");
         });
         await app.StartAsync();
@@ -300,13 +304,19 @@ public sealed class ApiErrorTests
         await using (app)
         using (client)
         {
-            var response = await client.GetAsync("/started", HttpCompletionOption.ResponseHeadersRead);
+            var probe = app.Services.GetRequiredService<StartedResponseProbe>();
+            using var response = await client.GetAsync("/started", HttpCompletionOption.ResponseHeadersRead);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             await using var stream = await response.Content.ReadAsStreamAsync();
             var bytes = new byte[15];
-            await stream.ReadExactlyAsync(bytes);
-            Assert.Equal("already-started", Encoding.UTF8.GetString(bytes));
-            await Assert.ThrowsAnyAsync<Exception>(async () => await stream.ReadExactlyAsync(new byte[1]));
+            try
+            {
+                await stream.ReadExactlyAsync(bytes).AsTask().WaitAsync(TimeSpan.FromSeconds(5));
+                Assert.Equal("already-started", Encoding.UTF8.GetString(bytes));
+            }
+            finally { probe.AllowFailure.TrySetResult(); }
+            await Assert.ThrowsAnyAsync<Exception>(async () => await stream.ReadExactlyAsync(new byte[1]))
+                .WaitAsync(TimeSpan.FromSeconds(5));
             Assert.Empty(sink.Events);
         }
     }
@@ -316,6 +326,11 @@ public sealed class ClientCancellationProbe
 {
     public TaskCompletionSource Entered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
     public TaskCompletionSource Ended { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+}
+
+public sealed class StartedResponseProbe
+{
+    public TaskCompletionSource AllowFailure { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 }
 
 [ApiController]
