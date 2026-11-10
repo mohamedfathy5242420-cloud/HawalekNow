@@ -31,7 +31,7 @@ public sealed class OtpOutboxTests : IAsyncLifetime
     public async Task DisposeAsync() { client.Dispose(); await factory.DisposeAsync(); await database.DisposeAsync(); }
     private async Task RegisterAsync(string type = "customers")
     {
-        using var response = await client.PostAsJsonAsync($"/api/v1/identity/{type}/register", new
+        using var response = await client.PostBrowserJsonAsync($"/api/v1/identity/{type}/register", new
         { username = name, email = Email, password = "Test-only-" + Guid.NewGuid().ToString("N"), acceptTerms = true });
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
@@ -42,10 +42,10 @@ public sealed class OtpOutboxTests : IAsyncLifetime
         return factory.Services.GetRequiredService<PayloadProtection>().Unprotect<EmailOtpPayload>(EmailOtpHandler.MessageKind, message.ProtectedPayload);
     }
     private async Task<HttpResponseMessage> VerifyAsync(string code, string type = "Customer", string? email = null) =>
-        await client.PostAsJsonAsync("/api/v1/identity/email/verify", new { accountType = type, email = email ?? Email, code });
+        await client.PostBrowserJsonAsync("/api/v1/identity/email/verify", new { accountType = type, email = email ?? Email, code });
     private async Task RequestAsync(string type = "Customer", string? email = null)
     {
-        using var response = await client.PostAsJsonAsync("/api/v1/identity/email/request", new { accountType = type, email = email ?? Email });
+        using var response = await client.PostBrowserJsonAsync("/api/v1/identity/email/request", new { accountType = type, email = email ?? Email });
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
     private async Task PumpAsync()

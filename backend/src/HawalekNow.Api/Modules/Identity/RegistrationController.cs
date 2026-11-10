@@ -3,6 +3,7 @@ using HawalekNow.Application.Modules.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace HawalekNow.Api.Modules.Identity;
 
@@ -11,6 +12,7 @@ namespace HawalekNow.Api.Modules.Identity;
 [Route("identity")]
 [Tags("Identity")]
 [RequestSizeLimit(8192)]
+[EnableRateLimiting(IdentityRateLimits.Registration)]
 public sealed class RegistrationController(ISender sender) : ControllerBase
 {
     [HttpPost("customers/register")]

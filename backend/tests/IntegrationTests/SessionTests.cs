@@ -29,7 +29,7 @@ public sealed class SessionTests : IAsyncLifetime
     private object Login(string type = "Customer", string? secret = null) => new { accountType = type, identifier = Email, password = secret ?? password };
     private async Task RegisterAsync(string type = "customers")
     {
-        using var response = await client.PostAsJsonAsync($"/api/v1/identity/{type}/register", new { username = name, email = Email, password, acceptTerms = true });
+        using var response = await client.PostBrowserJsonAsync($"/api/v1/identity/{type}/register", new { username = name, email = Email, password, acceptTerms = true });
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
     private static string Cookie(HttpResponseMessage response, string name) => response.Headers.GetValues("Set-Cookie")
@@ -38,7 +38,8 @@ public sealed class SessionTests : IAsyncLifetime
     {
         using var raw = factory.CreateClient(new() { BaseAddress = new("https://localhost"), HandleCookies = false });
         using var request = new HttpRequestMessage(post ? HttpMethod.Post : HttpMethod.Get, route);
-        request.Headers.Add("Cookie", name + "=" + value);
+        if (post) await BrowserRequests.AddCsrfAsync(raw, request, name + "=" + value);
+        else request.Headers.Add("Cookie", name + "=" + value);
         return await raw.SendAsync(request);
     }
 
@@ -46,13 +47,13 @@ public sealed class SessionTests : IAsyncLifetime
     public async Task Type_scoped_login_uses_cookie_only_and_returns_no_credentials_in_body()
     {
         await RegisterAsync(); await RegisterAsync("merchants");
-        using var customer = await client.PostAsJsonAsync("/api/v1/identity/login", Login());
+        using var customer = await client.PostBrowserJsonAsync("/api/v1/identity/login", Login());
         Assert.Equal(HttpStatusCode.NoContent, customer.StatusCode); Assert.True((await customer.Content.ReadAsStringAsync()).Length == 0, "Login body must be empty.");
         Assert.Equal("no-store", customer.Headers.CacheControl?.ToString());
         var first = Cookie(customer, IdentityAuthentication.AccessCookie);
         using (var me = await client.GetAsync("/api/v1/identity/me"))
         { Assert.Equal(HttpStatusCode.OK, me.StatusCode); var actor = await me.Content.ReadFromJsonAsync<SessionActor>(); Assert.Equal("Customer", actor!.AccountType); Assert.False(actor.EmailConfirmed); }
-        using var merchant = await client.PostAsJsonAsync("/api/v1/identity/login", Login("Merchant"));
+        using var merchant = await client.PostBrowserJsonAsync("/api/v1/identity/login", Login("Merchant"));
         Assert.Equal(HttpStatusCode.NoContent, merchant.StatusCode);
         using (var me = await client.GetAsync("/api/v1/identity/me")) Assert.Equal("Merchant", (await me.Content.ReadFromJsonAsync<SessionActor>())!.AccountType);
         using var bearerClient = factory.CreateHttpsClient(); bearerClient.DefaultRequestHeaders.Authorization = new("Bearer", first);
@@ -69,7 +70,7 @@ public sealed class SessionTests : IAsyncLifetime
     {
         await RegisterAsync();
         await using var https = new TestHttpsClient(database, clock);
-        using var login = await https.Client.PostAsJsonAsync("/api/v1/identity/login", Login());
+        using var login = await https.Client.PostBrowserJsonAsync("/api/v1/identity/login", Login());
         Assert.Equal(HttpStatusCode.NoContent, login.StatusCode);
         Assert.Equal("https", https.Address.Scheme);
         foreach (var header in login.Headers.GetValues("Set-Cookie"))
@@ -84,7 +85,7 @@ public sealed class SessionTests : IAsyncLifetime
         var before = https.Cookies.GetCookies(https.Address)[IdentityAuthentication.RefreshCookie]!.Value;
         Assert.True(https.Cookies.GetCookieHeader(new UriBuilder(https.Address) { Scheme = "http" }.Uri).Length == 0, "Secure credentials were exposed to HTTP.");
         using (var me = await https.Client.GetAsync("/api/v1/identity/me")) Assert.Equal(HttpStatusCode.OK, me.StatusCode);
-        using (var refresh = await https.Client.PostAsync("/api/v1/identity/refresh", null))
+        using (var refresh = await https.Client.PostBrowserAsync("/api/v1/identity/refresh"))
         { Assert.Equal(HttpStatusCode.NoContent, refresh.StatusCode); Assert.True((await refresh.Content.ReadAsStringAsync()).Length == 0, "Refresh body must be empty."); }
         Assert.False(before == https.Cookies.GetCookies(https.Address)[IdentityAuthentication.RefreshCookie]!.Value, "Refresh credential did not rotate.");
         using (var me = await https.Client.GetAsync("/api/v1/identity/me")) Assert.Equal(HttpStatusCode.OK, me.StatusCode);
@@ -93,7 +94,7 @@ public sealed class SessionTests : IAsyncLifetime
     [Fact]
     public async Task Concurrent_rotation_issues_one_success_then_replay_revokes_that_entire_family()
     {
-        await RegisterAsync(); using var login = await client.PostAsJsonAsync("/api/v1/identity/login", Login());
+        await RegisterAsync(); using var login = await client.PostBrowserJsonAsync("/api/v1/identity/login", Login());
         var refresh = Cookie(login, IdentityAuthentication.RefreshCookie); var access = Cookie(login, IdentityAuthentication.AccessCookie);
         var results = await Task.WhenAll(WithCookieAsync("/api/v1/identity/refresh", IdentityAuthentication.RefreshCookie, refresh),
             WithCookieAsync("/api/v1/identity/refresh", IdentityAuthentication.RefreshCookie, refresh));
@@ -117,7 +118,7 @@ public sealed class SessionTests : IAsyncLifetime
     [InlineData("future")]
     public async Task Actual_authentication_rejects_invalid_signature_issuer_audience_algorithm_or_time(string invalid)
     {
-        await RegisterAsync(); using var login = await client.PostAsJsonAsync("/api/v1/identity/login", Login());
+        await RegisterAsync(); using var login = await client.PostBrowserJsonAsync("/api/v1/identity/login", Login());
         var original = new JwtSecurityTokenHandler().ReadJwtToken(Cookie(login, IdentityAuthentication.AccessCookie));
         var config = TestIdentityConfiguration.Create(database.ConnectionString, database.IdentifierKey);
         var now = clock.GetUtcNow();
@@ -136,7 +137,7 @@ public sealed class SessionTests : IAsyncLifetime
     [Fact]
     public async Task Access_expiry_refresh_idle_expiry_and_database_revocation_apply_on_the_next_request()
     {
-        await RegisterAsync(); using var login = await client.PostAsJsonAsync("/api/v1/identity/login", Login());
+        await RegisterAsync(); using var login = await client.PostBrowserJsonAsync("/api/v1/identity/login", Login());
         var access = Cookie(login, IdentityAuthentication.AccessCookie); var refresh = Cookie(login, IdentityAuthentication.RefreshCookie);
         clock.Advance(TimeSpan.FromMinutes(5));
         using (var expired = await WithCookieAsync("/api/v1/identity/me", IdentityAuthentication.AccessCookie, access, false)) Assert.Equal(HttpStatusCode.Unauthorized, expired.StatusCode);
@@ -146,7 +147,7 @@ public sealed class SessionTests : IAsyncLifetime
         await using (var context = database.CreateContext()) { var session = await context.Set<AccountSession>().SingleAsync(); session.Revoke(clock.GetUtcNow()); await context.SaveChangesAsync(); }
         using (var revoked = await WithCookieAsync("/api/v1/identity/me", IdentityAuthentication.AccessCookie, nextAccess, false)) Assert.Equal(HttpStatusCode.Unauthorized, revoked.StatusCode);
         using (var revokedRefresh = await WithCookieAsync("/api/v1/identity/refresh", IdentityAuthentication.RefreshCookie, nextRefresh)) Assert.Equal(HttpStatusCode.Unauthorized, revokedRefresh.StatusCode);
-        using var newLogin = await client.PostAsJsonAsync("/api/v1/identity/login", Login());
+        using var newLogin = await client.PostBrowserJsonAsync("/api/v1/identity/login", Login());
         var idle = Cookie(newLogin, IdentityAuthentication.RefreshCookie); clock.Advance(TimeSpan.FromDays(7));
         using var idleResponse = await WithCookieAsync("/api/v1/identity/refresh", IdentityAuthentication.RefreshCookie, idle); Assert.Equal(HttpStatusCode.Unauthorized, idleResponse.StatusCode);
     }
@@ -155,13 +156,13 @@ public sealed class SessionTests : IAsyncLifetime
     public async Task Five_wrong_passwords_persist_lockout_and_unknown_credentials_have_the_same_safe_response()
     {
         await RegisterAsync();
-        for (var count = 0; count < 5; count++) { using var wrong = await client.PostAsJsonAsync("/api/v1/identity/login", Login(secret: "wrong-test-password")); Assert.Equal(HttpStatusCode.Unauthorized, wrong.StatusCode); }
-        using (var locked = await client.PostAsJsonAsync("/api/v1/identity/login", Login())) Assert.Equal(HttpStatusCode.Unauthorized, locked.StatusCode);
-        using (var unknown = await client.PostAsJsonAsync("/api/v1/identity/login", new { accountType = "Customer", identifier = "unknown-" + Email, password }))
+        for (var count = 0; count < 5; count++) { using var wrong = await client.PostBrowserJsonAsync("/api/v1/identity/login", Login(secret: "wrong-test-password")); Assert.Equal(HttpStatusCode.Unauthorized, wrong.StatusCode); }
+        using (var locked = await client.PostBrowserJsonAsync("/api/v1/identity/login", Login())) Assert.Equal(HttpStatusCode.Unauthorized, locked.StatusCode);
+        using (var unknown = await client.PostBrowserJsonAsync("/api/v1/identity/login", new { accountType = "Customer", identifier = "unknown-" + Email, password }))
         { Assert.Equal(HttpStatusCode.Unauthorized, unknown.StatusCode); Assert.False((await unknown.Content.ReadAsStringAsync()).Contains(password, StringComparison.Ordinal)); }
         await using (var context = database.CreateContext()) { Assert.Empty(await context.Set<AccountSession>().ToArrayAsync()); Assert.NotNull((await context.Set<ApplicationUser>().SingleAsync()).LockoutEnd); }
         clock.Advance(TimeSpan.FromMinutes(15));
-        using var success = await client.PostAsJsonAsync("/api/v1/identity/login", Login()); Assert.Equal(HttpStatusCode.NoContent, success.StatusCode);
+        using var success = await client.PostBrowserJsonAsync("/api/v1/identity/login", Login()); Assert.Equal(HttpStatusCode.NoContent, success.StatusCode);
         using var http = factory.CreateClient(new() { BaseAddress = new("http://localhost"), HandleCookies = false });
         using var insecure = await http.PostAsJsonAsync("/api/v1/identity/login", Login()); Assert.Equal(HttpStatusCode.Forbidden, insecure.StatusCode); Assert.False(insecure.Headers.Contains("Set-Cookie"));
     }
@@ -183,7 +184,7 @@ public sealed class SessionTests : IAsyncLifetime
     [Fact]
     public async Task SQL_session_and_refresh_survive_host_restart_with_stable_keys()
     {
-        await RegisterAsync(); using var login = await client.PostAsJsonAsync("/api/v1/identity/login", Login());
+        await RegisterAsync(); using var login = await client.PostBrowserJsonAsync("/api/v1/identity/login", Login());
         var access = Cookie(login, IdentityAuthentication.AccessCookie); var refresh = Cookie(login, IdentityAuthentication.RefreshCookie);
         client.Dispose(); await factory.DisposeAsync();
         factory = new(database, clock); client = factory.CreateHttpsClient();
@@ -200,11 +201,11 @@ public sealed class SessionTests : IAsyncLifetime
     public async Task Merchant_can_use_normalized_username_or_email_while_customer_uses_email()
     {
         await RegisterAsync(); await RegisterAsync("merchants");
-        using (var byName = await client.PostAsJsonAsync("/api/v1/identity/login", new { accountType = "Merchant", identifier = name.ToUpperInvariant(), password }))
+        using (var byName = await client.PostBrowserJsonAsync("/api/v1/identity/login", new { accountType = "Merchant", identifier = name.ToUpperInvariant(), password }))
             Assert.Equal(HttpStatusCode.NoContent, byName.StatusCode);
         using (var me = await client.GetAsync("/api/v1/identity/me")) Assert.Equal("Merchant", (await me.Content.ReadFromJsonAsync<SessionActor>())!.AccountType);
-        using (var byEmail = await client.PostAsJsonAsync("/api/v1/identity/login", Login("Merchant"))) Assert.Equal(HttpStatusCode.NoContent, byEmail.StatusCode);
-        using var customerName = await client.PostAsJsonAsync("/api/v1/identity/login", new { accountType = "Customer", identifier = name, password });
+        using (var byEmail = await client.PostBrowserJsonAsync("/api/v1/identity/login", Login("Merchant"))) Assert.Equal(HttpStatusCode.NoContent, byEmail.StatusCode);
+        using var customerName = await client.PostBrowserJsonAsync("/api/v1/identity/login", new { accountType = "Customer", identifier = name, password });
         Assert.Equal(HttpStatusCode.BadRequest, customerName.StatusCode);
     }
 }

@@ -30,8 +30,8 @@ public sealed class RegistrationTests(SqlDatabase database) : IClassFixture<SqlD
         await using var factory = new IdentityApiFactory(database, clock);
         using var client = factory.CreateHttpsClient();
         var body = new { username = details.Name, email = details.Email, password = details.Password, acceptTerms = true, accountType = "Admin", roles = new[] { "Admin" }, userId = suppliedId };
-        using var customer = await client.PostAsJsonAsync("/api/v1/identity/customers/register", body);
-        using var merchant = await client.PostAsJsonAsync("/api/v1/identity/merchants/register", body);
+        using var customer = await client.PostBrowserJsonAsync("/api/v1/identity/customers/register", body);
+        using var merchant = await client.PostBrowserJsonAsync("/api/v1/identity/merchants/register", body);
         foreach (var response in new[] { customer, merchant })
         {
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -63,10 +63,18 @@ public sealed class RegistrationTests(SqlDatabase database) : IClassFixture<SqlD
         await using var factory = new IdentityApiFactory(database);
         using var client = factory.CreateHttpsClient();
         var body = new { username = details.Name, email = details.Email, password = details.Password, acceptTerms = true };
-        var responses = await Task.WhenAll(Enumerable.Range(0, 6).Select(_ => client.PostAsJsonAsync("/api/v1/identity/merchants/register", body)));
+        async Task<HttpResponseMessage> FromPeerAsync(int index)
+        {
+            using var peer = new HttpClient(factory.Server.CreateHandler(context => context.Connection.RemoteIpAddress = IPAddress.Parse("192.0.2." + (index + 1))))
+            { BaseAddress = new("https://localhost") };
+            using var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/identity/merchants/register") { Content = JsonContent.Create(body) };
+            await BrowserRequests.AddCsrfAsync(peer, request, rawCookie: "");
+            return await peer.SendAsync(request);
+        }
+        var responses = await Task.WhenAll(Enumerable.Range(0, 6).Select(FromPeerAsync));
         foreach (var response in responses) { using (response) { Assert.Equal(HttpStatusCode.NoContent, response.StatusCode); Assert.Equal("", await response.Content.ReadAsStringAsync()); } }
-        using var duplicateName = await client.PostAsJsonAsync("/api/v1/identity/merchants/register", new { username = details.Name.ToUpperInvariant(), email = "other-" + details.Email, password = details.Password, acceptTerms = true });
-        using var duplicateEmail = await client.PostAsJsonAsync("/api/v1/identity/merchants/register", new { username = "other" + details.Name, email = details.Email.ToUpperInvariant(), password = details.Password, acceptTerms = true });
+        using var duplicateName = await client.PostBrowserJsonAsync("/api/v1/identity/merchants/register", new { username = details.Name.ToUpperInvariant(), email = "other-" + details.Email, password = details.Password, acceptTerms = true });
+        using var duplicateEmail = await client.PostBrowserJsonAsync("/api/v1/identity/merchants/register", new { username = "other" + details.Name, email = details.Email.ToUpperInvariant(), password = details.Password, acceptTerms = true });
         Assert.Equal(HttpStatusCode.NoContent, duplicateName.StatusCode);
         Assert.Equal(HttpStatusCode.NoContent, duplicateEmail.StatusCode);
         await using var context = database.CreateContext();
@@ -88,7 +96,7 @@ public sealed class RegistrationTests(SqlDatabase database) : IClassFixture<SqlD
         var password = invalid == "password" ? "secret-short" : details.Password;
         await using var factory = new IdentityApiFactory(database);
         using var client = factory.CreateHttpsClient();
-        using var response = await client.PostAsJsonAsync("/api/v1/identity/customers/register", new
+        using var response = await client.PostBrowserJsonAsync("/api/v1/identity/customers/register", new
         {
             username = name,
             email = invalid == "email" ? "invalid-email" : details.Email,
@@ -114,7 +122,7 @@ public sealed class RegistrationTests(SqlDatabase database) : IClassFixture<SqlD
             services.Replace(ServiceDescriptor.Scoped<IMerchantAccounts, FailingMerchants>());
         });
         using var client = factory.CreateHttpsClient();
-        using var response = await client.PostAsJsonAsync("/api/v1/identity/merchants/register", new { username = details.Name, email = details.Email, password = details.Password, acceptTerms = true });
+        using var response = await client.PostBrowserJsonAsync("/api/v1/identity/merchants/register", new { username = details.Name, email = details.Email, password = details.Password, acceptTerms = true });
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         Assert.DoesNotContain("test-only-failure-secret", await response.Content.ReadAsStringAsync());
         await using var context = database.CreateContext();
@@ -139,8 +147,8 @@ public sealed class RegistrationTests(SqlDatabase database) : IClassFixture<SqlD
             await context.SaveChangesAsync();
         }
         var body = new { username = details.Name, email = details.Email, password = details.Password, acceptTerms = true };
-        using var customer = await client.PostAsJsonAsync("/api/v1/identity/customers/register", body);
-        using var merchant = await client.PostAsJsonAsync("/api/v1/identity/merchants/register", body);
+        using var customer = await client.PostBrowserJsonAsync("/api/v1/identity/customers/register", body);
+        using var merchant = await client.PostBrowserJsonAsync("/api/v1/identity/merchants/register", body);
         Assert.Equal(HttpStatusCode.NoContent, customer.StatusCode);
         Assert.Equal(HttpStatusCode.NoContent, merchant.StatusCode);
         await using var verify = database.CreateContext();

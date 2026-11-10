@@ -239,6 +239,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S06 CSRF وRate Limiting
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S06.md).
+
 - الاعتمادات السابقة: [P02-S05](#p02-s05).
 - المخرج المطلوب: حماية العمليات المعدلة وسياسات OTP وLogin والبحث.
 - بوابة التحقق: V3 هجمات متوقعة و429 وCSRF failure.

@@ -5,6 +5,7 @@ using HawalekNow.Application.Shared.Results;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace HawalekNow.Api.Modules.Identity;
 
@@ -12,6 +13,7 @@ namespace HawalekNow.Api.Modules.Identity;
 public sealed class SessionsController(ISender sender, IAccountSessions sessions) : ControllerBase
 {
     [HttpPost("login"), AllowAnonymous]
+    [EnableRateLimiting(IdentityRateLimits.Login)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
@@ -21,6 +23,7 @@ public sealed class SessionsController(ISender sender, IAccountSessions sessions
         return Complete(await sender.Send(request, cancellationToken));
     }
     [HttpPost("refresh"), AllowAnonymous]
+    [EnableRateLimiting(IdentityRateLimits.Refresh)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status401Unauthorized, "application/problem+json")]
     public async Task<IActionResult> Refresh(CancellationToken cancellationToken)

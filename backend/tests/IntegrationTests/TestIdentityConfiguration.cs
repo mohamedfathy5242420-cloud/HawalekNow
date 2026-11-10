@@ -9,6 +9,7 @@ public static class TestIdentityConfiguration
     public static Dictionary<string, string?> Values(string connection, string key) => new()
     {
         ["ConnectionStrings:Application"] = connection,
+        ["Security:KeyRingPath"] = Path.Combine(Path.GetTempPath(), "HawalekNow-Unused-Keys-For-Ephemeral-Test-Provider"),
         ["Jwt:SigningKey"] = Convert.ToBase64String(HMACSHA256.HashData(Convert.FromBase64String(key), System.Text.Encoding.UTF8.GetBytes("test-jwt"))),
         ["Jwt:Issuer"] = "hawaleknow-test",
         ["Jwt:Audience"] = "hawaleknow-test-client",

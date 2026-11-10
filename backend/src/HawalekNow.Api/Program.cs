@@ -1,5 +1,6 @@
 using HawalekNow.Api.Shared.Diagnostics;
 using HawalekNow.Api.Modules.Identity;
+using HawalekNow.Api.Shared.Security;
 using HawalekNow.Api.Shared.Errors;
 using HawalekNow.Api.Shared.OpenApi;
 using HawalekNow.Api.Shared.Routing;
@@ -42,6 +43,7 @@ builder.Services.AddSerilog(configuration => configuration.ConfigureSafePipeline
     preserveStaticLogger: true);
 builder.Services.AddApplication();
 builder.Services.AddIdentityAuthentication();
+builder.Services.AddBrowserSecurity().AddIdentityRateLimits();
 builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme).Configure<SessionTokens, TimeProvider>(
     (options, tokens, clock) => options.TokenValidationParameters = tokens.Validation(clock));
 builder.Services.AddPersistence(builder.Configuration).AddIdentityPersistence().AddMerchantAccounts().AddBackgroundProcessing();
@@ -51,6 +53,8 @@ builder.Services.AddOpenApi("v1", options => options.AddDocumentTransformer<ApiD
 var app = builder.Build();
 
 app.UseApiErrorHandling();
+app.UseRouting();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.Use(async (context, next) =>

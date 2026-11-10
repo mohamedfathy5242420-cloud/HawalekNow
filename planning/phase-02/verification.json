@@ -209,10 +209,78 @@
       "exitCode": 0,
       "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1; ./planning/test-phase-gates.ps1 (separate processes); git diff --check",
       "detail": "Stable documentation baseline passed; 46 original P01 +14 P02 rejection cases retained. Prior snapshot-copy failure recorded."
+    },
+    {
+      "name": "S06InitialTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -Filter BrowserSecurity/Registration/OTP/Session",
+      "detail": "25 Integration failed, 0 passed; AutoValidateAntiforgeryToken ViewFeatures filter missing under AddControllers caused safe500 even for CSRF GET. Replaced attribute with API authorization filter calling IAntiforgery.ValidateRequestAsync and existing safe400 contract; no logging/schema/test weakening."
+    },
+    {
+      "name": "S06CacheAssertionTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -Filter Token_requires_its_own_cookie/Separate_routes",
+      "detail": "Registration passed after filter fix; CSRF test failed only because equivalent Cache-Control directives appeared in reverse order. Assertion now checks NoCache and NoStore flags; no security expectation removed."
+    },
+    {
+      "name": "S06KeyRingTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -Filter BrowserSecurity/Registration/OTP/Session",
+      "detail": "25 passed/1 failed; explicit key-ring restart test found no key files in owned directory because startup read configuration before WebApplicationFactory providers. KeyManagementOptions now resolve final configuration through DI; startup validation retained. Framework Development default key ring was not deleted."
+    },
+    {
+      "name": "S06InitialFullTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +134 Integration +28 Unit passed; one plain-HTTP login assertion failed (500) because framework Secure-cookie verification rejects insecure transport with InvalidOperationException. Filter now explicitly rejects non-HTTPS mutation as existing403 before verifier; Secure remains enabled and original S05 assertion restored."
+    },
+    {
+      "name": "S06Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 (Release build included)",
+      "detail": "All solution projects compiled; no compiler warnings/errors in final run"
+    },
+    {
+      "name": "S06Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +135 Integration +28 Unit =210; 0 failed/skipped; all original tests retained"
+    },
+    {
+      "name": "S06Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "BrowserSecurityTests and all existing SQL/HTTP/SMTP/worker tests via ./backend/test-p02.ps1",
+      "detail": "Real Program + SQL migrations/transactions; rejected CSRF leaves DB unchanged; valid principal-bound mutations and persistent key-ring restart; quotas and spoofed peer headers; Kestrel HTTPS; no new migration"
+    },
+    {
+      "name": "S06LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel"
+    },
+    {
+      "name": "S06Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S06DocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1; ./planning/test-phase-gates.ps1 (separate processes); git diff --check",
+      "detail": "507 links/anchors and sequential P02 handoffs valid; all 46 original P01 and14 P02 rejection cases retained; TARGET_SCHEDULE untracked with original SHA256"
     }
   ],
   "tests": {
-    "passed": 193,
+    "passed": 210,
     "failed": 0,
     "skipped": 0
   },
@@ -236,6 +304,18 @@
       "event": "pull_request",
       "conclusion": "success",
       "coverage": "S01-S04 only",
+      "jobs": [
+        "Restore, build, tests and format",
+        "Documentation and Git rules",
+        "API and SQL image builds"
+      ]
+    },
+    {
+      "runId": 42912520689,
+      "headSha": "9d97f8297b082cb9e0857d98ed1795e1b0da0c71",
+      "event": "pull_request",
+      "conclusion": "success",
+      "coverage": "S01-S05 only",
       "jobs": [
         "Restore, build, tests and format",
         "Documentation and Git rules",
