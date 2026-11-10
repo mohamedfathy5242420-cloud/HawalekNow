@@ -6,6 +6,7 @@ namespace HawalekNow.Infrastructure.Modules.Identity;
 public sealed class ApplicationUser : IdentityUser<Guid>
 {
     public AccountType AccountType { get; private set; }
+    public AccountAccessStatus AccessStatus { get; private set; } = AccountAccessStatus.Active;
     public byte[] RowVersion { get; private set; } = [];
     public DateTimeOffset? TermsAcceptedAt { get; private set; }
 

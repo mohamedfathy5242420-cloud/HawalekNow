@@ -34,6 +34,7 @@ public static class IdentityPersistenceRegistration
         services.AddSingleton<SessionTokens>();
         services.AddSingleton<LoginTiming>();
         services.AddScoped<IAccountSessions, AccountSessions>();
+        services.AddScoped<IIdentityAccountQueries, IdentityAccountQueries>();
         services.AddScoped<IdentityStateLock>();
         services.AddScoped<EmailConfirmationService>();
         services.AddScoped<IEmailConfirmation>(provider => provider.GetRequiredService<EmailConfirmationService>());

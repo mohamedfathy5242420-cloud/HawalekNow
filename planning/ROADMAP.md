@@ -249,6 +249,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S07 Authorization policies
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S07.md).
+
 - الاعتمادات السابقة: [P02-S06](#p02-s06).
 - المخرج المطلوب: AdminOnly وVerifiedCustomer وApprovedMerchant.
 - بوابة التحقق: V2 Policies وV3 matrix للصلاحيات.

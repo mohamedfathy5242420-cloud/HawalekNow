@@ -19,7 +19,8 @@ public sealed class EmailConfirmationService(HawalekDbContext context, ILookupNo
         {
             await stateLock.AcquireAsync(user.Id, cancellationToken);
             await context.Entry(user).ReloadAsync(cancellationToken);
-            if (!user.EmailConfirmed) await IssueInsideTransactionAsync(user, OtpPurpose.EmailConfirmation, cancellationToken);
+            if (context.Entry(user).State != EntityState.Detached && user.AccessStatus == AccountAccessStatus.Active && !user.EmailConfirmed)
+                await IssueInsideTransactionAsync(user, OtpPurpose.EmailConfirmation, cancellationToken);
         }
         await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken);
         return Result.Success();
@@ -31,8 +32,9 @@ public sealed class EmailConfirmationService(HawalekDbContext context, ILookupNo
         var user = await FindAsync(accountType, email, cancellationToken);
         if (user is null) return Invalid();
         await stateLock.AcquireAsync(user.Id, cancellationToken); await context.Entry(user).ReloadAsync(cancellationToken);
+        if (context.Entry(user).State == EntityState.Detached) return Invalid();
         var challenge = await context.Set<OtpChallenge>().SingleOrDefaultAsync(value => value.UserId == user.Id && value.Purpose == OtpPurpose.EmailConfirmation, cancellationToken);
-        var accepted = !user.EmailConfirmed && challenge is not null && challenge.Consume(secrets.Matches(challenge, code), clock.GetUtcNow());
+        var accepted = user.AccessStatus == AccountAccessStatus.Active && !user.EmailConfirmed && challenge is not null && challenge.Consume(secrets.Matches(challenge, code), clock.GetUtcNow());
         if (accepted) user.EmailConfirmed = true;
         await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken);
         return accepted ? Result.Success() : Invalid();
@@ -42,6 +44,7 @@ public sealed class EmailConfirmationService(HawalekDbContext context, ILookupNo
     {
         if (context.Database.CurrentTransaction is null) throw new InvalidOperationException("Challenge issuance requires a SQL transaction.");
         await stateLock.AcquireAsync(user.Id, cancellationToken);
+        if (purpose == OtpPurpose.AccountRecovery ? user.AccessStatus != AccountAccessStatus.Deleted || user.AccountType == AccountType.Admin : user.AccessStatus != AccountAccessStatus.Active) return false;
         var challenge = await context.Set<OtpChallenge>().SingleOrDefaultAsync(value => value.UserId == user.Id && value.Purpose == purpose, cancellationToken);
         if (challenge is null) { challenge = OtpChallenge.Create(user.Id, purpose); context.Add(challenge); }
         var code = secrets.Generate(); var generation = Guid.CreateVersion7();

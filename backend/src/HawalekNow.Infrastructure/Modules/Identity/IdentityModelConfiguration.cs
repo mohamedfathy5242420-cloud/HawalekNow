@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using HawalekNow.Domain.Modules.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,7 +11,12 @@ public sealed class IdentityModelConfiguration : IEntityTypeConfiguration<Applic
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
-        builder.ToTable("Users", "identity", table => table.HasCheckConstraint("CK_Users_AccountType", "[AccountType] IN (1,2,3)"));
+        builder.ToTable("Users", "identity", table =>
+        {
+            table.HasCheckConstraint("CK_Users_AccountType", "[AccountType] IN (1,2,3)");
+            table.HasCheckConstraint("CK_Users_AccessStatus", "[AccessStatus] IN (1,2,3)");
+        });
+        builder.Property(user => user.AccessStatus).HasDefaultValue(AccountAccessStatus.Active);
         builder.HasKey(user => user.Id);
         builder.Property(user => user.UserName).HasMaxLength(64).IsRequired();
         builder.Property(user => user.NormalizedUserName).HasMaxLength(64).UseCollation("Latin1_General_100_BIN2").IsRequired();

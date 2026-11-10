@@ -3,7 +3,7 @@
 آخر تحديث: 2026-11-11
 
 - Phase: P02
-- Step: P02-S06
+- Step: P02-S07
 - Status: InProgress
 - ExecutionMode: Phase
 - UserApproval: Pending
@@ -13,8 +13,8 @@
 - BaseMain: b7a502051ac52f06b57c541e24f4bdde270a3392
 - P03Status: NotStarted
 - Scope: تنفيذ P02-S01 إلى S09 بالتتابع وفق D012؛ لا دمج أو P03.
-- ActiveStepFile: planning/phase-02/steps/S06.md
-- NextStep: P02-S07 بعد نجاح تحقق S06 المطلوب؛ لا انتقال بعد فشل مانع.
+- ActiveStepFile: planning/phase-02/steps/S07.md
+- NextStep: P02-S08 بعد نجاح تحقق S07 المطلوب؛ لا انتقال بعد فشل مانع.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## تنفيذ P02 الجاري
@@ -30,6 +30,8 @@
 تحديث S05: [الدخول والجلسات](../planning/phase-02/steps/S05.md) Verified تقنيًا و[تسليم S06](../planning/phase-02/handoffs/S05-to-S06.md) InternalReady. 193 passed (47+118+28)، صفر failed/skipped، وlocked Restore وFormat verification ناجحتان. JWT وrefresh داخل HttpOnly Secure cookies فقط، بدوران ذري وإلغاء العائلة عند reuse والتحقق من SQL على كل طلب محمي. Kestrel/TLS حقيقية مع جذر اختبار خاص دون تعطيل Secure أو bypass؛ اختبار Merchant Username/Email وSQL lockout/config/restart ناجح. مخالفات حدود API وSchannel وإغلاق Worker وفشلها التاريخي وإصلاحها في S05؛ 47 اختبار معمارية بقيت كما هي. [CI S04 42849693832](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42849693832) نجحت بجميع Jobs على 1a8564b؛ لا تغطي S05 قبل رفعها. لا CSRF أو HTTP rate limits أو صلاحيات السياسات بعد؛ تكتمل بالتتابع قبل تسليم المرحلة. UserApproval وV4 Pending، ولا دمج أو P03.
 
 تحديث S06: [CSRF وحدود HTTP](../planning/phase-02/steps/S06.md) Verified تقنيًا و[تسليم S07](../planning/phase-02/handoffs/S06-to-S07.md) InternalReady. 210 passed (47+135+28)، صفر failed/skipped؛ locked Restore وFormat verification ناجحتان. كل mutations تتطلب HTTPS وCSRF framework، بما فيها anonymous registration/login/OTP، وScalar/OpenAPI تعرض header المطلوبة و400/403/429. quotas فعلية حسب peer؛ headers المزيفة لا تغير IP، وعدادات الحساب SQL باقية. key-ring persistence ورفض Production settings الناقصة مثبتان؛ لا مفاتيح اختبار باقية في مجلدها المملوك أو سر في Git. فشل التهيئة/config/HTTP والتصحيحات موثقة دون تخفيف الاختبارات. [CI S05 42912520689](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42912520689) على9d97f8297b082cb9e0857d98ed1795e1b0da0c71 ناجحة بكل Jobs؛ S06 تنتظر CI على رأسها الجديد. لا صلاحيات S07 أو reset/delete بعد؛ التنفيذ متتابع، والاعتماد البشري وV4 Pending.
+
+تحديث S07: [الصلاحيات والملكية](../planning/phase-02/steps/S07.md) Verified تقنيًا و[تسليم S08](../planning/phase-02/handoffs/S07-to-S08.md) InternalReady. 231 passed (47+156+28)، صفر failed/skipped؛ 14 صف matrix عبر Program/SQL، وowner filters وتغير الصلاحيات بنفسcookie ورفض claims/UserId/roles من العميل. Pending المؤكد يدخل setup دون نشر؛ Approved يدخل النشر؛ Suspended/Deleted وجلسة ملغاة401. Migration additive لحالة الوصول الافتراضيةActive وقيدSQL مطبقة على HawalekNow_Development بعد اختبار حفظ الصفوف؛ لا موافقات أو تعليق/حذف API مبكر. inactive OTP intents تُسقط دون إرسال؛ locked Restore وFormat verification ناجحتان. CI S06 على951f02c ناجحة في [42918478621](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42918478621)، وS07 تنتظر CI لرأسها الجديد. الاعتماد البشري وV4 Pending، ولا دمج أو P03.
 
 ## حالة إغلاق P01 السابقة — تاريخية
 

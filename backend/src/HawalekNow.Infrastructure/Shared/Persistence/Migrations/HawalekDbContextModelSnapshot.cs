@@ -153,6 +153,11 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<int>("AccessStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
                     b.Property<int>("AccountType")
                         .HasColumnType("int");
 
@@ -225,6 +230,8 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
 
                     b.ToTable("Users", "identity", t =>
                         {
+                            t.HasCheckConstraint("CK_Users_AccessStatus", "[AccessStatus] IN (1,2,3)");
+
                             t.HasCheckConstraint("CK_Users_AccountType", "[AccountType] IN (1,2,3)");
                         });
                 });

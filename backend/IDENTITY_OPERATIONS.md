@@ -82,3 +82,21 @@ Security__KeyRingPath يحدد مجلد DataProtection مطلقًا ثابتًا
 الحدود لكل عنوان اتصال في كل instance: تسجيل العميل والتاجر معًا5/10 دقائق، login10/دقيقة، طلب رمز5/15دقيقة، تحقق رمز20/10دقائق، refresh30/دقيقة. queue=0؛ الرفض429 مع ProblemDetails آمنة وRetry-After وcorrelation. عدادات SQL للمحاولات وresend والقفل تبقى مستقلة ودائمة، ولا تصفر بتغير IP أو إعادة تشغيل HTTP host. HTTP counters في الذاكرة ولا تدعي حدودًا موزعة أو حماية DDoS كاملة.
 
 IP من Connection.RemoteIpAddress فقط، مع توحيد IPv4-mapped IPv6؛ لا تفسر X-Forwarded-For أو X-Real-IP أو Forwarded من العميل. لا ForwardedHeaders middleware مفعلة هنا؛ نشر خلف proxy يحتاج إعدادًا مقصودًا لعناوين proxies والشبكات الموثوقة وHTTPS، ولم يُختبر لهذا النشر. اختبارات spoofing تغيّر headers ويبقى quota نفسها؛ peer آخر حقيقي في TestServer له partition مستقلة. اختبار التنافس الأصلي يسجل ستة طلبات من peer contexts مستقلة عبر Program مع CSRF صحيحة، لا يتجاوز limiter في الإنتاج. لا search endpoint أو سياسة بحث تجاري ضمن P02.
+
+## صلاحيات الحساب وموارد المالك
+
+| GET route تحت /api/v1 | السياسة والمخرج |
+| --- | --- |
+| identity/me | أي جلسة نشطة؛ UserId/SessionId/AccountType/EmailConfirmed الحالية |
+| identity/sessions | جلسات المالك النشطة، حتى50 مع الحالية أولًا؛ تواريخ وRevokedAt وIsCurrent فقط |
+| identity/sessions/{sessionId} | تفاصيل جلسة المالك؛ غير المملوكة أو المفقودة404 حتى للـAdmin |
+| identity/customer-profile | VerifiedCustomer؛ UserId/Username/Email للعميل المؤكد نفسه |
+| merchants/account | VerifiedMerchantSetup؛ حالة وإمكانات ملف التاجر الخاص به |
+| merchants/account/publishing-access | ApprovedMerchant؛ استحقاق نشر لملف التاجر المعتمد نفسه |
+| identity/admin/session | AdminOnly مؤكد البريد؛ معلومات جلسة Admin الحالية |
+
+الزائر401، والنوع غير المطابق أو البريد غير المؤكد403. Pending وChangesRequested المؤكدتان تدخلان تجهيز الحساب؛ Approved المؤكدة تدخل التجهيز واستحقاق النشر؛ Rejected تدخل me/sessions فقط. Merchant Suspended أو User AccessStatus=Suspended/Deleted يرفض login/refresh وطلبات cookie سابقة401. دعم حالة Deleted هنا guard للمصادقة؛ S09 تضيف انتقال الحذف و30 يومًا والجدولة. لا يتحول Pending إلى Approved بتأكيد البريد.
+
+AccessStatus column من Identity لحالة الوصول العامة، وMerchantApprovalStatus تظل ملك Merchants. Metadata authorization تقرأ النوع وتأكيد البريد من SQL، وMerchant handler يقرأ العقد العام scoped في كل طلب؛ تغيير SQL يؤثر على الطلب التالي دون إصدار JWT جديدة. الطلب الذي بدأ قبل تغيير الحالة قد يكمل؛ mutations الحرجة اللاحقة تحتاج guard داخل معاملتها أيضًا. لا Roles أو UserId من body/query تعطي صلاحيات، ولا تؤخذ claims إضافية من JWT بدل actor المبني من SQL. ملكية الجلسة جزء من WHERE مع UserId الموثوق، وquery identifier لحساب آخر لا يغير المالك.
+
+الاختبارات تنشئ حالات Approved/ChangesRequested/Rejected/Suspended/Deleted صراحةً في قواعد SQL المملوكة لها، دون approval أو تعليق أو حذف API في S07. أسماء السياسات public contract داخل Application.Identity.Contracts، والتنفيذ Framework في Api.Identity؛ Merchants API تستخدم العقد فقط. لا Framework/EF في Application أو Domain، ولا Entity من وحدة أخرى.

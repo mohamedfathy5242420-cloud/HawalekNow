@@ -277,10 +277,50 @@
       "exitCode": 0,
       "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1; ./planning/test-phase-gates.ps1 (separate processes); git diff --check",
       "detail": "507 links/anchors and sequential P02 handoffs valid; all 46 original P01 and14 P02 rejection cases retained; TARGET_SCHEDULE untracked with original SHA256"
+    },
+    {
+      "name": "S07Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1; ./backend/test-p02.ps1",
+      "detail": "Initial explicit build and final test build succeeded without compiler warnings/errors"
+    },
+    {
+      "name": "S07Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +156 Integration +28 Unit =231; 0 failed/skipped; original tests and assertions retained"
+    },
+    {
+      "name": "S07Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "AuthorizationTests/PersistenceTests via ./backend/test-p02.ps1; dotnet ef database update --project backend/src/HawalekNow.Infrastructure --configuration Release --no-build",
+      "detail": "14 HTTP matrix rows and SQL live-state/ownership, inactive OTP, FK-linked session binding, forged claims, status constraint; legacy migration preserves identity and defaults active; additive migration applied to named development DB"
+    },
+    {
+      "name": "S07LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel"
+    },
+    {
+      "name": "S07Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S07DocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1; ./planning/test-phase-gates.ps1 (separate processes); git diff --check",
+      "detail": "513 local links/anchors; sequential handoffs; all46 P01 and14 P02 rejection cases; TARGET_SCHEDULE original hash and untracked"
     }
   ],
   "tests": {
-    "passed": 210,
+    "passed": 231,
     "failed": 0,
     "skipped": 0
   },
@@ -316,6 +356,18 @@
       "event": "pull_request",
       "conclusion": "success",
       "coverage": "S01-S05 only",
+      "jobs": [
+        "Restore, build, tests and format",
+        "Documentation and Git rules",
+        "API and SQL image builds"
+      ]
+    },
+    {
+      "runId": 42918478621,
+      "headSha": "951f02caef38d96373d86e7a59b31123b277a84f",
+      "event": "pull_request",
+      "conclusion": "success",
+      "coverage": "S01-S06 only",
       "jobs": [
         "Restore, build, tests and format",
         "Documentation and Git rules",

@@ -1,5 +1,9 @@
 # حزم Backend والتوافق والتراخيص
 
+## إضافة P02-S07
+
+لا حزم أو نسخ جديدة. Authorization policies/requirements/handlers من Microsoft.AspNetCore.App القائم. راجعت [سياسات .NET10](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies?view=aspnetcore-10.0) و[ملكية الموارد](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/resource-based?view=aspnetcore-10.0). RequireClaim تعمل على principal يعاد بناؤه من SQL، وMerchant requirement تقرأ عقد Merchants العام في scoped handler، لا Entity أو Role يرسلها العميل. أسماء السياسات عقد Identity عام مستقل عن framework، وملكية الجلسات جزء من WHERE في query فعلية؛ لا يكفي وجود Authorize وحدها. الحزم/التراخيص119 كما في S05/S06؛ لا SDK/MediatR أو logging schema change.
+
 ## إضافة P02-S06
 
 لا NuGet package جديدة أو تغيير نسخة/SDK/MediatR. Antiforgery وDataProtection وRateLimiting وMVC filters من Microsoft.AspNetCore.App الموجود. روجعت [antiforgery لـ.NET10](https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-10.0)، [rate limiter](https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit?view=aspnetcore-10.0)، [proxy](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-10.0)، [DataProtection configuration](https://learn.microsoft.com/en-us/aspnet/core/security/data-protection/configuration/overview?view=aspnetcore-10.0) و[key storage](https://learn.microsoft.com/en-us/aspnet/core/security/data-protection/implementation/key-storage-providers?view=aspnetcore-10.0). Runtimeاختبارات الجهاز10.0.12 وSDK10.0.401 بقيت كما هي.

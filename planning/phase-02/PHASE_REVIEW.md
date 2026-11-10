@@ -19,4 +19,5 @@ NextStep: P03-S01
 | S04 | Verified؛ OTP وOutbox وHangfire SQL وMailpit/restart/lost ACK و174 اختبارًا ناجحًا | Pending |
 | S05 | Verified؛ SQL sessions وJWT cookie/rotation/replay وKestrel HTTPS و193 اختبارًا ناجحًا | Pending |
 | S06 | Verified؛ CSRF وHTTP quotas وproxy/key-ring/HTTPS checks؛ 210 اختبارًا ناجحًا | Pending |
-| S07–S09 | NotStarted | Pending |
+| S07 | Verified؛ سياسات و14 صف matrix وملكية session/Merchant و231 اختبارًا ناجحًا | Pending |
+| S08–S09 | NotStarted | Pending |

@@ -43,6 +43,7 @@ builder.Services.AddSerilog(configuration => configuration.ConfigureSafePipeline
     preserveStaticLogger: true);
 builder.Services.AddApplication();
 builder.Services.AddIdentityAuthentication();
+builder.Services.AddAccountPolicies();
 builder.Services.AddBrowserSecurity().AddIdentityRateLimits();
 builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme).Configure<SessionTokens, TimeProvider>(
     (options, tokens, clock) => options.TokenValidationParameters = tokens.Validation(clock));

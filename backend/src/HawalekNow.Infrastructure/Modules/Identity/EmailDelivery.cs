@@ -42,7 +42,10 @@ public sealed class EmailOtpHandler(HawalekDbContext context, PayloadProtection 
         var now = clock.GetUtcNow();
         var valid = await context.Set<OtpChallenge>().AsNoTracking().AnyAsync(value => value.UserId == payload.UserId && value.Purpose == payload.Purpose &&
             value.Generation == payload.Generation && value.ConsumedAt == null && value.ExpiresAt > now, cancellationToken);
-        if (!valid || !await context.Set<ApplicationUser>().AnyAsync(value => value.Id == payload.UserId, cancellationToken)) return OutboxHandlingResult.Suppressed;
+        var recovery = payload.Purpose == OtpPurpose.AccountRecovery;
+        if (!valid || !await context.Set<ApplicationUser>().AnyAsync(value => value.Id == payload.UserId &&
+            (recovery ? value.AccessStatus == AccountAccessStatus.Deleted && value.AccountType != AccountType.Admin : value.AccessStatus == AccountAccessStatus.Active), cancellationToken))
+            return OutboxHandlingResult.Suppressed;
         await transport.SendAsync(new(payload.Email, "HawalekNow verification code", $"Purpose: {payload.Purpose}\nCode: {payload.Code}\nExpires in ten minutes.\n", messageId), cancellationToken);
         return OutboxHandlingResult.Completed;
     }

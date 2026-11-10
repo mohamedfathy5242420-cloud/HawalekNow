@@ -32,6 +32,7 @@ public sealed class PersistenceTests(SqlDatabase database) : IClassFixture<SqlDa
         Assert.Equal(user.Email, after.Email);
         Assert.Equal(originalHash, after.PasswordHash);
         Assert.Null(after.TermsAcceptedAt);
+        Assert.Equal(AccountAccessStatus.Active, after.AccessStatus);
         var collation = await context.Database.SqlQueryRaw<string>("SELECT [collation_name] AS [Value] FROM sys.columns WHERE [object_id]=OBJECT_ID(N'[identity].[Users]') AND [name]=N'NormalizedEmail'").SingleAsync();
         Assert.Equal("Latin1_General_100_BIN2", collation);
     }

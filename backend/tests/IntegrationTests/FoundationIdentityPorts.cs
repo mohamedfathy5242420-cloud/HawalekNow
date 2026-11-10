@@ -9,7 +9,15 @@ namespace HawalekNow.IntegrationTests;
 public static class FoundationIdentityPorts
 {
     public static IServiceCollection AddFoundationIdentityPorts(this IServiceCollection services) =>
-        services.AddScoped<IAccountRegistration, UnusedRegistration>().AddScoped<IEmailConfirmation, UnusedEmail>().AddScoped<IAccountSessions, UnusedSessions>();
+        services.AddScoped<IAccountRegistration, UnusedRegistration>().AddScoped<IEmailConfirmation, UnusedEmail>().AddScoped<IAccountSessions, UnusedSessions>()
+            .AddScoped<IIdentityAccountQueries, UnusedQueries>();
+
+    private sealed class UnusedQueries : IIdentityAccountQueries
+    {
+        public Task<CustomerIdentityInfo?> CustomerIdentityAsync(Guid userId, CancellationToken cancellationToken) => throw new InvalidOperationException("An isolated foundation test invoked a business port.");
+        public Task<IReadOnlyList<AccountSessionInfo>> SessionsAsync(Guid userId, Guid currentSessionId, CancellationToken cancellationToken) => throw new InvalidOperationException("An isolated foundation test invoked a business port.");
+        public Task<AccountSessionInfo?> SessionAsync(Guid userId, Guid sessionId, Guid currentSessionId, CancellationToken cancellationToken) => throw new InvalidOperationException("An isolated foundation test invoked a business port.");
+    }
 
     private sealed class UnusedSessions : IAccountSessions
     {
