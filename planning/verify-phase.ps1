@@ -19,12 +19,30 @@ Expect $decision 'EffectiveFrom' 'P01-S07'
 Expect $decision 'ExecutionMode' 'Phase'
 Expect $state 'Phase' 'P01' '- '
 Expect $state 'ExecutionMode' 'Phase' '- '
-Expect $state 'UserApproval' 'Pending' '- '
-Expect $state 'V4' 'Pending' '- '
 $current = Field $state 'Step' '- '
 $status = Field $state 'Status' '- '
 Require ($current -in @('P01-S07', 'P01-S08')) 'Phase execution must remain in authorized P01 steps.'
-Require ($status -in @('InProgress', 'InReview')) 'Phase closure requires a separate recorded human approval.'
+Require ($status -in @('InProgress', 'InReview', 'Done')) 'Unsupported P01 state.'
+$closed = $status -eq 'Done'
+$approval = if ($closed) { 'Approved' } else { 'Pending' }
+$manual = if ($closed) { 'Deferred' } else { 'Pending' }
+Expect $state 'UserApproval' $approval '- '
+Expect $state 'V4' $approval '- '
+function Closure-Fields([string]$Text, [string]$Prefix = '') {
+    foreach ($pair in @(@('ApprovalDate', '2026-11-10'), @('ReviewedHead', '4b4d5a574dd459eda0e091311eab908439cb2fd0'), @('AcceptanceDecision', 'D013'), @('AcceptanceBasis', 'CodeTestsCI'))) { Expect $Text $pair[0] $pair[1] $Prefix }
+}
+if ($closed) {
+    Require ($current -eq 'P01-S08') 'Only completed S08 can close P01.'
+    Expect $state 'ReviewStatus' 'Approved' '- '
+    Expect $state 'P02Status' 'NotStarted' '- '
+    Closure-Fields $state '- '
+    $acceptance = [regex]::Match($decisions, '(?ms)^## D013 .*?(?=^## |\z)').Value
+    foreach ($pair in @(@('Status', 'Approved'), @('ApprovalDate', '2026-11-10'), @('ReviewedHead', '4b4d5a574dd459eda0e091311eab908439cb2fd0'), @('AcceptanceBasis', 'CodeTestsCI'), @('ClosureAuthorization', 'Approved'), @('MergeAuthorization', 'Approved'), @('P02Execution', 'NotStarted'))) { Expect $acceptance $pair[0] $pair[1] }
+    foreach ($field in @('UserScalarReview', 'UserPostmanReview', 'EducationalWalkthrough')) {
+        Expect $acceptance $field 'Deferred'
+        Expect $state $field 'Deferred' '- '
+    }
+}
 Expect $state 'ActiveStepFile' ("planning/phase-01/steps/" + $current.Substring(4) + '.md') '- '
 $evidence = Read-Record 'planning/phase-01/verification.json' | ConvertFrom-Json
 Require ($evidence.phase -eq 'P01') 'Evidence phase mismatch.'
@@ -52,10 +70,17 @@ $s08 = if (Test-Path -LiteralPath $s08Path) { Read-Record 'planning/phase-01/ste
 foreach ($entry in @(@{Text = $s07; Id = 'S07'; Previous = 'P01-S06'; Next = 'P01-S08'}, @{Text = $s08; Id = 'S08'; Previous = 'P01-S07'; Next = 'PhaseReview'})) {
     if (-not $entry.Text) { continue }
     $text = $entry.Text
-    foreach ($pair in @(@('Phase', 'P01'), @('PreviousStep', $entry.Previous), @('NextStep', $entry.Next), @('ExecutionMode', 'Phase'), @('UserApproval', 'Pending'), @('ReviewStatus', 'Pending'), @('V4', 'Pending'))) {
+    foreach ($pair in @(@('Phase', 'P01'), @('PreviousStep', $entry.Previous), @('NextStep', $entry.Next), @('ExecutionMode', 'Phase'), @('UserApproval', $approval), @('ReviewStatus', $approval), @('V4', $approval))) {
         Expect $text $pair[0] $pair[1]
     }
-    Require ((Field $text 'Status') -in @('InProgress', 'InReview')) 'Unapproved step cannot claim Done.'
+    if ($closed) {
+        Expect $text 'Status' 'Done'
+        Expect $text 'ExecutionStatus' 'Verified'
+        Expect $text 'VerificationStatus' 'Passed'
+        Closure-Fields $text
+    } else {
+        Require ((Field $text 'Status') -in @('InProgress', 'InReview')) 'Unapproved step cannot claim Done.'
+    }
     $execution = Field $text 'ExecutionStatus'
     $verification = Field $text 'VerificationStatus'
     Require ($execution -in @('InProgress', 'Verified')) 'Invalid internal execution state.'
@@ -66,14 +91,14 @@ foreach ($entry in @(@{Text = $s07; Id = 'S07'; Previous = 'P01-S06'; Next = 'P0
         Require ($text.Contains($heading.Value.Trim())) "Missing step heading: $($entry.Id)"
     }
 }
-Expect $s07 'Status' 'InReview'
+Expect $s07 'Status' $(if ($closed) { 'Done' } else { 'InReview' })
 Expect $s07 'ExecutionStatus' 'Verified'
 Expect $s07 'VerificationStatus' 'Passed'
-foreach ($field in @('UserScalarReview', 'UserPostmanReview')) { Expect $s07 $field 'Pending' }
+foreach ($field in @('UserScalarReview', 'UserPostmanReview')) { Expect $s07 $field $manual }
 foreach ($field in @('ScalarBrowserVerification', 'PostmanVerification')) { Expect $s07 $field 'Passed' }
 Expect $s07 'LoggingPolicy' 'PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete'
 $internal = Read-Record 'planning/phase-01/handoffs/S07-to-S08.md'
-foreach ($pair in @(@('From', 'P01-S07'), @('To', 'P01-S08'), @('Status', 'InternalReady'), @('ExecutionMode', 'Phase'), @('UserApproval', 'Pending'), @('ReviewStatus', 'Pending'))) { Expect $internal $pair[0] $pair[1] }
+foreach ($pair in @(@('From', 'P01-S07'), @('To', 'P01-S08'), @('Status', $(if ($closed) { 'Ready' } else { 'InternalReady' })), @('ExecutionMode', 'Phase'), @('UserApproval', $approval), @('ReviewStatus', $approval))) { Expect $internal $pair[0] $pair[1] }
 if ($current -eq 'P01-S08') { Require ([bool]$s08) 'S08 must have its execution record.' }
 if ($s08 -and (Field $s08 'ExecutionStatus') -eq 'Verified') {
     Passed @('Restore', 'Build', 'Tests', 'Format', 'Roadmap', 'GitRules', 'PhaseGates', 'Diff', 'DockerApi', 'DockerSql', 'DockerSmoke', 'CI')
@@ -90,14 +115,25 @@ if ($s08 -and (Field $s08 'ExecutionStatus') -eq 'Verified') {
 $review = Read-Record 'planning/phase-01/PHASE_REVIEW.md'
 Expect $review 'Phase' 'P01'
 Expect $review 'Status' $status
-foreach ($field in @('UserApproval', 'ReviewStatus', 'V4', 'UserScalarReview', 'UserPostmanReview', 'EducationalWalkthrough')) { Expect $review $field 'Pending' }
+foreach ($field in @('UserApproval', 'ReviewStatus', 'V4')) { Expect $review $field $approval }
+foreach ($field in @('UserScalarReview', 'UserPostmanReview', 'EducationalWalkthrough')) { Expect $review $field $manual }
+if ($closed) { Closure-Fields $review; Closure-Fields $internal }
 if ($status -eq 'InReview') {
     Require ([bool]$s08) 'Phase review requires S08 execution.'
     Expect $s08 'ExecutionStatus' 'Verified'
     Expect $s08 'Status' 'InReview'
 }
 $handoff = Read-Record 'planning/phase-01/handoffs/S08-to-P02.md'
-foreach ($pair in @(@('From', 'P01-S08'), @('To', 'P02-S01'), @('Status', 'Draft'), @('UserApproval', 'Pending'), @('ReviewStatus', 'Pending'))) { Expect $handoff $pair[0] $pair[1] }
+foreach ($pair in @(@('From', 'P01-S08'), @('To', 'P02-S01'), @('Status', $(if ($closed) { 'Ready' } else { 'Draft' })), @('UserApproval', $approval), @('ReviewStatus', $approval))) { Expect $handoff $pair[0] $pair[1] }
+if ($closed) {
+    Closure-Fields $handoff
+    Expect $handoff 'P02Status' 'NotStarted'
+    foreach ($field in @('UserScalarReview', 'UserPostmanReview', 'EducationalWalkthrough')) { Expect $handoff $field 'Deferred' }
+    $closure = Read-Record 'planning/phase-01/CLOSURE.md'
+    Expect $closure 'AcceptanceDecision' 'D013'
+    Expect $closure 'ApprovalDate' '2026-11-10'
+    Expect $closure 'ReviewedHead' '4b4d5a574dd459eda0e091311eab908439cb2fd0'
+}
 foreach ($text in @($internal, $handoff)) {
     foreach ($heading in [regex]::Matches((Read-Record 'planning/templates/HANDOFF_TEMPLATE.md'), '(?m)^## .+$')) { Require ($text.Contains($heading.Value.Trim())) 'Missing handoff heading.' }
 }
@@ -114,5 +150,13 @@ foreach ($id in @('P01-S07', 'P01-S08')) {
         Require ($values.Count -eq 1 -and $values[0].Groups[1].Value -eq (Field $step $name)) "Roadmap $name differs: $id"
     }
 }
-Write-Output 'PASS: D012 sequential internal progress; human review Pending; real CI required for S08 Verified; failed/unrun checks cannot claim Passed; P02 remains unstarted.'
+if ($closed) {
+    $next = [regex]::Match($map, '(?ms)^### P02-S01 .*?(?=^### |\z)').Value
+    Require ($next -match '(?m)^- Status: NotStarted؛') 'P02 roadmap must remain NotStarted.'
+    foreach ($id in @('P01-S07', 'P01-S08')) {
+        $block = [regex]::Match($map, '(?ms)^### ' + $id + ' .*?(?=^### |\z)').Value
+        foreach ($value in @('UserApproval: Approved', 'ReviewStatus: Approved', 'V4: Approved', 'ApprovalDate: 2026-11-10', 'ReviewedHead: 4b4d5a574dd459eda0e091311eab908439cb2fd0')) { Require ($block.Contains($value)) "Missing closed roadmap field: $id $value" }
+    }
+}
+Write-Output "PASS: D012/D013 phase gate; state=$status; approval=$approval; personal educational reviews=$manual; all technical/CI evidence required; P02 remains unstarted."
 Write-Output 'LIMIT: recorded evidence consistency only; this script does not execute .NET/Docker or query GitHub. CI and runtime evidence must be collected separately.'

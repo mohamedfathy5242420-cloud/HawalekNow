@@ -1,17 +1,36 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-11-09
+آخر تحديث: 2026-11-10
 
 - Phase: P01
 - Step: P01-S08
-- Status: InReview
+- Status: Done
 - ExecutionMode: Phase
-- UserApproval: Pending
-- V4: Pending
-- Scope: استكمال P01-S07 ثم P01-S08 وCI وDocker للتطبيق ومراجعة متطلبات P01 وفق D012؛ لا دمج أو P02 أو تعديل بيانات الخدمات.
+- UserApproval: Approved
+- ReviewStatus: Approved
+- V4: Approved
+- ApprovalDate: 2026-11-10
+- ReviewedHead: 4b4d5a574dd459eda0e091311eab908439cb2fd0
+- AcceptanceDecision: D013
+- AcceptanceBasis: CodeTestsCI
+- UserScalarReview: Deferred
+- UserPostmanReview: Deferred
+- EducationalWalkthrough: Deferred
+- P02Status: NotStarted
+- Scope: إغلاق P01 ودمج PR #8 بعد نجاح فحوص الإغلاق فقط؛ لا تنفيذ P02 أو تشغيل SQL/Mailpit أو تغيير بيانات.
 - ActiveStepFile: planning/phase-01/steps/S08.md
-- NextStep: PhaseReview لـP01 ثم P02-S01 NotStarted؛ تسليم P02 Draft فقط.
+- NextStep: P02-S01 NotStarted؛ Handoff Ready، دون إذن تنفيذ.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
+
+## الحالة الملزمة وقرار القبول
+
+P01 Done ومراجعتها Approved وفق D013 وإذن المستخدم بتاريخ 2026-11-10، مشروطًا بإعادة نجاح الفحوص المحلية وCI على رأس الإغلاق قبل الدمج والتحقق بعده. S01–S06 واعتماداتها التاريخية محفوظة؛ S07/S08 Done وExecutionStatus Verified وVerificationStatus Passed. [مراجعة P01](../planning/phase-01/PHASE_REVIEW.md) و[سجل الإغلاق](../planning/phase-01/CLOSURE.md) و[تسليم P02 Ready](../planning/phase-01/handoffs/S08-to-P02.md). P02 NotStarted ولا ملفات تنفيذ لها؛ تسليمها الجاهز ليس إذن بدء.
+
+قبول المستخدم أساسه الكود والاختبارات وأدلة CI؛ Scalar/Postman الشخصيتان والشرح الكامل Deferred عن بوابة الإغلاق بقراره، وليست Passed. تعليمات المراجعة التعليمية محفوظة في backend/API_EXPLORATION.md وbackend/postman والدليل المحلي tmp/P01-CODE-WALKTHROUGH-AR.md. SQL/Mailpit متوقفتان وأدلة استمرارهما تاريخية من S06؛ لا تشغيل أو إعادة إنشاء. جدول TARGET_SCHEDULE.md خارج التتبع ومحفوظ دون تعديل أو staging. LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete.
+
+## سجل الحالة قبل القبول — تاريخي
+
+كل عبارات InReview/Pending/Draft ومنع الدمج التالية تخص وقتها؛ الحالة الملزمة أعلاه وD013. لا تُعاد تسمية نتائج التجارب التاريخية كأن المستخدم أجراها، ولا يُمسح أي فشل سابق.
 
 ## التنفيذ الجاري وفق D012
 

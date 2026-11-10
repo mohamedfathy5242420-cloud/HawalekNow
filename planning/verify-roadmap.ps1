@@ -49,7 +49,7 @@ if(Test-Path (Join-Path $Root 'planning/phase-00/steps/S04.md')){
 }
 if(Test-Path (Join-Path $Root 'planning/phase-00/PHASE_REVIEW.md')){$files += 'planning/phase-00/PHASE_REVIEW.md'}
 if(Test-Path (Join-Path $Root 'backend/API_ERRORS.md')){$files += 'backend/API_ERRORS.md'}
-foreach($candidate in @('backend/API_EXPLORATION.md','planning/phase-01/steps/S07.md','planning/phase-01/handoffs/S07-to-S08.md','planning/phase-01/steps/S08.md','planning/phase-01/PHASE_REVIEW.md','planning/phase-01/handoffs/S08-to-P02.md','backend/CI.md')){
+foreach($candidate in @('backend/API_EXPLORATION.md','planning/phase-01/steps/S07.md','planning/phase-01/handoffs/S07-to-S08.md','planning/phase-01/steps/S08.md','planning/phase-01/PHASE_REVIEW.md','planning/phase-01/handoffs/S08-to-P02.md','backend/CI.md','planning/phase-01/CLOSURE.md')){
   if(Test-Path (Join-Path $Root $candidate)){$files += $candidate}
 }
 foreach($candidate in @('README.md','backend/README.md','docker/README.md','planning/phase-01/steps/S01.md','planning/phase-01/handoffs/S01-to-S02.md','planning/phase-01/steps/S02.md','planning/phase-01/handoffs/S02-to-S03.md','planning/phase-01/steps/S03.md','planning/phase-01/handoffs/S03-to-S04.md','backend/MODULES.md','backend/PACKAGES.md','planning/phase-01/steps/S04.md','planning/phase-01/handoffs/S04-to-S05.md','planning/phase-01/steps/S05.md','planning/phase-01/handoffs/S05-to-S06.md','planning/phase-01/steps/S06.md','planning/phase-01/handoffs/S06-to-S07.md')){
@@ -167,7 +167,7 @@ if($currentStep -in @('P01-S01','P01-S02','P01-S03','P01-S04','P01-S05','P01-S06
               $closedMap=[regex]::Match($map,'(?ms)^### P01-S06 .*?(?=^### |\z)').Value
               foreach($token in @('Status: Done','UserApproval: Approved','ReviewStatus: Approved','ApprovalDate: 2026-10-22','ReviewedHead: 6244fa36e1a802be07cb69b072093453e1ef5cc9')){if(-not $closedMap.Contains($token)){throw "S06 roadmap closure mismatch: $token"}}
               $nextMap=[regex]::Match($map,'(?ms)^### P01-S07 .*?(?=^### |\z)').Value
-              $expectedS07=if($phaseExecution){'InReview'}else{$displayStatus}
+              $expectedS07=if($phaseExecution -and $displayStatus -ne 'Done'){'InReview'}else{$displayStatus}
               if(-not $nextMap.Contains("Status: $expectedS07")){throw 'S07 roadmap state mismatch'}
             }elseif($currentStatus -eq 'NotStarted'){
               if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path $activeS06Path)){throw 'NotStarted S06 must have no execution file'}

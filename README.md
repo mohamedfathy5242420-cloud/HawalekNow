@@ -1,6 +1,6 @@
 # HawalekNow — حوالك ناو
 
-P01 InReview وفق D012: S01–S06 Done تاريخيًا، S07 وS08 Verified تقنيًا بعد نجاح PR CI و126 اختبارًا بلا فشل أو تخطٍّ. [مراجعة المرحلة](planning/phase-01/PHASE_REVIEW.md) و[CI/Docker API](backend/CI.md) و[Scalar/Postman](backend/API_EXPLORATION.md). اعتماد المستخدم وV4 والشرح التفصيلي Pending، وتسليم P02 Draft؛ لا دمج أو بدء P02. [الحالة الحالية](docs/CURRENT_STATE.md).
+P01 Done ومراجعتها Approved بقرار المستخدم D013 بتاريخ 2026-11-10، المشروط بنجاح فحوص الإغلاق قبل دمج PR #8 وبعده. [سجل الإغلاق](planning/phase-01/CLOSURE.md) و[مراجعة المرحلة](planning/phase-01/PHASE_REVIEW.md) و[الحالة الحالية](docs/CURRENT_STATE.md). تسليم P02 Ready وP02 NotStarted دون تنفيذ. تجربة المستخدم الشخصية Scalar/Postman والشرح الكامل Deferred عن بوابة الإغلاق بقراره، وليست Passed؛ [تعليمات التجربة](backend/API_EXPLORATION.md) محفوظة.
 
 منصة لاكتشاف المنتجات والتجار القريبين في مصر ومقارنة السعر والتوافر لكل فرع ثم التواصل مباشرة مع التاجر. البيع يتم خارج المنصة؛ لا سلة أو دفع أو شحن داخلها.
 

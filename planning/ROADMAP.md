@@ -1,6 +1,6 @@
 # خريطة مراحل HawalekNow واعتماداتها
 
-Updated: 2026-11-09
+Updated: 2026-11-10
 Status: Approved
 OwnerStep: P00-S03
 
@@ -13,7 +13,7 @@ OwnerStep: P00-S03
 
 وفق D012 بتاريخ 2026-11-09 تنفذ المرحلة المأذونة في مهمة واحدة، وخطواتها بالتتابع دون توازٍ وبعد نجاح تنفيذ وتحقق السابقة. يحتفظ كل صف بمعرفه ومخرجاته واعتماداته وطبقات V1–V4 وDefinition of Done الأصلية. ExecutionStatus Verified وInternalReady يسمحان بالتقدم داخل المرحلة مع UserApproval وV4 Pending إلى مراجعة المرحلة؛ لا يعنيان Done أو اعتمادًا بشريًا.
 أول خطوة في المرحلة التالية تنتظر Phase Review واعتماد المستخدم وHandoff Ready وإذن البدء؛ الإغلاق يشمل Definition of Done للمرحلة من المصدر كله. لكل صف راجع Diff ووثق التحقق الفعلي والفشل والقيود، واجمع مراجعة المستخدم والشرح المفصل في المرحلة. Commit وDraft PR والدمج وفق [Git](../docs/GIT_WORKFLOW.md)؛ لا إذن دمج أو P02 في استكمال P01.
-الفحوص الآلية لا تعني اعتمادًا بشريًا. السجلات والاعتمادات السابقة لـP00 وP01-S01–S06 محفوظة كما حدثت؛ بوابات Step القديمة تخص تاريخها. S07 وS08 InReview وVerified تقنيًا؛ تسليم S08 InternalReady استُخدم للتقدم تحت إذن P01، والمرحلة الآن InReview. [مراجعة P01](phase-01/PHASE_REVIEW.md) تجمع المراجعات المؤجلة و[تسليم P02](phase-01/handoffs/S08-to-P02.md) Draft؛ لا ملف تنفيذ P02. فحوص D009 في S06 تاريخية ولا تعتبر تأجيلًا Passed أو Health حالية.
+الفحوص الآلية لا تعني اعتمادًا بشريًا. بتاريخ 2026-11-10 اعتمد المستخدم مخرجات P01 التقنية وفق D013 وأذن بإغلاقها ودمج PR #8 مشروطًا بنجاح فحوص الإغلاق؛ S07/S08 Done وVerified تقنيًا، ومراجعة P01 Approved وتسليم P02 Ready. التجربة الشخصية Scalar/Postman والشرح الكامل Deferred عن بوابة الإغلاق بقراره، وليست Passed؛ التعليمات محفوظة. P02 NotStarted بلا ملف تنفيذ أو إذن بدء. الاعتمادات والأخفاقات التاريخية محفوظة؛ فحوص D009 في S06 تاريخية ولا تعتبر Health حالية. [سجل الإغلاق](phase-01/CLOSURE.md).
 
 ## المراحل واعتمادات المصدر
 
@@ -161,7 +161,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S07 OpenAPI وScalar وAPI v1
 
-- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ [السجل](phase-01/steps/S07.md) و[تسليم S08 InternalReady](phase-01/handoffs/S07-to-S08.md). D012 يسمح بالتقدم الداخلي؛ Awaiting user review على مستوى P01. OpenAPI/Scalar Development فقط وLiveness دون Readiness SQL/البريد؛ لا Persistence أو Versioning library.
+- Status: Done؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Approved؛ ReviewStatus: Approved؛ V4: Approved؛ ApprovalDate: 2026-11-10؛ ReviewedHead: 4b4d5a574dd459eda0e091311eab908439cb2fd0؛ [سجل الإغلاق](phase-01/CLOSURE.md). D013؛ المراجعات التعليمية Deferred وليست Passed؛ تسليم P02 Ready، وP02 NotStarted.
 
 - الاعتمادات السابقة: [P01-S06](#p01-s06).
 - المخرج المطلوب: توثيق حي ومسارات api v1 وHealth endpoints.
@@ -173,7 +173,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P01-S08 GitHub Actions baseline
 
-- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ [ملف التنفيذ](phase-01/steps/S08.md) و[مراجعة P01](phase-01/PHASE_REVIEW.md) و[تسليم P02 Draft](phase-01/handoffs/S08-to-P02.md)؛ CI ناجح على PR فعلي، UserApproval وV4 Pending.
+- Status: Done؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Approved؛ ReviewStatus: Approved؛ V4: Approved؛ ApprovalDate: 2026-11-10؛ ReviewedHead: 4b4d5a574dd459eda0e091311eab908439cb2fd0؛ [سجل الإغلاق](phase-01/CLOSURE.md). D013؛ المراجعات التعليمية Deferred وليست Passed؛ تسليم P02 Ready، وP02 NotStarted.
 
 - الاعتمادات السابقة: [P01-S07](#p01-s07).
 - المخرج المطلوب: Restore وBuild وTests وFormat وDocker build.
@@ -186,6 +186,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S01 تأسيس Identity model
 
+- Status: NotStarted؛ Handoff P01 Ready؛ لا إذن تنفيذ P02 في مهمة الإغلاق.
 - الاعتمادات السابقة: [P01-S08](#p01-s08) + Phase Review وHandoff للمرحلة السابقة.
 - المخرج المطلوب: ApplicationUser وAccountType وMerchantAccount وGuid v7 وSchemas.
 - بوابة التحقق: V2 Domain وV3 Migration.
