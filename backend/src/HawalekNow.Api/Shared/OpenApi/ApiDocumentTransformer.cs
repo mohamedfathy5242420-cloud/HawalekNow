@@ -11,7 +11,7 @@ public sealed class ApiDocumentTransformer : IOpenApiDocumentTransformer
         document.Info.Title = "HawalekNow API";
         document.Info.Version = "v1";
         document.Info.Description = "api/v1 is a fixed controller route prefix, not request version negotiation. " +
-            "Only application liveness is implemented. SQL/email readiness is not checked. " +
+            "Identity registration and application liveness are implemented. SQL/email readiness is not checked. " +
             "Unmatched routes return 404 and unsupported methods return 405 as application/problem+json " +
             "with type, title, status, code and correlationId; no request path or internal diagnostics.";
         foreach (var path in document.Paths.Values)

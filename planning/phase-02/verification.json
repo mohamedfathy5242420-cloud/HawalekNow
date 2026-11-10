@@ -67,10 +67,44 @@
       "status": "Passed",
       "exitCode": 0,
       "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S03InitialTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture and16 Unit passed; Integration91 passed/1 failed. Migration preservation assertion used runtime GetCollation; replaced by actual SQL sys.columns query. No skipped tests or weakened assertions."
+    },
+    {
+      "name": "S03Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "0 warnings/errors; subsequent test build also succeeded"
+    },
+    {
+      "name": "S03Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "47 Architecture +94 Integration +23 Unit =164; 0 failed/skipped; prior failing run retained"
+    },
+    {
+      "name": "S03Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "RegistrationTests/PersistenceTests via test-p02; dotnet ef database update --project backend/src/HawalekNow.Infrastructure --configuration Release --no-build",
+      "detail": "Actual SQL migration preserves prior row; 6 concurrent registrations; cross-module rollback; type-scoped uniqueness; reserved identifiers"
+    },
+    {
+      "name": "S03Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
     }
   ],
   "tests": {
-    "passed": 139,
+    "passed": 164,
     "failed": 0,
     "skipped": 0
   },

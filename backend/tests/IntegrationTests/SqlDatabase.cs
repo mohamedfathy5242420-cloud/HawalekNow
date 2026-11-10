@@ -1,6 +1,8 @@
 using HawalekNow.Infrastructure.Shared.Persistence;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HawalekNow.IntegrationTests;
 
@@ -11,6 +13,8 @@ public sealed class SqlDatabase : IAsyncLifetime
     private string? masterConnection;
     private bool created;
     public string ConnectionString { get; private set; } = "";
+    public string IdentifierKey { get; } = TestIdentityConfiguration.NewKey();
+    public string? InitialMigration { get; init; }
 
     public HawalekDbContext CreateContext() => new(new DbContextOptionsBuilder<HawalekDbContext>()
         .UseSqlServer(ConnectionString, sql => sql.MigrationsHistoryTable("__EFMigrationsHistory", "operations")).Options);
@@ -32,7 +36,8 @@ public sealed class SqlDatabase : IAsyncLifetime
         await command.ExecuteNonQueryAsync();
         created = true;
         await using var context = CreateContext();
-        await context.Database.MigrateAsync();
+        if (InitialMigration is null) await context.Database.MigrateAsync();
+        else await context.GetService<IMigrator>().MigrateAsync(InitialMigration);
     }
 
     public async Task DisposeAsync()

@@ -10,6 +10,7 @@ Status: InProgress
 | متغير Environment | الاستخدام |
 | --- | --- |
 | ConnectionStrings__Application | اتصال SQL بقاعدة التطبيق المحددة؛ ليس master أو قاعدة مشروع آخر |
+| Identity__IdentifierKey | مفتاح HMAC عشوائي من 32 bytes بصيغة Base64، ثابت ومخزن بأمان خارج Git؛ يلزم للحجز الدائم ولا يعاد توليده بين مرات التشغيل |
 | Identity__AdminSeed__Username | اسم Admin الأول؛ 3–64 من الحروف والأرقام ASCII و._- |
 | Identity__AdminSeed__Email | بريد Admin يحدده المشغل |
 | Identity__AdminSeed__Password | كلمة مرور سرية من 15–128 حرفًا؛ لا توجد قيمة افتراضية |
@@ -29,3 +30,9 @@ dotnet run --project backend/src/HawalekNow.Api --configuration Release --no-bui
 محليًا يقرأ المشغل إعداد SQL الموجود في docker/.env دون عرضه. في CI يمرر HAWALEKNOW_TEST_SQL باتصال خاص بالتشغيل وDatabase=master؛ الاختبارات تنشئ قاعدة HN_P02_Test_<Guid> جديدة، وتطبق Migration حقيقية، وتنظف قواعدها بالاسم والملكية فقط. لا EF InMemory أو EnsureDeleted. تبقى قاعدة التطبيق وS06 probe وVolumes وموارد المشاريع الأخرى محفوظة.
 
 S01: Migration وSQL والمعاملات وRowVersion؛ S02: bootstrap والتنافس والإعدادات وProgram الحقيقي. تعليمات الرحلات تضاف عند تنفيذ خطواتها. هذا دليل تطوير واختبار، وليس ادعاء جاهزية إنتاج أو تحقق Brevo.
+
+## التسجيل
+
+POST /api/v1/identity/customers/register وPOST /api/v1/identity/merchants/register يستقبلان username وemail وpassword وacceptTerms=true. لا Admin أو AccountType أو UserId قابل للاختيار. استجابة الطلب الصحيح 204 بلا body أو Cookies سواء أُنشئ الحساب أو كانت المعرّفات مستخدمة/محجوزة؛ لا تتخذها دليلًا على وجود حساب. الحساب الجديد غير مؤكد، والتاجر Pending. تسجيل النوعين بالمعرّفات نفسها ينشئ حسابين مستقلين وفق D014.
+
+تقبل كلمة المرور 15–128 Unicode rune، مع قائمة صغيرة للكلمات الشائعة ودون شروط تركيب؛ لا ترسلها في query أو URL أو تقارير. وقت قبول الشروط يسجل UTC؛ لا يقدم P02 نصوص الشروط أو ادعاء نسخة قانونية منشورة. معاملة واحدة تضم UserManager وMerchantAccount؛ حفظ Identity الداخلي لا يهرب من rollback. المعرّفات النشطة والمحذوفة ناعمًا محجوزة بفهارس SQL؛ بعد purge تحفظ بصمات HMAC في جدول الحجز. فقد مفتاح IdentifierKey أو استبداله يفقد إمكانية مطابقة الحجوزات القديمة؛ يلزم حفظه ونسخه احتياطيًا، وأي rotation مستقبلية تحتاج ترحيلًا صريحًا يحفظ الحجوزات.

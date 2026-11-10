@@ -207,6 +207,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S03 تسجيل العميل والتاجر
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S03.md).
+
 - الاعتمادات السابقة: [P02-S02](#p02-s02).
 - المخرج المطلوب: Endpoints منفصلة وقواعد التفرد والشروط وحالة Pending.
 - بوابة التحقق: V2 Validators وV3 API وSQL.

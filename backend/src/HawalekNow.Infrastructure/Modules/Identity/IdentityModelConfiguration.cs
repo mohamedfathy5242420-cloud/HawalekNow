@@ -13,9 +13,9 @@ public sealed class IdentityModelConfiguration : IEntityTypeConfiguration<Applic
         builder.ToTable("Users", "identity", table => table.HasCheckConstraint("CK_Users_AccountType", "[AccountType] IN (1,2,3)"));
         builder.HasKey(user => user.Id);
         builder.Property(user => user.UserName).HasMaxLength(64).IsRequired();
-        builder.Property(user => user.NormalizedUserName).HasMaxLength(64).IsRequired();
+        builder.Property(user => user.NormalizedUserName).HasMaxLength(64).UseCollation("Latin1_General_100_BIN2").IsRequired();
         builder.Property(user => user.Email).HasMaxLength(254).IsRequired();
-        builder.Property(user => user.NormalizedEmail).HasMaxLength(254).IsRequired();
+        builder.Property(user => user.NormalizedEmail).HasMaxLength(254).UseCollation("Latin1_General_100_BIN2").IsRequired();
         builder.Property(user => user.ConcurrencyStamp).IsConcurrencyToken();
         builder.Property(user => user.RowVersion).IsRowVersion();
         builder.HasIndex(user => new { user.AccountType, user.NormalizedUserName }).IsUnique();

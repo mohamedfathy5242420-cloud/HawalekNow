@@ -4,6 +4,7 @@ using HawalekNow.Api.Shared.OpenApi;
 using HawalekNow.Api.Shared.Routing;
 using HawalekNow.Application.Shared;
 using HawalekNow.Infrastructure.Modules.Identity;
+using HawalekNow.Infrastructure.Modules.Merchants;
 using HawalekNow.Infrastructure.Shared.Persistence;
 using Scalar.AspNetCore;
 using Serilog;
@@ -16,7 +17,7 @@ if (args.Contains("--seed-admin", StringComparer.Ordinal))
         bootstrap.Logging.ClearProviders();
         var connection = bootstrap.Configuration.GetConnectionString("Application")
             ?? throw new InvalidOperationException("Configure the application database before explicit bootstrap.");
-        bootstrap.Services.AddPersistence(connection).AddIdentityPersistence();
+        bootstrap.Services.AddPersistence(connection).AddIdentityPersistence().AddMerchantAccounts();
         using var bootstrapHost = bootstrap.Build();
         await using var scope = bootstrapHost.Services.CreateAsyncScope();
         await scope.ServiceProvider.GetRequiredService<AdminSeeder>().SeedAsync(AdminSeedSettings.Read(bootstrap.Configuration));
@@ -37,6 +38,7 @@ builder.Services.AddSerilog(configuration => configuration.ConfigureSafePipeline
     .WriteTo.Console(outputTemplate: "{Timestamp:O} [{Level:u3}] [{CorrelationId}] {Message:lj}{NewLine}"),
     preserveStaticLogger: true);
 builder.Services.AddApplication();
+builder.Services.AddPersistence(builder.Configuration).AddIdentityPersistence().AddMerchantAccounts();
 builder.Services.AddApiErrorHandling().AddMvcOptions(options => options.Conventions.Add(new ApiV1RouteConvention()));
 builder.Services.AddHealthChecks();
 builder.Services.AddOpenApi("v1", options => options.AddDocumentTransformer<ApiDocumentTransformer>());

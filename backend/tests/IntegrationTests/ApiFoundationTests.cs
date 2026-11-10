@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace HawalekNow.IntegrationTests;
@@ -97,7 +98,8 @@ public sealed class ApiFoundationTests
         var root = document.RootElement;
         Assert.StartsWith("3.1", root.GetProperty("openapi").GetString());
         var paths = root.GetProperty("paths");
-        Assert.Equal("/api/v1/health/live", Assert.Single(paths.EnumerateObject()).Name);
+        Assert.Equal(new[] { "/api/v1/health/live", "/api/v1/identity/customers/register", "/api/v1/identity/merchants/register" },
+            paths.EnumerateObject().Select(path => path.Name).Order().ToArray());
         var operation = paths.GetProperty("/api/v1/health/live").GetProperty("get");
         var responses = operation.GetProperty("responses");
         Assert.Equal(new[] { "200", "500", "503" }, responses.EnumerateObject().Select(p => p.Name).Order().ToArray());
@@ -250,9 +252,12 @@ public sealed class ApiFoundationTests
 
     private sealed class ApiFactory(string environment, Action<IServiceCollection>? configure = null) : WebApplicationFactory<Program>
     {
+        private readonly string identifierKey = TestIdentityConfiguration.NewKey();
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment(environment);
+            builder.ConfigureAppConfiguration((_, configuration) => configuration.AddInMemoryCollection(TestIdentityConfiguration.Values(
+                "Server=unused.invalid;Database=HawalekNow_HostContract;Integrated Security=True;Encrypt=True", identifierKey)));
             // No copied service/pipeline configuration: all normal registrations and mappings come from Program.
             if (configure is not null) builder.ConfigureTestServices(configure);
         }

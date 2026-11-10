@@ -5,15 +5,17 @@ using HawalekNow.Infrastructure.Shared.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace HawalekNow.IntegrationTests;
 
 public sealed class AdminSeedTests
 {
-    private static ServiceProvider Services(string connection)
+    private static ServiceProvider Services(SqlDatabase database)
     {
         var services = new ServiceCollection();
-        services.AddLogging().AddPersistence(connection).AddIdentityPersistence();
+        services.AddSingleton<IConfiguration>(TestIdentityConfiguration.Create(database.ConnectionString, database.IdentifierKey));
+        services.AddLogging().AddPersistence(database.ConnectionString).AddIdentityPersistence();
         return services.BuildServiceProvider();
     }
 
@@ -29,7 +31,7 @@ public sealed class AdminSeedTests
     {
         await using var database = new SqlDatabase();
         await database.InitializeAsync();
-        await using var provider = Services(database.ConnectionString);
+        await using var provider = Services(database);
         var first = Settings();
         async Task<AdminSeedOutcome> Seed(AdminSeedSettings settings)
         {
@@ -63,18 +65,20 @@ public sealed class AdminSeedTests
     [InlineData("email")]
     [InlineData("password")]
     [InlineData("username")]
+    [InlineData("whitespace")]
+    [InlineData("common")]
     public async Task Missing_or_invalid_configuration_fails_without_creating_accounts_or_echoing_secrets(string failure)
     {
         await using var database = new SqlDatabase();
         await database.InitializeAsync();
-        await using var provider = Services(database.ConnectionString);
+        await using var provider = Services(database);
         await using var scope = provider.CreateAsyncScope();
         var valid = Settings();
         var settings = new AdminSeedSettings
         {
             Username = failure == "username" ? "invalid@name" : valid.Username,
             Email = failure == "email" ? "invalid" : valid.Email,
-            Password = failure == "missing" ? null : failure == "password" ? "short" : valid.Password
+            Password = failure switch { "missing" => null, "password" => "short", "whitespace" => new string(' ', 20), "common" => "passwordpassword", _ => valid.Password }
         };
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => scope.ServiceProvider.GetRequiredService<AdminSeeder>().SeedAsync(settings));
         Assert.Equal("Admin bootstrap configuration is missing or invalid.", exception.Message);
@@ -95,6 +99,7 @@ public sealed class AdminSeedTests
             info.ArgumentList.Add(typeof(Program).Assembly.Location);
             info.ArgumentList.Add("--seed-admin");
             info.Environment["ConnectionStrings__Application"] = database.ConnectionString;
+            info.Environment["Identity__IdentifierKey"] = database.IdentifierKey;
             info.Environment["Identity__AdminSeed__Username"] = settings.Username;
             info.Environment["Identity__AdminSeed__Email"] = settings.Email;
             info.Environment.Remove("Identity__AdminSeed__Password");
@@ -109,6 +114,7 @@ public sealed class AdminSeedTests
             Assert.DoesNotContain(settings.Password!, output);
             Assert.DoesNotContain(settings.Email!, output);
             Assert.DoesNotContain(settings.Username!, output);
+            Assert.True(!output.Contains(database.IdentifierKey, StringComparison.Ordinal), "A runtime secret was printed.");
             return (process.ExitCode, output);
         }
         Assert.Equal(0, (await Run(true)).Exit);

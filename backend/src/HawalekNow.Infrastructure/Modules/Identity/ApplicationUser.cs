@@ -7,6 +7,9 @@ public sealed class ApplicationUser : IdentityUser<Guid>
 {
     public AccountType AccountType { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
+    public DateTimeOffset? TermsAcceptedAt { get; private set; }
+
+    public void RecordTermsAcceptance(DateTimeOffset acceptedAt) => TermsAcceptedAt = acceptedAt.ToUniversalTime();
 
     private ApplicationUser() { }
 

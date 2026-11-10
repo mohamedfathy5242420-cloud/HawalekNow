@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using HawalekNow.Domain.Modules.Identity;
 using HawalekNow.Infrastructure.Shared.Persistence;
 using Microsoft.AspNetCore.Identity;
@@ -24,7 +23,7 @@ public sealed class AdminSeedSettings
     {
         if (Username is null || Username.Trim().Length is < 3 or > 64 ||
             Username.Trim().Any(character => !char.IsAsciiLetterOrDigit(character) && character is not '.' and not '_' and not '-') ||
-            Email is null || Email.Trim().Length > 254 || !new EmailAddressAttribute().IsValid(Email.Trim()) || Password is null || Password.Length is < 15 or > 128)
+            !EmailRules.IsValid(Email?.Trim()) || !PasswordRules.IsAcceptable(Password))
             throw new InvalidOperationException("Admin bootstrap configuration is missing or invalid.");
     }
 }

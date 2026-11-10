@@ -6,15 +6,41 @@ using Microsoft.EntityFrameworkCore;
 using HawalekNow.Infrastructure.Shared.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace HawalekNow.IntegrationTests;
 
 public sealed class PersistenceTests(SqlDatabase database) : IClassFixture<SqlDatabase>
 {
     [Fact]
+    public async Task Registration_migration_preserves_existing_identity_data_and_does_not_invent_prior_consent()
+    {
+        await using var legacy = new SqlDatabase { InitialMigration = "20261110120808_P02IdentityFoundation" };
+        await legacy.InitializeAsync();
+        var user = User(AccountType.Customer, "legacy" + Guid.NewGuid().ToString("N"));
+        var originalHash = new PasswordHasher<ApplicationUser>().HashPassword(user, "Test-only-" + Guid.NewGuid().ToString("N"));
+        await using var context = legacy.CreateContext();
+        await context.Database.ExecuteSqlInterpolatedAsync($"""
+            INSERT [identity].[Users] ([Id],[AccountType],[UserName],[NormalizedUserName],[Email],[NormalizedEmail],
+                [PasswordHash],[EmailConfirmed],[PhoneNumberConfirmed],[TwoFactorEnabled],[LockoutEnabled],[AccessFailedCount])
+            VALUES ({user.Id},{(int)user.AccountType},{user.UserName},{user.NormalizedUserName},{user.Email},{user.NormalizedEmail},
+                {originalHash},0,0,0,1,0)
+            """);
+        await context.Database.MigrateAsync();
+        var after = await context.Set<ApplicationUser>().AsNoTracking().SingleAsync();
+        Assert.Equal(user.Id, after.Id);
+        Assert.Equal(user.Email, after.Email);
+        Assert.Equal(originalHash, after.PasswordHash);
+        Assert.Null(after.TermsAcceptedAt);
+        var collation = await context.Database.SqlQueryRaw<string>("SELECT [collation_name] AS [Value] FROM sys.columns WHERE [object_id]=OBJECT_ID(N'[identity].[Users]') AND [name]=N'NormalizedEmail'").SingleAsync();
+        Assert.Equal("Latin1_General_100_BIN2", collation);
+    }
+
+    [Fact]
     public async Task Identity_UserManager_supports_type_scoped_accounts_and_joins_the_unit_of_work()
     {
         var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(TestIdentityConfiguration.Create(database.ConnectionString, database.IdentifierKey));
         services.AddLogging().AddPersistence(database.ConnectionString).AddMerchantAccounts().AddIdentityPersistence();
         await using var provider = services.BuildServiceProvider();
         var name = "store" + Guid.NewGuid().ToString("N");
