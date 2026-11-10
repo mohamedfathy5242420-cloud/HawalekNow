@@ -1,5 +1,15 @@
 # حزم Backend والتوافق والتراخيص
 
+## إضافة P02-S01
+
+حزم S01 مثبتة exact على 10.0.14: Microsoft.AspNetCore.Identity.EntityFrameworkCore وMicrosoft.EntityFrameworkCore.SqlServer وMicrosoft.EntityFrameworkCore.Design (PrivateAssets=all) داخل Infrastructure؛ dotnet-ef أداة محلية بنفس النسخة في .config/dotnet-tools.json. جميعها MIT وnet10.0. جرى فحص صفحات النسخ الرسمية ومثال UseSqlServer وتخصيص Identity model قبل الإضافة. DbContext عادي مع UserOnlyStore صريح وتكوينات مملوكة للوحدات، وفق تنبيه Microsoft بشأن عدم استنتاج أنواع store عند عدم الاشتقاق من IdentityDbContext. Domain وApplication لا تستقبلان مراجع ASP.NET أو EF.
+
+روابط النسخ: [Identity EF](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.EntityFrameworkCore/10.0.14)، [SQL provider](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.SqlServer/10.0.14)، [Design](https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Design/10.0.14)، [تخصيص Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/customize-identity-model?view=aspnetcore-10.0)، [تكوين DbContext](https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/).
+
+Microsoft.Extensions.Logging.Abstractions ارتفعت من 10.0.0 إلى [10.0.14](https://www.nuget.org/packages/Microsoft.Extensions.Logging.Abstractions/10.0.14) لمطابقة الحد الأدنى في graph EF الجديدة؛ لا تغيير لمخطط Logging أو الفلتر أو الـSDK 10.0.401 أو MediatR 12.5.0. المراجعات القديمة أدناه تاريخية. أول Restore وBuild نجحا مع NU1902/NU1903 لأن Microsoft.Data.SqlClient 6.1.7 جلبت Pkcs 9.0.11. أضيف pin صريح لـ[System.Security.Cryptography.Pkcs 10.0.14](https://www.nuget.org/packages/System.Security.Cryptography.Pkcs/10.0.14) (MIT) بدل تعطيل audit؛ [إعلان Microsoft الأول](https://github.com/advisories/GHSA-846f-f764-76mx) و[الثاني](https://github.com/advisories/GHSA-2fmv-rv2c-59x7) يحددان 10.0.13 كنسخة مصححة. لا ادعاء زوال التحذيرات حتى إعادة Restore الفعلية.
+
+أعيد locked-mode Restore دون التحذيرين، وRelease Build صفر warnings/errors، و133 اختبارًا ناجحًا بينها SQL/UserManager والمعمارية، وFormat verification. جرد metadata وملفات التراخيص لـ111 زوجًا في [P02_DEPENDENCIES](P02_DEPENDENCIES.md): 93 MIT و16 Apache-2.0، وحزمتان انتقاليتان بشروط Microsoft Software License Terms منفصلة: [SNI.runtime 6.0.3](https://www.nuget.org/packages/Microsoft.Data.SqlClient.SNI.runtime/6.0.3) و[NativeInterop 0.20.6](https://www.nuget.org/packages/Microsoft.Identity.Client.NativeInterop/0.20.6). قُرئت LICENSE.txt وLICENSE الفعليتان؛ لا توصفان كترخيص MIT. لا Azure/Broker login أو جمع بيانات اختياري مفعّل. مراجعة توزيع إنتاج لاحقًا تحفظ شروط هذه الحزم ولا تستنتج من فحوص التطوير. لا Hangfire أو JWT packages قبل خطواتها.
+
 OwnerStep: P01-S04
 Updated: 2026-11-09
 

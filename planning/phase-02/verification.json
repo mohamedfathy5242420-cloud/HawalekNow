@@ -1,0 +1,52 @@
+{
+  "phase": "P02",
+  "baseMain": "b7a502051ac52f06b57c541e24f4bdde270a3392",
+  "predecessor": {
+    "phase": "P01",
+    "approval": "D013",
+    "pr": 8,
+    "merged": true,
+    "mergedAt": "2026-11-10T11:01:00Z"
+  },
+  "checks": [
+    {
+      "name": "S01Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 (Release build included)",
+      "detail": "All projects compiled; zero compiler warnings/errors after Pkcs correction"
+    },
+    {
+      "name": "S01Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +77 Integration +9 Unit =133; zero failed/skipped"
+    },
+    {
+      "name": "S01Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet ef database update --project backend/src/HawalekNow.Infrastructure --configuration Release --no-build; PersistenceTests via test-p02",
+      "detail": "SQL Server 17.0.5015.4; additive migration; type-scoped unique constraints; actual UserOnlyStore; atomic commit/rollback; RowVersion"
+    },
+    {
+      "name": "S01LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel"
+    },
+    {
+      "name": "S01Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    }
+  ],
+  "tests": {
+    "passed": 133,
+    "failed": 0,
+    "skipped": 0
+  },
+  "ci": null
+}

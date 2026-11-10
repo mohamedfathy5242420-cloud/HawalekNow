@@ -3,6 +3,8 @@
 OwnerStep: P01-S03
 Updated: 2026-10-11
 
+تحديث P02-S01 بتاريخ 2026-11-10: أضيف AccountType في Domain.Identity وApplicationUser المعتمد على ASP.NET في Infrastructure.Identity؛ MerchantAccount وتكوينه وخدمة حساب التاجر داخل Merchants. أول عقد فعلي IMerchantAccounts وMerchantAccountInfo في Application.Merchants.Contracts لا يكشف Entity. Shared.Persistence التقني يملك DbContext واحدًا وUoW، ويكتشف تكوينات الوحدات دون مرجع إلى أنواعها؛ لا Repository عام. الاختبارات تتحقق من المعاملة المشتركة ومنع الكتابة القديمة على SQL. تفاصيل الاستخدام والتحقق في [S01](../planning/phase-02/steps/S01.md) و[التصميم](../planning/phase-02/DESIGN.md). عبارات «لا أنواع/عقود بعد» في وصف التأسيس أدناه تاريخية؛ قواعد الملكية والاعتماد نفسها لم تتغير.
+
 المصدر: [المتطلبات المعتمدة](../Hawalek_Now_Approved_Requirements_AR.docx)، الأقسام المذكورة أدناه؛ [خطة التنفيذ](../Hawalek_Now_Backend_Master_Execution_Plan_AR.docx)، P01-S03 ومراحل P02–P08؛ [القرارات](../docs/DECISIONS.md)، D001 وD003/D004 وD010/D011. هذه خريطة ملكية؛ الوظائف والعقود لم تنفذ بعد.
 
 | Module | الملكية والمسؤولية | المصدر والحد الفاصل |

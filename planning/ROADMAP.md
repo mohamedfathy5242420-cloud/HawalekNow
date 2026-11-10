@@ -186,7 +186,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S01 تأسيس Identity model
 
-- Status: NotStarted؛ Handoff P01 Ready؛ لا إذن تنفيذ P02 في مهمة الإغلاق.
+- Status: InReview؛ Handoff P01 Ready؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S01.md).
 - الاعتمادات السابقة: [P01-S08](#p01-s08) + Phase Review وHandoff للمرحلة السابقة.
 - المخرج المطلوب: ApplicationUser وAccountType وMerchantAccount وGuid v7 وSchemas.
 - بوابة التحقق: V2 Domain وV3 Migration.

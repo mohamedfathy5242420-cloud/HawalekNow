@@ -2,27 +2,26 @@
 
 آخر تحديث: 2026-11-10
 
-- Phase: P01
-- Step: P01-S08
-- Status: Done
+- Phase: P02
+- Step: P02-S01
+- Status: InProgress
 - ExecutionMode: Phase
-- UserApproval: Approved
-- ReviewStatus: Approved
-- V4: Approved
-- ApprovalDate: 2026-11-10
-- ReviewedHead: 4b4d5a574dd459eda0e091311eab908439cb2fd0
-- AcceptanceDecision: D013
-- AcceptanceBasis: CodeTestsCI
-- UserScalarReview: Deferred
-- UserPostmanReview: Deferred
-- EducationalWalkthrough: Deferred
-- P02Status: NotStarted
-- Scope: إغلاق P01 ودمج PR #8 بعد نجاح فحوص الإغلاق فقط؛ لا تنفيذ P02 أو تشغيل SQL/Mailpit أو تغيير بيانات.
-- ActiveStepFile: planning/phase-01/steps/S08.md
-- NextStep: P02-S01 NotStarted؛ Handoff Ready، دون إذن تنفيذ.
+- UserApproval: Pending
+- ReviewStatus: Pending
+- V4: Pending
+- ExecutionAuthorization: D015
+- BaseMain: b7a502051ac52f06b57c541e24f4bdde270a3392
+- P03Status: NotStarted
+- Scope: تنفيذ P02-S01 إلى S09 بالتتابع وفق D012؛ لا دمج أو P03.
+- ActiveStepFile: planning/phase-02/steps/S01.md
+- NextStep: P02-S02 بعد نجاح تحقق S01 المطلوب؛ لا انتقال بعد فشل مانع.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
-## الحالة الملزمة وقرار القبول
+## تنفيذ P02 الجاري
+
+تحققت البوابة: P01 Done وApproved وفق D013، وPR #8 merged=true في 2026-11-10T11:01:00Z، وتسليم P02 Ready. بدأ الفرع codex/p02-implement-identity-and-account-security من main المحدثة. [سجل P01 المغلق](../planning/phase-01/CLOSED_STATE.md) يحفظ الحالة السابقة، و[تصميم P02](../planning/phase-02/DESIGN.md) و[S01](../planning/phase-02/steps/S01.md) يسجلان التنفيذ الجاري. جواب المستخدم D014 يثبت التفرد داخل نوع الحساب والحجز الدائم للمعرّفات بعد الحذف. S01 InReview وVerified تقنيًا: DbContext واحد وIdentity وMerchantAccount وUoW وMigration فعلية مطبقة على HawalekNow_Development؛ 133 اختبارًا ناجحًا (47+77+9) بلا failed/skipped، منها SQL للتفرد والتزامن وUserManager وrollback بين الوحدتين. locked-mode Restore وRelease build وFormat verification وفاحصا التوثيق وdiff نجحت، مع 46 حالة بوابة سابقة و14 حالة P02 مرفوضة. لا اعتماد بشري مفترض؛ [تسليم S02](../planning/phase-02/handoffs/S01-to-S02.md) InternalReady. Docker بدأ بعد غياب Engine وفحصت الموارد؛ SQL المملوك للمشروع Healthy، وMailpit القديمة فشلت بسبب حجز منفذ 1025 دون إيقاف أو حذف أي مورد. صححت تحذيرات Pkcs بpin للنسخة المصححة دون تعطيل audit. CI عُدّل لتوفير SQL معزولة وسر عشوائي خاص بالتشغيل؛ لم يشغّل على PR لـP02 بعد. الملف TARGET_SCHEDULE.md محفوظ خارج staging ببصمته الأصلية. LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete.
+
+## حالة إغلاق P01 السابقة — تاريخية
 
 P01 Done ومراجعتها Approved وفق D013 وإذن المستخدم بتاريخ 2026-11-10، مشروطًا بإعادة نجاح الفحوص المحلية وCI على رأس الإغلاق قبل الدمج والتحقق بعده. S01–S06 واعتماداتها التاريخية محفوظة؛ S07/S08 Done وExecutionStatus Verified وVerificationStatus Passed. [مراجعة P01](../planning/phase-01/PHASE_REVIEW.md) و[سجل الإغلاق](../planning/phase-01/CLOSURE.md) و[تسليم P02 Ready](../planning/phase-01/handoffs/S08-to-P02.md). P02 NotStarted ولا ملفات تنفيذ لها؛ تسليمها الجاهز ليس إذن بدء.
 
