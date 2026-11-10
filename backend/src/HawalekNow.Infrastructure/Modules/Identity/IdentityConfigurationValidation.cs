@@ -5,12 +5,12 @@ using HawalekNow.Infrastructure.Shared.Messaging;
 
 namespace HawalekNow.Infrastructure.Modules.Identity;
 
-public sealed class IdentityConfigurationValidation(IdentifierDigests digests, OtpProtection otp, PayloadProtection payloads, IConfiguration configuration) : IHostedService
+public sealed class IdentityConfigurationValidation(IdentifierDigests digests, OtpProtection otp, PayloadProtection payloads, SessionTokens tokens, IConfiguration configuration) : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _ = digests; // Constructor validation enforces a stable key; no generated fallback at application startup.
-        _ = otp; _ = payloads;
+        _ = otp; _ = payloads; _ = tokens;
         try
         {
             var connection = new SqlConnectionStringBuilder(configuration.GetConnectionString("Application") ?? "");

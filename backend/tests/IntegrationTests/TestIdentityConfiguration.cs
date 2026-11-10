@@ -9,6 +9,9 @@ public static class TestIdentityConfiguration
     public static Dictionary<string, string?> Values(string connection, string key) => new()
     {
         ["ConnectionStrings:Application"] = connection,
+        ["Jwt:SigningKey"] = Convert.ToBase64String(HMACSHA256.HashData(Convert.FromBase64String(key), System.Text.Encoding.UTF8.GetBytes("test-jwt"))),
+        ["Jwt:Issuer"] = "hawaleknow-test",
+        ["Jwt:Audience"] = "hawaleknow-test-client",
         ["Identity:IdentifierKey"] = key
         ,
         ["Identity:OtpKey"] = Convert.ToBase64String(HMACSHA256.HashData(Convert.FromBase64String(key), System.Text.Encoding.UTF8.GetBytes("test-otp")))

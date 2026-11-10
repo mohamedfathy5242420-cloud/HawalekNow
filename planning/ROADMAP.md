@@ -229,6 +229,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S05 Login وJWT cookies
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S05.md).
+
 - الاعتمادات السابقة: [P02-S04](#p02-s04).
 - المخرج المطلوب: Access وRefresh rotation داخل HttpOnly Secure Cookies.
 - بوابة التحقق: V2 token rules وV3 cookie flow.

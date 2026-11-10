@@ -1,9 +1,9 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-11-10
+آخر تحديث: 2026-11-11
 
 - Phase: P02
-- Step: P02-S04
+- Step: P02-S05
 - Status: InProgress
 - ExecutionMode: Phase
 - UserApproval: Pending
@@ -13,8 +13,8 @@
 - BaseMain: b7a502051ac52f06b57c541e24f4bdde270a3392
 - P03Status: NotStarted
 - Scope: تنفيذ P02-S01 إلى S09 بالتتابع وفق D012؛ لا دمج أو P03.
-- ActiveStepFile: planning/phase-02/steps/S04.md
-- NextStep: P02-S05 بعد نجاح تحقق S04 المطلوب؛ لا انتقال بعد فشل مانع.
+- ActiveStepFile: planning/phase-02/steps/S05.md
+- NextStep: P02-S06 بعد نجاح تحقق S05 المطلوب؛ لا انتقال بعد فشل مانع.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## تنفيذ P02 الجاري
@@ -26,6 +26,8 @@
 تحديث S03: التسجيل Verified تقنيًا، و[تسليم S04](../planning/phase-02/handoffs/S03-to-S04.md) InternalReady. آخر الحل 164 اختبارًا (47+94+23) بلا failed/skipped؛ التنافس وrollback عبر Program وHTTP وحفظ صف سابق أثناء Migration مثبتة على SQL. فشل assertion Collation وإصلاحه محفوظان في S03؛ لا تخفيف للفحص. Migration S03 طُبّقت على HawalekNow_Development بلا حذف بيانات أو إعادة إنشاء قاعدة؛ Format وBuild والفاحص وdiff ناجحة. لا حزم جديدة أو OTP أو جلسات بعد؛ ذلك في خطواتها التالية.
 
 تحديث S04: [تأكيد البريد وOutbox](../planning/phase-02/steps/S04.md) Verified تقنيًا و[تسليم S05](../planning/phase-02/handoffs/S04-to-S05.md) InternalReady. الحل الحالي 174 passed (47+101+26)، صفر failed/skipped، وRelease Build صفر warnings/errors. SQL وHTTP وSMTP Mailpit وHangfire SQL Worker فعلية؛ concurrency/single-use/rollback/restart وlease recovery وفقد ACK مثبتة. قبول البريد ثم فقد الرد سبب نسختين عند retry، فلا exactly-once. Migration additive مطبقة على HawalekNow_Development، ومفاتيح OTP/Outbox خارج Git؛ Mailpit اختبار loopback معزولة دون لمس القديمة أو Volumes أو مشاريع أخرى. [Draft PR #9](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/9) مفتوحة؛ [CI 42826018563](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42826018563) نجحت على 31ae179 وتغطي S01–S03 فقط، ولا تغطي S04 الجديدة. D016 يثبت منع الحذف الذاتي للـAdmin؛ اعتماد المرحلة وV4 Pending. LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete.
+
+تحديث S05: [الدخول والجلسات](../planning/phase-02/steps/S05.md) Verified تقنيًا و[تسليم S06](../planning/phase-02/handoffs/S05-to-S06.md) InternalReady. 193 passed (47+118+28)، صفر failed/skipped، وlocked Restore وFormat verification ناجحتان. JWT وrefresh داخل HttpOnly Secure cookies فقط، بدوران ذري وإلغاء العائلة عند reuse والتحقق من SQL على كل طلب محمي. Kestrel/TLS حقيقية مع جذر اختبار خاص دون تعطيل Secure أو bypass؛ اختبار Merchant Username/Email وSQL lockout/config/restart ناجح. مخالفات حدود API وSchannel وإغلاق Worker وفشلها التاريخي وإصلاحها في S05؛ 47 اختبار معمارية بقيت كما هي. [CI S04 42849693832](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42849693832) نجحت بجميع Jobs على 1a8564b؛ لا تغطي S05 قبل رفعها. لا CSRF أو HTTP rate limits أو صلاحيات السياسات بعد؛ تكتمل بالتتابع قبل تسليم المرحلة. UserApproval وV4 Pending، ولا دمج أو P03.
 
 ## حالة إغلاق P01 السابقة — تاريخية
 

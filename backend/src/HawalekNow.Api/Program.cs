@@ -1,4 +1,5 @@
 using HawalekNow.Api.Shared.Diagnostics;
+using HawalekNow.Api.Modules.Identity;
 using HawalekNow.Api.Shared.Errors;
 using HawalekNow.Api.Shared.OpenApi;
 using HawalekNow.Api.Shared.Routing;
@@ -8,6 +9,7 @@ using HawalekNow.Infrastructure.Modules.Merchants;
 using HawalekNow.Infrastructure.Shared.Persistence;
 using HawalekNow.Infrastructure.Shared.Messaging;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
 
 if (args.Contains("--seed-admin", StringComparer.Ordinal))
@@ -39,6 +41,9 @@ builder.Services.AddSerilog(configuration => configuration.ConfigureSafePipeline
     .WriteTo.Console(outputTemplate: "{Timestamp:O} [{Level:u3}] [{CorrelationId}] {Message:lj}{NewLine}"),
     preserveStaticLogger: true);
 builder.Services.AddApplication();
+builder.Services.AddIdentityAuthentication();
+builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme).Configure<SessionTokens, TimeProvider>(
+    (options, tokens, clock) => options.TokenValidationParameters = tokens.Validation(clock));
 builder.Services.AddPersistence(builder.Configuration).AddIdentityPersistence().AddMerchantAccounts().AddBackgroundProcessing();
 builder.Services.AddApiErrorHandling().AddMvcOptions(options => options.Conventions.Add(new ApiV1RouteConvention()));
 builder.Services.AddHealthChecks();
@@ -46,6 +51,13 @@ builder.Services.AddOpenApi("v1", options => options.AddDocumentTransformer<ApiD
 var app = builder.Build();
 
 app.UseApiErrorHandling();
+app.UseAuthentication();
+app.UseAuthorization();
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/api/v1/identity") || context.User.Identity?.IsAuthenticated == true) context.Response.Headers.CacheControl = "no-store";
+    await next(context);
+});
 if (app.Environment.IsDevelopment())
 {
     // Only this document exists. Let unknown names fall through to the existing safe 404 policy.

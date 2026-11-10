@@ -31,7 +31,7 @@ public sealed class RegisterCustomerValidator : AbstractValidator<RegisterCustom
 {
     public RegisterCustomerValidator()
     {
-        RuleFor(value => value.Username).NotEmpty().Length(3, 64).Matches("^[A-Za-z0-9._-]+$");
+        RuleFor(value => value.Username).Must(UsernameRules.IsValid);
         RuleFor(value => value.Email).Must(EmailRules.IsValid);
         RuleFor(value => value.Password).Must(PasswordRules.IsAcceptable);
         RuleFor(value => value.AcceptTerms).Equal(true);
@@ -42,7 +42,7 @@ public sealed class RegisterMerchantValidator : AbstractValidator<RegisterMercha
 {
     public RegisterMerchantValidator()
     {
-        RuleFor(value => value.Username).NotEmpty().Length(3, 64).Matches("^[A-Za-z0-9._-]+$");
+        RuleFor(value => value.Username).Must(UsernameRules.IsValid);
         RuleFor(value => value.Email).Must(EmailRules.IsValid);
         RuleFor(value => value.Password).Must(PasswordRules.IsAcceptable);
         RuleFor(value => value.AcceptTerms).Equal(true);

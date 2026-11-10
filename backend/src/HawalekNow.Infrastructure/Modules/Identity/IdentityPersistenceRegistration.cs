@@ -31,6 +31,9 @@ public static class IdentityPersistenceRegistration
         services.AddSingleton<IdentifierDigests>();
         services.AddScoped<IdentifierLocks>();
         services.AddSingleton<OtpProtection>();
+        services.AddSingleton<SessionTokens>();
+        services.AddSingleton<LoginTiming>();
+        services.AddScoped<IAccountSessions, AccountSessions>();
         services.AddScoped<IdentityStateLock>();
         services.AddScoped<EmailConfirmationService>();
         services.AddScoped<IEmailConfirmation>(provider => provider.GetRequiredService<EmailConfirmationService>());
@@ -51,8 +54,7 @@ public sealed class TypeScopedUserValidator(HawalekDbContext context, Identifier
     {
         var name = user.UserName;
         var email = user.Email;
-        if (name is null || name.Length is < 3 or > 64 || name.Any(character => !char.IsAsciiLetterOrDigit(character) && character is not '.' and not '_' and not '-') ||
-            !EmailRules.IsValid(email))
+        if (!UsernameRules.IsValid(name) || !EmailRules.IsValid(email))
             return Invalid();
         var normalizedName = manager.NormalizeName(name);
         var normalizedEmail = manager.NormalizeEmail(email);

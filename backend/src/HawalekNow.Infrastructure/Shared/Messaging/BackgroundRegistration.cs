@@ -58,6 +58,10 @@ public sealed class HangfireWorker(IServiceProvider provider, IConfiguration con
         provider.GetRequiredService<IBackgroundJobClient>().Enqueue<OutboxPump>(job => job.RunAsync(CancellationToken.None));
         return Task.CompletedTask;
     }
-    public Task StopAsync(CancellationToken cancellationToken) { server?.SendStop(); server?.Dispose(); server = null; return Task.CompletedTask; }
-    public void Dispose() { server?.Dispose(); server = null; }
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        var owned = Interlocked.Exchange(ref server, null);
+        owned?.SendStop(); owned?.Dispose(); return Task.CompletedTask;
+    }
+    public void Dispose() => Interlocked.Exchange(ref server, null)?.Dispose();
 }

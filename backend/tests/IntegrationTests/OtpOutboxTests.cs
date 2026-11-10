@@ -194,6 +194,9 @@ public sealed class OtpOutboxTests : IAsyncLifetime
         factory = new(database, clock, settings: settings); client = factory.CreateHttpsClient();
         await WaitUntilAsync(() => Task.FromResult(factory.Services.GetRequiredService<JobStorage>().GetMonitoringApi().GetStatistics().Succeeded >= 2));
         Assert.Single(await MailpitProbe.MessagesAsync(Email));
+        var worker = factory.Services.GetServices<Microsoft.Extensions.Hosting.IHostedService>().OfType<HangfireWorker>().Single();
+        await Task.WhenAll(Task.Run(() => worker.StopAsync(CancellationToken.None)), Task.Run(worker.Dispose));
+        await worker.StopAsync(CancellationToken.None); // host disposal will safely repeat this too
     }
 
     [Fact]

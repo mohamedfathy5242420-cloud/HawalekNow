@@ -1,8 +1,8 @@
-# جرد حزم P02 S04
+# جرد حزم P02 S05
 
 Updated: 2026-11-10
 
-مصدر الجرد lockfiles السبعة وnuspec وملفات الترخيص المستعادة. 115 زوج اسم/نسخة: 93 MIT و16 Apache-2.0، و4 Hangfire تحت LGPL-3.0-or-later، وحزمتان بشروط Microsoft منفصلة. Newtonsoft.Json 13.0.3 باقية في graph اختبارات سابقة، و13.0.4 مثبتة لـInfrastructure. هذه metadata وليست موافقة توزيع إنتاج.
+مصدر الجرد lockfiles السبعة وnuspec وملفات الترخيص المستعادة. 119 زوج اسم/نسخة: 97 MIT و16 Apache-2.0 و4 LGPL-3.0-or-later وحزمتان بشروط Microsoft منفصلة. هذا جرد metadata وليس اعتماد توزيع إنتاج. نسخ متعددة قد تبقى في graphs مشاريع مختلفة؛ جرد S01/S04 وقرارات الترخيص محفوظة في PACKAGES.md وسجل Git.
 
 | الحزمة | النسخة | الترخيص |
 | --- | --- | --- |
@@ -18,6 +18,7 @@ Updated: 2026-11-10
 | [Humanizer.Core](https://www.nuget.org/packages/Humanizer.Core/2.14.1) | 2.14.1 | MIT |
 | [MediatR.Contracts](https://www.nuget.org/packages/MediatR.Contracts/2.0.1) | 2.0.1 | Apache-2.0 |
 | [MediatR](https://www.nuget.org/packages/MediatR/12.5.0) | 12.5.0 | Apache-2.0 |
+| [Microsoft.AspNetCore.Authentication.JwtBearer](https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.JwtBearer/10.0.14) | 10.0.14 | MIT |
 | [Microsoft.AspNetCore.Cryptography.Internal](https://www.nuget.org/packages/Microsoft.AspNetCore.Cryptography.Internal/10.0.14) | 10.0.14 | MIT |
 | [Microsoft.AspNetCore.Cryptography.KeyDerivation](https://www.nuget.org/packages/Microsoft.AspNetCore.Cryptography.KeyDerivation/10.0.14) | 10.0.14 | MIT |
 | [Microsoft.AspNetCore.Identity.EntityFrameworkCore](https://www.nuget.org/packages/Microsoft.AspNetCore.Identity.EntityFrameworkCore/10.0.14) | 10.0.14 | MIT |
@@ -25,6 +26,7 @@ Updated: 2026-11-10
 | [Microsoft.AspNetCore.OpenApi](https://www.nuget.org/packages/Microsoft.AspNetCore.OpenApi/10.0.12) | 10.0.12 | MIT |
 | [Microsoft.AspNetCore.TestHost](https://www.nuget.org/packages/Microsoft.AspNetCore.TestHost/10.0.0) | 10.0.0 | MIT |
 | [Microsoft.Bcl.AsyncInterfaces](https://www.nuget.org/packages/Microsoft.Bcl.AsyncInterfaces/8.0.0) | 8.0.0 | MIT |
+| [Microsoft.Bcl.Cryptography](https://www.nuget.org/packages/Microsoft.Bcl.Cryptography/10.0.2) | 10.0.2 | MIT |
 | [Microsoft.Build.Framework](https://www.nuget.org/packages/Microsoft.Build.Framework/18.0.2) | 18.0.2 | MIT |
 | [Microsoft.CodeAnalysis.Analyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers/3.11.0) | 3.11.0 | MIT |
 | [Microsoft.CodeAnalysis.Common](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Common/5.0.0) | 5.0.0 | MIT |
@@ -78,12 +80,14 @@ Updated: 2026-11-10
 | [Microsoft.Identity.Client.Extensions.Msal](https://www.nuget.org/packages/Microsoft.Identity.Client.Extensions.Msal/4.78.0) | 4.78.0 | MIT |
 | [Microsoft.Identity.Client.NativeInterop](https://www.nuget.org/packages/Microsoft.Identity.Client.NativeInterop/0.20.6) | 0.20.6 | Microsoft Software License Terms |
 | [Microsoft.Identity.Client](https://www.nuget.org/packages/Microsoft.Identity.Client/4.84.2) | 4.84.2 | MIT |
-| [Microsoft.IdentityModel.Abstractions](https://www.nuget.org/packages/Microsoft.IdentityModel.Abstractions/8.14.0) | 8.14.0 | MIT |
-| [Microsoft.IdentityModel.JsonWebTokens](https://www.nuget.org/packages/Microsoft.IdentityModel.JsonWebTokens/7.7.1) | 7.7.1 | MIT |
-| [Microsoft.IdentityModel.Logging](https://www.nuget.org/packages/Microsoft.IdentityModel.Logging/7.7.1) | 7.7.1 | MIT |
+| [Microsoft.IdentityModel.Abstractions](https://www.nuget.org/packages/Microsoft.IdentityModel.Abstractions/8.19.2) | 8.19.2 | MIT |
+| [Microsoft.IdentityModel.JsonWebTokens](https://www.nuget.org/packages/Microsoft.IdentityModel.JsonWebTokens/8.19.2) | 8.19.2 | MIT |
+| [Microsoft.IdentityModel.Logging](https://www.nuget.org/packages/Microsoft.IdentityModel.Logging/8.19.2) | 8.19.2 | MIT |
 | [Microsoft.IdentityModel.Protocols.OpenIdConnect](https://www.nuget.org/packages/Microsoft.IdentityModel.Protocols.OpenIdConnect/7.7.1) | 7.7.1 | MIT |
+| [Microsoft.IdentityModel.Protocols.OpenIdConnect](https://www.nuget.org/packages/Microsoft.IdentityModel.Protocols.OpenIdConnect/8.19.2) | 8.19.2 | MIT |
 | [Microsoft.IdentityModel.Protocols](https://www.nuget.org/packages/Microsoft.IdentityModel.Protocols/7.7.1) | 7.7.1 | MIT |
-| [Microsoft.IdentityModel.Tokens](https://www.nuget.org/packages/Microsoft.IdentityModel.Tokens/7.7.1) | 7.7.1 | MIT |
+| [Microsoft.IdentityModel.Protocols](https://www.nuget.org/packages/Microsoft.IdentityModel.Protocols/8.19.2) | 8.19.2 | MIT |
+| [Microsoft.IdentityModel.Tokens](https://www.nuget.org/packages/Microsoft.IdentityModel.Tokens/8.19.2) | 8.19.2 | MIT |
 | [Microsoft.NET.Test.Sdk](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk/17.14.1) | 17.14.1 | MIT |
 | [Microsoft.OpenApi](https://www.nuget.org/packages/Microsoft.OpenApi/2.12.0) | 2.12.0 | MIT |
 | [Microsoft.SqlServer.Server](https://www.nuget.org/packages/Microsoft.SqlServer.Server/1.0.0) | 1.0.0 | MIT |
@@ -109,7 +113,7 @@ Updated: 2026-11-10
 | [System.Configuration.ConfigurationManager](https://www.nuget.org/packages/System.Configuration.ConfigurationManager/9.0.11) | 9.0.11 | MIT |
 | [System.Diagnostics.EventLog](https://www.nuget.org/packages/System.Diagnostics.EventLog/10.0.0) | 10.0.0 | MIT |
 | [System.Diagnostics.EventLog](https://www.nuget.org/packages/System.Diagnostics.EventLog/9.0.11) | 9.0.11 | MIT |
-| [System.IdentityModel.Tokens.Jwt](https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt/7.7.1) | 7.7.1 | MIT |
+| [System.IdentityModel.Tokens.Jwt](https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt/8.19.2) | 8.19.2 | MIT |
 | [System.Memory.Data](https://www.nuget.org/packages/System.Memory.Data/8.0.1) | 8.0.1 | MIT |
 | [System.Security.Cryptography.Pkcs](https://www.nuget.org/packages/System.Security.Cryptography.Pkcs/10.0.14) | 10.0.14 | MIT |
 | [System.Security.Cryptography.ProtectedData](https://www.nuget.org/packages/System.Security.Cryptography.ProtectedData/9.0.11) | 9.0.11 | MIT |

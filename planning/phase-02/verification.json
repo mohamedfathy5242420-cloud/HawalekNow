@@ -148,10 +148,71 @@
       "status": "Passed",
       "exitCode": 0,
       "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S05InitialTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -Filter FullyQualifiedName~SessionTests",
+      "detail": "10 Integration +2 Unit passed, 1 HTTPS failed at Schannel handshake with purely ephemeral key; disposable default-key import fixed Windows handshake while keeping custom CA validation/Secure. Focused real HTTPS rerun passed."
+    },
+    {
+      "name": "S05InitialFullTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1",
+      "detail": "Architecture27 passed/20 failed due one forbidden API implementation dependency and domain enum in API DTO. Integration116 passed/1 failed at intermittent worker duplicate shutdown. Unit28 passed. Tests unchanged; wiring moved to Program, DTO uses string, worker disposal takes ownership atomically. Reverification pending."
+    },
+    {
+      "name": "S05Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 (Release build included)",
+      "detail": "All solution projects compiled for Release; no compiler warnings/errors in final run"
+    },
+    {
+      "name": "S05Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +118 Integration +28 Unit =193; 0 failed/skipped; all original tests retained; prior failures recorded"
+    },
+    {
+      "name": "S05Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "SessionTests/OtpOutboxTests via ./backend/test-p02.ps1; dotnet ef database update --project backend/src/HawalekNow.Infrastructure --configuration Release --no-build",
+      "detail": "Real SQL migrations/rotation/replay/concurrency/revocation/restart; actual Kestrel HTTPS custom CA and Secure cookie container; repeated/concurrent worker shutdown; reviewed additive migration applied to HawalekNow_Development without recreation"
+    },
+    {
+      "name": "S05LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel"
+    },
+    {
+      "name": "S05Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S05InitialDocGate",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./planning/test-phase-gates.ps1",
+      "detail": "46 P01 cases passed; P02 snapshot copied during documentation/handoff edit and observed new S05 link before its target. Rerun against stable files required; no gate changes."
+    },
+    {
+      "name": "S05DocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1; ./planning/test-phase-gates.ps1 (separate processes); git diff --check",
+      "detail": "Stable documentation baseline passed; 46 original P01 +14 P02 rejection cases retained. Prior snapshot-copy failure recorded."
     }
   ],
   "tests": {
-    "passed": 174,
+    "passed": 193,
     "failed": 0,
     "skipped": 0
   },
@@ -163,6 +224,18 @@
       "event": "pull_request",
       "conclusion": "success",
       "coverage": "S01-S03 only",
+      "jobs": [
+        "Restore, build, tests and format",
+        "Documentation and Git rules",
+        "API and SQL image builds"
+      ]
+    },
+    {
+      "runId": 42849693832,
+      "headSha": "1a8564b2c8dc37d89ed6095893b50131fb8aae20",
+      "event": "pull_request",
+      "conclusion": "success",
+      "coverage": "S01-S04 only",
       "jobs": [
         "Restore, build, tests and format",
         "Documentation and Git rules",

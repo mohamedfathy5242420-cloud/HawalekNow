@@ -98,7 +98,7 @@ public sealed class ApiFoundationTests
         var root = document.RootElement;
         Assert.StartsWith("3.1", root.GetProperty("openapi").GetString());
         var paths = root.GetProperty("paths");
-        Assert.Equal(new[] { "/api/v1/health/live", "/api/v1/identity/customers/register", "/api/v1/identity/email/request", "/api/v1/identity/email/verify", "/api/v1/identity/merchants/register" },
+        Assert.Equal(new[] { "/api/v1/health/live", "/api/v1/identity/customers/register", "/api/v1/identity/email/request", "/api/v1/identity/email/verify", "/api/v1/identity/login", "/api/v1/identity/me", "/api/v1/identity/merchants/register", "/api/v1/identity/refresh" },
             paths.EnumerateObject().Select(path => path.Name).Order().ToArray());
         var operation = paths.GetProperty("/api/v1/health/live").GetProperty("get");
         var responses = operation.GetProperty("responses");
