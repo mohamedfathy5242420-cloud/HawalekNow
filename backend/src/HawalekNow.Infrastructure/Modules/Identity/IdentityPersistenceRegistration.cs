@@ -25,6 +25,7 @@ public static class IdentityPersistenceRegistration
         }).AddUserStore<UserOnlyStore<ApplicationUser, HawalekDbContext, Guid>>();
         services.RemoveAll<IUserValidator<ApplicationUser>>();
         services.AddScoped<IUserValidator<ApplicationUser>, TypeScopedUserValidator>();
+        services.AddScoped<AdminSeeder>();
         return services;
     }
 }

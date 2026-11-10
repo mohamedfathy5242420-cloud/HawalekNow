@@ -3,8 +3,33 @@ using HawalekNow.Api.Shared.Errors;
 using HawalekNow.Api.Shared.OpenApi;
 using HawalekNow.Api.Shared.Routing;
 using HawalekNow.Application.Shared;
+using HawalekNow.Infrastructure.Modules.Identity;
+using HawalekNow.Infrastructure.Shared.Persistence;
 using Scalar.AspNetCore;
 using Serilog;
+
+if (args.Contains("--seed-admin", StringComparer.Ordinal))
+{
+    try
+    {
+        var bootstrap = Host.CreateApplicationBuilder(args.Where(argument => argument != "--seed-admin").ToArray());
+        bootstrap.Logging.ClearProviders();
+        var connection = bootstrap.Configuration.GetConnectionString("Application")
+            ?? throw new InvalidOperationException("Configure the application database before explicit bootstrap.");
+        bootstrap.Services.AddPersistence(connection).AddIdentityPersistence();
+        using var bootstrapHost = bootstrap.Build();
+        await using var scope = bootstrapHost.Services.CreateAsyncScope();
+        await scope.ServiceProvider.GetRequiredService<AdminSeeder>().SeedAsync(AdminSeedSettings.Read(bootstrap.Configuration));
+        Console.WriteLine("Admin bootstrap completed. Existing accounts were preserved.");
+    }
+    catch (Exception)
+    {
+        // Bootstrap is an explicit operator command, not an HTTP endpoint. Never print settings or exception details.
+        Console.Error.WriteLine("Admin bootstrap failed. Check local configuration and database availability.");
+        Environment.ExitCode = 1;
+    }
+    return;
+}
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();

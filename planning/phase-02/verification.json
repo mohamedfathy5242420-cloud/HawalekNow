@@ -41,10 +41,36 @@
       "status": "Passed",
       "exitCode": 0,
       "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S02Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 (Release build included)"
+    },
+    {
+      "name": "S02Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +83 Integration +9 Unit =139; no failed/skipped"
+    },
+    {
+      "name": "S02Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "AdminSeedTests via ./backend/test-p02.ps1",
+      "detail": "Concurrent first-admin seed; unchanged credentials on repeat; actual Program command twice; missing/invalid configuration; no secret output"
+    },
+    {
+      "name": "S02Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
     }
   ],
   "tests": {
-    "passed": 133,
+    "passed": 139,
     "failed": 0,
     "skipped": 0
   },
