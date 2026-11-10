@@ -31,6 +31,28 @@ dotnet run --project backend/src/HawalekNow.Api --configuration Release --no-bui
 
 S01: Migration وSQL والمعاملات وRowVersion؛ S02: bootstrap والتنافس والإعدادات وProgram الحقيقي. تعليمات الرحلات تضاف عند تنفيذ خطواتها. هذا دليل تطوير واختبار، وليس ادعاء جاهزية إنتاج أو تحقق Brevo.
 
+## تأكيد البريد وOutbox
+
+التسجيل يحفظ challenge وintent البريد داخل المعاملة نفسها. POST /api/v1/identity/email/request يستقبل accountType وemail ويعيد 204 عامًا؛ POST /api/v1/identity/email/verify يضيف code ويعيد 204 عند القبول، و400 آمنة عند الخطأ. الـOTP ستة أرقام، صالح عشر دقائق، استخدام واحد؛ خمس محاولات ثم قفل 30 دقيقة، واستمرار المحاولات عبر resend. فاصل 60 ثانية وثلاث رسائل/15 دقيقة لكل حساب وغرض. تأكيد بريد التاجر يبقيه Pending.
+
+الإعدادات الإضافية للتشغيل HTTP/Worker، خارج Git:
+
+| متغير Environment | الاستخدام |
+| --- | --- |
+| Identity__OtpKey | 32 bytes عشوائية Base64 لـHMAC، ثابتة بين Hosts حتى انتهاء الرموز القائمة |
+| Outbox__EncryptionKey | 32 bytes مستقلة Base64 لـAES-GCM، ثابتة ومحفوظة مع نسخة احتياطية؛ فقدها يمنع قراءة الرسائل المعلقة |
+| Email__SmtpHost | 127.0.0.1 أو localhost أو ::1 فقط في Development |
+| Email__SmtpPort | منفذ SMTP لحاوية Mailpit المحلية |
+| Background__Enabled | true افتراضيًا؛ false خاص بفحوص liveness والاختبارات التي لا تشغل Worker |
+
+تُطبق Migration المراجعة قبل بدء العامل. Hangfire ينشئ schema hangfire في قاعدة التطبيق نفسها؛ عملية البدء تحتاج صلاحية إنشاء schema/jداول التشغيل. لا Dashboard منشورة. jobs تحمل CancellationToken فقط، ومعلومات البريد/OTP مشفرة في operations.Outbox؛ بعد الإرسال أو إسقاط رسالة قديمة يمسح payload. لا تغيّر مفاتيح قائمة دون ترحيل مقصود؛ لا تعالج رسالة غير قابلة للفك بإعادة توليد رمز عشوائيًا.
+
+Outbox تدعي حتى 25 رسالة في كل تشغيل، بlease دقيقتين. الإرسال خارج معاملة SQL وبمهلة 15 ثانية؛ إعادة المحاولة بتأخير متزايد حتى خمس دقائق وحد عشر محاولات، ثم Failed محفوظة لتدخل تشغيلي مقصود. رمز الخطأ delivery.failed ثابت ولا يحفظ استثناء المزود. التشغيل عند البداية وكل دقيقة، وإعادة تشغيل العامل تستعيد leases المنتهية. معالجة SQL تمنع إعادة الرسالة Sent؛ إذا قبل SMTP الرسالة ثم فُقد ACK، قد تصل نسخة ثانية برمز التحقق نفسه. اختبار proxy إلى Mailpit يثبت ذلك؛ لا exactly-once أو ضمان الوصول لصندوق المستلم. SMTP بلا TLS محصور باتصال loopback للتطوير؛ Cookies الجلسة في S05 تظل Secure.
+
+الناقل الحالي يرفض التشغيل خارج Development. لا إعداد Brevo أو إرسال خارجي أو ادعاء جاهزية بريد إنتاج؛ يلزم ناقل وإعداد وإذن مستقلان قبل ذلك. diagnostics العامة لـHangfire مغلقة لحماية البيانات؛ مراقبة وتشخيص تشغيل الإنتاج يحتاجان سياسة آمنة لاحقة.
+
+اختبارات SMTP تحتاج HAWALEKNOW_TEST_SMTP_PORT وHAWALEKNOW_TEST_MAILPIT_URL. المشغل المحلي يقرأ metadata حاوية الاختبار من tmp/p02-mailpit-service.json إن وجدت، وCI ينشئ SQL وMailpit باسم وlabel خاصين بالتشغيل وبـports loopback عشوائية. لا حذف رسائل Mailpit المشتركة؛ كل اختبار يقرأ مستلمه العشوائي فقط. التنظيف يقتصر على قواعد الاختبار وحاويات التشغيل المملوكة.
+
 ## التسجيل
 
 POST /api/v1/identity/customers/register وPOST /api/v1/identity/merchants/register يستقبلان username وemail وpassword وacceptTerms=true. لا Admin أو AccountType أو UserId قابل للاختيار. استجابة الطلب الصحيح 204 بلا body أو Cookies سواء أُنشئ الحساب أو كانت المعرّفات مستخدمة/محجوزة؛ لا تتخذها دليلًا على وجود حساب. الحساب الجديد غير مؤكد، والتاجر Pending. تسجيل النوعين بالمعرّفات نفسها ينشئ حسابين مستقلين وفق D014.

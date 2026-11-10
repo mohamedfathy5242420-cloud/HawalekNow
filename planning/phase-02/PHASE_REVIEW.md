@@ -16,4 +16,5 @@ NextStep: P03-S01
 | S01 | Verified؛ Migration وSQL و133 اختبارًا ناجحًا | Pending |
 | S02 | Verified؛ bootstrap وProgram الحقيقي والتنافس و139 اختبارًا ناجحًا | Pending |
 | S03 | Verified؛ تسجيل النوعين ومعاملة SQL و164 اختبارًا ناجحًا | Pending |
-| S04–S09 | NotStarted | Pending |
+| S04 | Verified؛ OTP وOutbox وHangfire SQL وMailpit/restart/lost ACK و174 اختبارًا ناجحًا | Pending |
+| S05–S09 | NotStarted | Pending |

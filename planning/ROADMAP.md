@@ -217,6 +217,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S04 Email OTP
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S04.md).
+
 - الاعتمادات السابقة: [P02-S03](#p02-s03).
 - المخرج المطلوب: توليد آمن وHash وانتهاء ومحاولات وإرسال Mailpit عبر Hangfire.
 - بوابة التحقق: V2 قواعد OTP وV3 Email job وV4 Postman.

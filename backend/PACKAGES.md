@@ -1,5 +1,13 @@
 # حزم Backend والتوافق والتراخيص
 
+## إضافة P02-S04
+
+Infrastructure تثبت Hangfire.AspNetCore وHangfire.SqlServer **[1.8.25]** وNewtonsoft.Json **[13.0.4]**؛ Hangfire.Core وHangfire.NetCore انتقاليتان 1.8.25. صفحات النسخ الرسمية: [AspNetCore](https://www.nuget.org/packages/Hangfire.AspNetCore/1.8.25)، [SqlServer](https://www.nuget.org/packages/Hangfire.SqlServer/1.8.25)، [Core](https://www.nuget.org/packages/Hangfire.Core/1.8.25)، [NetCore](https://www.nuget.org/packages/Hangfire.NetCore/1.8.25)، [Newtonsoft](https://www.nuget.org/packages/Newtonsoft.Json/13.0.4). مكتبات netstandard2.0/netcoreapp3.0 متوافقة مع net10.0؛ لا تغيير SDK أو MediatR. SqlServer يستخدم Microsoft.Data.SqlClient الموجود؛ لا تضيف الخطوة System.Data.SqlClient أو Dashboard أو Pro package.
+
+قُرئت LICENSE.md وCOPYING.LESSER وCOPYING المستعادة لحزم Hangfire؛ الاختيار هو LGPL-3.0-or-later من خيارات الترخيص المتعددة، دون شراء اشتراك تجاري. يلزم الحفاظ على إشعارات الترخيص وإتاحة مصدر المكتبة والتعديلات عليها والالتزام بحقوق الاستبدال/إعادة الربط عند التوزيع؛ لا تصفها MIT ولا تفترض جاهزية توزيع إنتاج من نجاح التطوير. [ترخيص tag v1.8.25](https://github.com/HangfireIO/Hangfire/blob/v1.8.25/LICENSE.md)، [LGPL](https://github.com/HangfireIO/Hangfire/blob/v1.8.25/COPYING.LESSER). Newtonsoft MIT، و13.0.3 تبقى في graph اختبارات سابقة بينما pin 13.0.4 يخص Infrastructure. الجرد الحالي 115 زوجًا في [P02_DEPENDENCIES](P02_DEPENDENCIES.md).
+
+رُوجعت أمثلة [SQL storage](https://docs.hangfire.io/en/latest/configuration/using-sql-server.html) و[ASP.NET Core](https://docs.hangfire.io/en/latest/getting-started/aspnet-core-applications.html)، ومصدر AspNetCoreJobActivator في tag نفسه. التسجيل هنا صريح لكل Host: SqlServerStorage وBackgroundJobServer مع Activator من IServiceScopeFactory؛ لا JobStorage.Current أو JobActivator.Current مشتركة بين الاختبارات. العامل يستيقظ عند البداية وكل دقيقة ويدعي Outbox من SQL؛ الـjobs لا تحمل البريد أو OTP. logging الخاص بـHangfire مغلق بدل fallback إلى logger عام، ولا تتغير سياسة Serilog أو Pipeline. Mailpit محلية معزولة فقط؛ لا Brevo أو نجاح إنتاج مفترض.
+
 ## إضافة P02-S01
 
 حزم S01 مثبتة exact على 10.0.14: Microsoft.AspNetCore.Identity.EntityFrameworkCore وMicrosoft.EntityFrameworkCore.SqlServer وMicrosoft.EntityFrameworkCore.Design (PrivateAssets=all) داخل Infrastructure؛ dotnet-ef أداة محلية بنفس النسخة في .config/dotnet-tools.json. جميعها MIT وnet10.0. جرى فحص صفحات النسخ الرسمية ومثال UseSqlServer وتخصيص Identity model قبل الإضافة. DbContext عادي مع UserOnlyStore صريح وتكوينات مملوكة للوحدات، وفق تنبيه Microsoft بشأن عدم استنتاج أنواع store عند عدم الاشتقاق من IdentityDbContext. Domain وApplication لا تستقبلان مراجع ASP.NET أو EF.

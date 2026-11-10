@@ -22,6 +22,7 @@ P01 Done وApproved وفق D013؛ Handoff Ready. تحقق GitHub في بداية
 | Username وEmail وPassword وقبول الشروط عند التسجيل | طلب تنفيذ P02 ومرجع التسجيل؛ لا AccountType أو Roles في DTO التسجيل |
 | تأكيد البريد مستقل عن موافقة التاجر؛ Pending يستطيع تجهيز حسابه | D010؛ MerchantAccount ملك Merchants |
 | Soft Delete وRecovery OTP ومهلة 30 يومًا | المتطلبات قسم 3؛ لا حذف بيانات تجارية مستقبلية |
+| منع الحذف الذاتي للـAdmin؛ الحذف والاسترجاع للعميل والتاجر | قرار المستخدم D016 في هذه المهمة |
 | OTP Hash، صلاحية، محاولات، إعادة إرسال، استعمال واحد | الخطة S04؛ القيم العددية غير محددة في المرجعين |
 | Cookies HttpOnly Secure، Refresh rotation، CSRF وRate Limits | D005 والخطة S05/S06؛ القيم العددية غير محددة |
 
@@ -85,4 +86,6 @@ S01 يؤسس المستخدم وMerchantAccount والمعاملة وMigration �
 
 ## قيود التحقق الحالية
 
-قراءة Docker API أولًا فشلت لغياب Engine؛ بدأ تشغيل Docker Desktop المثبت دون إيقاف خدمات أو حذف موارد. لا نجاح SQL مفترض حتى يتاح Engine وتفحص موارده. لم تنفذ Migrations أو SMTP أو CI لـP02 بعد.
+السجل الأولي: Docker API فشلت لغياب Engine؛ شغّل Docker Desktop وفحصت الموارد دون إيقاف أو حذف خدمات أخرى. التحديث حتى S04: Migration فعلية مطبقة على قاعدة التطوير المسماة، و174 اختبارًا ناجحًا على SQL وProgram وMailpit، بما فيها Hangfire SQL worker/restart وlost ACK. [أدلة كل خطوة](verification.json) تفصل الفشل والإصلاح. CI ناجحة على S03 فقط حتى تشغيل الرأس الجديد؛ ليست دليلًا على الخطوات اللاحقة. لا إنتاج أو Brevo أو وصول مضمون لصندوق المستلم.
+
+تنفيذ S04 يستخدم AES-GCM بمفتاح Outbox:EncryptionKey مستقل ثابت وIdentity:OtpKey لـHMAC، بدل DataProtection المقترحة أعلاه لpayload. الـjob تحمل CancellationToken فقط وتختار Outbox من SQL؛ لا secret أو email في args. Worker يستيقظ عند البدء وكل دقيقة، بlease دقيقتين وإرسال SMTP بمهلة 15 ثانية و10 محاولات وتأخير متزايد حتى خمس دقائق. تفاصيل القيم والفشل وحدود التشغيل في [دليل الهوية](../../backend/IDENTITY_OPERATIONS.md).

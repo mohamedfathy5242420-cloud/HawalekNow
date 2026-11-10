@@ -7,13 +7,17 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HawalekNow.IntegrationTests;
 
-public sealed class IdentityApiFactory(SqlDatabase database, TimeProvider? clock = null, Action<IServiceCollection>? configure = null) : WebApplicationFactory<Program>
+public sealed class IdentityApiFactory(SqlDatabase database, TimeProvider? clock = null, Action<IServiceCollection>? configure = null,
+    IReadOnlyDictionary<string, string?>? settings = null) : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Development");
-        builder.ConfigureAppConfiguration((_, configuration) => configuration.AddInMemoryCollection(
-            TestIdentityConfiguration.Values(database.ConnectionString, database.IdentifierKey)));
+        builder.ConfigureAppConfiguration((_, configuration) =>
+        {
+            configuration.AddInMemoryCollection(TestIdentityConfiguration.Values(database.ConnectionString, database.IdentifierKey));
+            if (settings is not null) configuration.AddInMemoryCollection(settings);
+        });
         builder.ConfigureTestServices(services =>
         {
             if (clock is not null) { services.RemoveAll<TimeProvider>(); services.AddSingleton(clock); }

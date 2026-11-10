@@ -10,6 +10,16 @@ public static class TestIdentityConfiguration
     {
         ["ConnectionStrings:Application"] = connection,
         ["Identity:IdentifierKey"] = key
+        ,
+        ["Identity:OtpKey"] = Convert.ToBase64String(HMACSHA256.HashData(Convert.FromBase64String(key), System.Text.Encoding.UTF8.GetBytes("test-otp")))
+        ,
+        ["Outbox:EncryptionKey"] = Convert.ToBase64String(HMACSHA256.HashData(Convert.FromBase64String(key), System.Text.Encoding.UTF8.GetBytes("test-outbox")))
+        ,
+        ["Background:Enabled"] = "false"
+        ,
+        ["Email:SmtpHost"] = "127.0.0.1"
+        ,
+        ["Email:SmtpPort"] = Environment.GetEnvironmentVariable("HAWALEKNOW_TEST_SMTP_PORT") ?? "2525"
     };
     public static IConfiguration Create(string connection, string key) =>
         new ConfigurationBuilder().AddInMemoryCollection(Values(connection, key)).Build();

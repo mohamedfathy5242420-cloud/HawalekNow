@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace HawalekNow.Infrastructure.Modules.Identity;
 
 public sealed class AccountRegistration(UserManager<ApplicationUser> manager, IUnitOfWork work,
-    IdentifierLocks locks, IMerchantAccounts merchants, TimeProvider clock) : IAccountRegistration
+    IdentifierLocks locks, IMerchantAccounts merchants, TimeProvider clock, EmailConfirmationService confirmation) : IAccountRegistration
 {
     public Task<Result> RegisterCustomerAsync(RegistrationDetails details, CancellationToken cancellationToken) =>
         RegisterAsync(AccountType.Customer, details, cancellationToken);
@@ -31,6 +31,7 @@ public sealed class AccountRegistration(UserManager<ApplicationUser> manager, IU
             // A valid registration request receives the same acknowledgement for existing or reserved identifiers.
             if (!result.Succeeded) return Result.Success();
             if (type == AccountType.Merchant) await merchants.CreatePendingAsync(user.Id, cancellationToken);
+            await confirmation.IssueInsideTransactionAsync(user, OtpPurpose.EmailConfirmation, cancellationToken);
             await work.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
             return Result.Success();

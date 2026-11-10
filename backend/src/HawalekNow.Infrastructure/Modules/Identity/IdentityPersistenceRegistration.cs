@@ -1,5 +1,6 @@
 using HawalekNow.Application.Modules.Identity;
 using HawalekNow.Domain.Modules.Identity;
+using HawalekNow.Application.Shared.Messaging;
 using HawalekNow.Infrastructure.Shared.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -29,6 +30,12 @@ public static class IdentityPersistenceRegistration
         services.AddScoped<AdminSeeder>();
         services.AddSingleton<IdentifierDigests>();
         services.AddScoped<IdentifierLocks>();
+        services.AddSingleton<OtpProtection>();
+        services.AddScoped<IdentityStateLock>();
+        services.AddScoped<EmailConfirmationService>();
+        services.AddScoped<IEmailConfirmation>(provider => provider.GetRequiredService<EmailConfirmationService>());
+        services.AddScoped<IIdentityEmailTransport, MailpitEmailTransport>();
+        services.AddScoped<IOutboxHandler, EmailOtpHandler>();
         services.AddScoped<IAccountRegistration, AccountRegistration>();
         services.TryAddSingleton(TimeProvider.System);
         services.AddHostedService<IdentityConfigurationValidation>();

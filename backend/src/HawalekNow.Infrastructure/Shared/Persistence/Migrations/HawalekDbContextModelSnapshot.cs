@@ -22,6 +22,62 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Identity.OtpChallenge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("ConsumedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Digest")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(64)");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("FailedAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("Generation")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("LastSentAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("LockedUntil")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Purpose")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("SentInWindow")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("WindowStartedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Purpose")
+                        .IsUnique();
+
+                    b.ToTable("OtpChallenges", "identity");
+                });
+
             modelBuilder.Entity("HawalekNow.Domain.Modules.Merchants.MerchantAccount", b =>
                 {
                     b.Property<Guid>("Id")
@@ -163,6 +219,56 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.ToTable("ReservedIdentifiers", "identity");
                 });
 
+            modelBuilder.Entity("HawalekNow.Infrastructure.Shared.Messaging.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LastFailureCode")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<Guid?>("LeaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("LeaseUntil")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("NextAttemptAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("ProtectedPayload")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("State", "NextAttemptAt");
+
+                    b.ToTable("Outbox", "operations");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -229,6 +335,15 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens", "identity");
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Identity.OtpChallenge", b =>
+                {
+                    b.HasOne("HawalekNow.Infrastructure.Modules.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>

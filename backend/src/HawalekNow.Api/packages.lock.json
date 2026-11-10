@@ -75,6 +75,38 @@
           "FluentValidation": "12.1.1"
         }
       },
+      "Hangfire.AspNetCore": {
+        "type": "Transitive",
+        "resolved": "1.8.25",
+        "contentHash": "IqklPyZDacfrCM6I9vpoTd9n14AvP5tepgR/IfKTUlPzGihLzey9jpL7PTKguJ3CPAA12qz3WCDUfIJ9IsCLQw==",
+        "dependencies": {
+          "Hangfire.NetCore": "[1.8.25]"
+        }
+      },
+      "Hangfire.Core": {
+        "type": "Transitive",
+        "resolved": "1.8.25",
+        "contentHash": "BxzXlHwXNrGPHJ7YfAVfeiXC+BHd6uPoyyfV+9bCJVPPGs4z0EQCW1X44Og/IUFM81ENCqAFP1r2rOkQhm4ydA==",
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.1"
+        }
+      },
+      "Hangfire.NetCore": {
+        "type": "Transitive",
+        "resolved": "1.8.25",
+        "contentHash": "ZfI7gwr7n70r635VS9aKsWSzOodY6U0bSIG0jDrqd5ODRLKvc+e5aXXGCnWHWzjvagvlwtUcRGG/lD0/3C7chA==",
+        "dependencies": {
+          "Hangfire.Core": "[1.8.25]"
+        }
+      },
+      "Hangfire.SqlServer": {
+        "type": "Transitive",
+        "resolved": "1.8.25",
+        "contentHash": "KuDVyRuixoEnvIpKJ+PCvIlxNoRyVNOQPmYD4H6k1J4ZE6C372aBKZ17MawwtWTL+Mpqa10TgOaIivI1xXj1Ug==",
+        "dependencies": {
+          "Hangfire.Core": "[1.8.25]"
+        }
+      },
       "MediatR": {
         "type": "Transitive",
         "resolved": "12.5.0",
@@ -252,6 +284,11 @@
         "resolved": "1.0.0",
         "contentHash": "N4KeF3cpcm1PUHym1RmakkzfkEv3GRMyofVv40uXsQhCQeglr2OHNcUk2WOG51AKpGO8ynGpo9M/kFXSzghwug=="
       },
+      "Newtonsoft.Json": {
+        "type": "Transitive",
+        "resolved": "13.0.4",
+        "contentHash": "pdgNNMai3zv51W5aq268sujXUyx7SNdE2bj1wZcWjAQrKMFZV260lbqYop1d2GM67JI1huLRwxo9ZqnfF/lC6A=="
+      },
       "Serilog.Extensions.Logging": {
         "type": "Transitive",
         "resolved": "10.0.0",
@@ -316,10 +353,13 @@
       "hawaleknow.infrastructure": {
         "type": "Project",
         "dependencies": {
+          "Hangfire.AspNetCore": "[1.8.25, 1.8.25]",
+          "Hangfire.SqlServer": "[1.8.25, 1.8.25]",
           "HawalekNow.Application": "[1.0.0, )",
           "HawalekNow.Domain": "[1.0.0, )",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "[10.0.14, 10.0.14]",
           "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.14, 10.0.14]",
+          "Newtonsoft.Json": "[13.0.4, 13.0.4]",
           "System.Security.Cryptography.Pkcs": "[10.0.14, 10.0.14]"
         }
       }

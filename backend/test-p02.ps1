@@ -2,7 +2,15 @@ param([string]$Filter = '', [switch]$NoBuild)
 $ErrorActionPreference = 'Stop'
 $p02Root = Split-Path $PSScriptRoot -Parent
 $p02PriorConnection = [Environment]::GetEnvironmentVariable('HAWALEKNOW_TEST_SQL')
+$p02PriorSmtp = [Environment]::GetEnvironmentVariable('HAWALEKNOW_TEST_SMTP_PORT')
+$p02PriorMailpit = [Environment]::GetEnvironmentVariable('HAWALEKNOW_TEST_MAILPIT_URL')
 try {
+    $p02ServicePath = Join-Path $p02Root 'tmp/p02-mailpit-service.json'
+    if (-not $p02PriorSmtp -and (Test-Path -LiteralPath $p02ServicePath)) {
+        $p02Mailpit = Get-Content -LiteralPath $p02ServicePath -Raw | ConvertFrom-Json
+        $env:HAWALEKNOW_TEST_SMTP_PORT = [string]$p02Mailpit.smtpPort
+        $env:HAWALEKNOW_TEST_MAILPIT_URL = 'http://127.0.0.1:' + $p02Mailpit.httpPort
+    }
     if (-not $p02PriorConnection) {
         $p02EnvPath = Join-Path $p02Root 'docker/.env'
         $p02LocalSettings = [IO.File]::ReadAllText($p02EnvPath)
@@ -17,4 +25,6 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'P02 verification failed; inspect test names, never print connection strings or secrets.' }
 } finally {
     [Environment]::SetEnvironmentVariable('HAWALEKNOW_TEST_SQL', $p02PriorConnection)
+    [Environment]::SetEnvironmentVariable('HAWALEKNOW_TEST_SMTP_PORT', $p02PriorSmtp)
+    [Environment]::SetEnvironmentVariable('HAWALEKNOW_TEST_MAILPIT_URL', $p02PriorMailpit)
 }

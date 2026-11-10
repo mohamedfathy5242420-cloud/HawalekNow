@@ -3,7 +3,7 @@
 آخر تحديث: 2026-11-10
 
 - Phase: P02
-- Step: P02-S03
+- Step: P02-S04
 - Status: InProgress
 - ExecutionMode: Phase
 - UserApproval: Pending
@@ -13,8 +13,8 @@
 - BaseMain: b7a502051ac52f06b57c541e24f4bdde270a3392
 - P03Status: NotStarted
 - Scope: تنفيذ P02-S01 إلى S09 بالتتابع وفق D012؛ لا دمج أو P03.
-- ActiveStepFile: planning/phase-02/steps/S03.md
-- NextStep: P02-S04 بعد نجاح تحقق S03 المطلوب؛ لا انتقال بعد فشل مانع.
+- ActiveStepFile: planning/phase-02/steps/S04.md
+- NextStep: P02-S05 بعد نجاح تحقق S04 المطلوب؛ لا انتقال بعد فشل مانع.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## تنفيذ P02 الجاري
@@ -24,6 +24,8 @@
 تحديث S02: [Admin bootstrap](../planning/phase-02/steps/S02.md) Verified تقنيًا و[تسليم S03](../planning/phase-02/handoffs/S02-to-S03.md) InternalReady. 139 اختبارًا (47+83+9) بلا failed/skipped، تشمل Program الحقيقي والتنافس وعدم تعديل أي بيانات حساب عند التكرار والإعدادات الخاطئة. Format verification ناجحة؛ لا حزم أو Migration جديدة في S02. [دليل التشغيل](../backend/IDENTITY_OPERATIONS.md) يحصر إعدادات الأسرار المحلية والأمر المقصود؛ لا Admin حقيقي أنشئ في قاعدة التطبيق ضمن الاختبارات.
 
 تحديث S03: التسجيل Verified تقنيًا، و[تسليم S04](../planning/phase-02/handoffs/S03-to-S04.md) InternalReady. آخر الحل 164 اختبارًا (47+94+23) بلا failed/skipped؛ التنافس وrollback عبر Program وHTTP وحفظ صف سابق أثناء Migration مثبتة على SQL. فشل assertion Collation وإصلاحه محفوظان في S03؛ لا تخفيف للفحص. Migration S03 طُبّقت على HawalekNow_Development بلا حذف بيانات أو إعادة إنشاء قاعدة؛ Format وBuild والفاحص وdiff ناجحة. لا حزم جديدة أو OTP أو جلسات بعد؛ ذلك في خطواتها التالية.
+
+تحديث S04: [تأكيد البريد وOutbox](../planning/phase-02/steps/S04.md) Verified تقنيًا و[تسليم S05](../planning/phase-02/handoffs/S04-to-S05.md) InternalReady. الحل الحالي 174 passed (47+101+26)، صفر failed/skipped، وRelease Build صفر warnings/errors. SQL وHTTP وSMTP Mailpit وHangfire SQL Worker فعلية؛ concurrency/single-use/rollback/restart وlease recovery وفقد ACK مثبتة. قبول البريد ثم فقد الرد سبب نسختين عند retry، فلا exactly-once. Migration additive مطبقة على HawalekNow_Development، ومفاتيح OTP/Outbox خارج Git؛ Mailpit اختبار loopback معزولة دون لمس القديمة أو Volumes أو مشاريع أخرى. [Draft PR #9](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/9) مفتوحة؛ [CI 42826018563](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42826018563) نجحت على 31ae179 وتغطي S01–S03 فقط، ولا تغطي S04 الجديدة. D016 يثبت منع الحذف الذاتي للـAdmin؛ اعتماد المرحلة وV4 Pending. LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete.
 
 ## حالة إغلاق P01 السابقة — تاريخية
 
