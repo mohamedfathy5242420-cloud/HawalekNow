@@ -1,5 +1,4 @@
 using HawalekNow.Application.Modules.Identity;
-using HawalekNow.Application.Modules.Merchants.Contracts;
 using HawalekNow.Application.Shared.Results;
 using HawalekNow.Domain.Modules.Identity;
 using HawalekNow.Infrastructure.Shared.Persistence;
@@ -18,7 +17,7 @@ public sealed class LoginTiming
 }
 
 public sealed class AccountSessions(HawalekDbContext context, EmailConfirmationService accounts, IdentityStateLock stateLock, ILookupNormalizer normalizer,
-    UserManager<ApplicationUser> users, LoginTiming timing, SessionTokens tokens, TimeProvider clock, IMerchantAccounts merchants) : IAccountSessions
+    UserManager<ApplicationUser> users, LoginTiming timing, SessionTokens tokens, TimeProvider clock, AccountAvailability availability) : IAccountSessions
 {
     public async Task<Result<SessionCredentials>> LoginAsync(string accountType, string identifier, string password, CancellationToken cancellationToken)
     {
@@ -34,7 +33,7 @@ public sealed class AccountSessions(HawalekDbContext context, EmailConfirmationS
         await stateLock.AcquireAsync(user.Id, cancellationToken); await context.Entry(user).ReloadAsync(cancellationToken);
         if (context.Entry(user).State == EntityState.Detached) { timing.Verify(password); return Denied(); }
         var now = clock.GetUtcNow();
-        if (user.LockoutEnd > now || user.AccessStatus != AccountAccessStatus.Active || !await MerchantAvailableAsync(user.AccountType, user.Id, cancellationToken))
+        if (user.LockoutEnd > now || !await availability.IsActiveAsync(user, cancellationToken))
         { timing.Verify(password); return Denied(); }
         if (!await users.CheckPasswordAsync(user, password))
         {
@@ -69,7 +68,7 @@ public sealed class AccountSessions(HawalekDbContext context, EmailConfirmationS
             sessionRow.Revoke(now); await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); return Denied();
         }
         var user = await context.Set<ApplicationUser>().SingleOrDefaultAsync(value => value.Id == owner.Value && value.AccessStatus == AccountAccessStatus.Active, cancellationToken);
-        if (row.ExpiresAt <= now || user is null || !await MerchantAvailableAsync(user.AccountType, user.Id, cancellationToken) || !sessionRow.Rotate(now)) return Denied();
+        if (row.ExpiresAt <= now || user is null || !await availability.IsActiveAsync(user, cancellationToken) || !sessionRow.Rotate(now)) return Denied();
         row.ConsumedAt = now;
         var grant = Issue(owner.Value, sessionRow, now);
         await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken);
@@ -83,14 +82,8 @@ public sealed class AccountSessions(HawalekDbContext context, EmailConfirmationS
                            where session.Id == sessionId && user.Id == userId && user.AccessStatus == AccountAccessStatus.Active && session.RevokedAt == null && session.RefreshExpiresAt > now && session.AbsoluteExpiresAt > now
                            select new SessionActor(user.Id, session.Id, user.AccountType.ToString(), user.EmailConfirmed)).SingleOrDefaultAsync(cancellationToken);
         if (actor is null) return null;
-        if (actor.AccountType == nameof(AccountType.Merchant) && !await MerchantAvailableAsync(AccountType.Merchant, userId, cancellationToken)) return null;
+        if (actor.AccountType == nameof(AccountType.Merchant) && !await availability.MerchantAvailableAsync(AccountType.Merchant, userId, cancellationToken)) return null;
         return actor;
-    }
-    private async Task<bool> MerchantAvailableAsync(AccountType type, Guid userId, CancellationToken cancellationToken)
-    {
-        if (type != AccountType.Merchant) return true;
-        var account = await merchants.FindByOwnerAsync(userId, cancellationToken);
-        return account is { IsSuspended: false };
     }
     private SessionCredentials Issue(Guid userId, AccountSession session, DateTimeOffset now)
     {

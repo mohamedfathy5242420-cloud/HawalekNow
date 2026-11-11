@@ -10,7 +10,19 @@ public static class FoundationIdentityPorts
 {
     public static IServiceCollection AddFoundationIdentityPorts(this IServiceCollection services) =>
         services.AddScoped<IAccountRegistration, UnusedRegistration>().AddScoped<IEmailConfirmation, UnusedEmail>().AddScoped<IAccountSessions, UnusedSessions>()
-            .AddScoped<IIdentityAccountQueries, UnusedQueries>();
+            .AddScoped<IIdentityAccountQueries, UnusedQueries>().AddScoped<IPasswordRecovery, UnusedPasswordRecovery>().AddScoped<IAccountSessionManagement, UnusedSessionManagement>();
+
+    private sealed class UnusedPasswordRecovery : IPasswordRecovery
+    {
+        public Task<Result> RequestAsync(string accountType, string email, CancellationToken cancellationToken) => throw new InvalidOperationException("An isolated foundation test invoked a business port.");
+        public Task<Result> ResetAsync(string accountType, string email, string code, string newPassword, CancellationToken cancellationToken) => throw new InvalidOperationException("An isolated foundation test invoked a business port.");
+    }
+    private sealed class UnusedSessionManagement : IAccountSessionManagement
+    {
+        public Task<Result> LogoutAsync(string? refreshCredential, CancellationToken cancellationToken) => throw new InvalidOperationException("An isolated foundation test invoked a business port.");
+        public Task<Result> LogoutAllAsync(Guid userId, CancellationToken cancellationToken) => throw new InvalidOperationException("An isolated foundation test invoked a business port.");
+        public Task<Result> RevokeAsync(Guid userId, Guid sessionId, CancellationToken cancellationToken) => throw new InvalidOperationException("An isolated foundation test invoked a business port.");
+    }
 
     private sealed class UnusedQueries : IIdentityAccountQueries
     {

@@ -3,7 +3,7 @@
 آخر تحديث: 2026-11-11
 
 - Phase: P02
-- Step: P02-S07
+- Step: P02-S08
 - Status: InProgress
 - ExecutionMode: Phase
 - UserApproval: Pending
@@ -13,8 +13,8 @@
 - BaseMain: b7a502051ac52f06b57c541e24f4bdde270a3392
 - P03Status: NotStarted
 - Scope: تنفيذ P02-S01 إلى S09 بالتتابع وفق D012؛ لا دمج أو P03.
-- ActiveStepFile: planning/phase-02/steps/S07.md
-- NextStep: P02-S08 بعد نجاح تحقق S07 المطلوب؛ لا انتقال بعد فشل مانع.
+- ActiveStepFile: planning/phase-02/steps/S08.md
+- NextStep: P02-S09 بعد نجاح تحقق S08 المطلوب؛ لا انتقال بعد فشل مانع.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## تنفيذ P02 الجاري

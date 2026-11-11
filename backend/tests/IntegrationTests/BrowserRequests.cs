@@ -17,6 +17,11 @@ public static class BrowserRequests
         using var request = new HttpRequestMessage(HttpMethod.Post, route);
         await AddCsrfAsync(client, request); return await client.SendAsync(request);
     }
+    public static async Task<HttpResponseMessage> DeleteBrowserAsync(this HttpClient client, string route, object? body = null)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Delete, route) { Content = body is null ? null : JsonContent.Create(body) };
+        await AddCsrfAsync(client, request); return await client.SendAsync(request);
+    }
     public static async Task AddCsrfAsync(HttpClient client, HttpRequestMessage request, string? rawCookie = null)
     {
         using var query = new HttpRequestMessage(HttpMethod.Get, "/api/v1/identity/csrf");

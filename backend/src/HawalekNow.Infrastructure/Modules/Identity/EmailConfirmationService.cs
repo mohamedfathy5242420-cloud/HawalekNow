@@ -47,7 +47,10 @@ public sealed class EmailConfirmationService(HawalekDbContext context, ILookupNo
         if (purpose == OtpPurpose.AccountRecovery ? user.AccessStatus != AccountAccessStatus.Deleted || user.AccountType == AccountType.Admin : user.AccessStatus != AccountAccessStatus.Active) return false;
         var challenge = await context.Set<OtpChallenge>().SingleOrDefaultAsync(value => value.UserId == user.Id && value.Purpose == purpose, cancellationToken);
         if (challenge is null) { challenge = OtpChallenge.Create(user.Id, purpose); context.Add(challenge); }
-        var code = secrets.Generate(); var generation = Guid.CreateVersion7();
+        var previous = await context.Set<OtpChallenge>().Where(value => value.UserId == user.Id).ToArrayAsync(cancellationToken);
+        string code;
+        do { code = secrets.Generate(); } while (previous.Any(value => secrets.Matches(value, code)));
+        var generation = Guid.CreateVersion7();
         if (!challenge.Issue(generation, secrets.Hash(user.Id, purpose, generation, code), clock.GetUtcNow())) return false;
         outbox.Add(EmailOtpHandler.MessageKind, protection.Protect(EmailOtpHandler.MessageKind, new EmailOtpPayload(user.Id, purpose, generation, user.Email!, code)));
         return true;

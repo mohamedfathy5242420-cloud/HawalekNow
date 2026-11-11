@@ -5,6 +5,7 @@ $p02PriorConnection = [Environment]::GetEnvironmentVariable('HAWALEKNOW_TEST_SQL
 $p02PriorSmtp = [Environment]::GetEnvironmentVariable('HAWALEKNOW_TEST_SMTP_PORT')
 $p02PriorMailpit = [Environment]::GetEnvironmentVariable('HAWALEKNOW_TEST_MAILPIT_URL')
 try {
+    if (-not $p02PriorSmtp) { & (Join-Path $PSScriptRoot 'start-p02-services.ps1') -SkipSql:([bool]$p02PriorConnection) | Out-Null }
     $p02ServicePath = Join-Path $p02Root 'tmp/p02-mailpit-service.json'
     if (-not $p02PriorSmtp -and (Test-Path -LiteralPath $p02ServicePath)) {
         $p02Mailpit = Get-Content -LiteralPath $p02ServicePath -Raw | ConvertFrom-Json

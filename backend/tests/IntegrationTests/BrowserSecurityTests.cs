@@ -32,6 +32,9 @@ public sealed class BrowserSecurityTests : IAsyncLifetime
     [InlineData("email/request")]
     [InlineData("email/verify")]
     [InlineData("refresh")]
+    [InlineData("password/request")]
+    [InlineData("password/reset")]
+    [InlineData("logout")]
     public async Task Every_existing_identity_mutation_rejects_missing_or_invalid_CSRF_before_business_work(string route)
     {
         using (var missing = await client.PostAsJsonAsync("/api/v1/identity/" + route, Input()))

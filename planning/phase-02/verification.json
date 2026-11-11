@@ -317,6 +317,20 @@
       "exitCode": 0,
       "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1; ./planning/test-phase-gates.ps1 (separate processes); git diff --check",
       "detail": "513 local links/anchors; sequential handoffs; all46 P01 and14 P02 rejection cases; TARGET_SCHEDULE original hash and untracked"
+    },
+    {
+      "name": "S08InitialFullTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture and28 Unit passed; Integration72 passed/100 failed at SQL fixture connection (total172). Docker Linux engine pipe was absent; no business test or migration bypassed. Restore locked graph passed. Restore existing engine/services and rerun same full suite."
+    },
+    {
+      "name": "S08SqlRecoveryRun",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "After Docker engine recovery, SQL was still recovering: pre-login connections closed; 47 Architecture +72 Integration +28 Unit passed,100 SQL fixtures failed,0 skipped. SQL later reached Healthy. A subsequent full run is pending; remote CI will verify the current source in isolated services. No assertion or test parallelism removed."
     }
   ],
   "tests": {
@@ -368,6 +382,18 @@
       "event": "pull_request",
       "conclusion": "success",
       "coverage": "S01-S06 only",
+      "jobs": [
+        "Restore, build, tests and format",
+        "Documentation and Git rules",
+        "API and SQL image builds"
+      ]
+    },
+    {
+      "runId": 42922283143,
+      "headSha": "755e559716e8f083fadab7d5200eb0415826986a",
+      "event": "pull_request",
+      "conclusion": "success",
+      "coverage": "S01-S07 only",
       "jobs": [
         "Restore, build, tests and format",
         "Documentation and Git rules",

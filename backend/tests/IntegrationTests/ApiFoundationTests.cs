@@ -100,7 +100,7 @@ public sealed class ApiFoundationTests
         var root = document.RootElement;
         Assert.StartsWith("3.1", root.GetProperty("openapi").GetString());
         var paths = root.GetProperty("paths");
-        Assert.Equal(new[] { "/api/v1/health/live", "/api/v1/identity/admin/session", "/api/v1/identity/csrf", "/api/v1/identity/customer-profile", "/api/v1/identity/customers/register", "/api/v1/identity/email/request", "/api/v1/identity/email/verify", "/api/v1/identity/login", "/api/v1/identity/me", "/api/v1/identity/merchants/register", "/api/v1/identity/refresh", "/api/v1/identity/sessions", "/api/v1/identity/sessions/{sessionId}", "/api/v1/merchants/account", "/api/v1/merchants/account/publishing-access" },
+        Assert.Equal(new[] { "/api/v1/health/live", "/api/v1/identity/admin/session", "/api/v1/identity/csrf", "/api/v1/identity/customer-profile", "/api/v1/identity/customers/register", "/api/v1/identity/email/request", "/api/v1/identity/email/verify", "/api/v1/identity/login", "/api/v1/identity/logout", "/api/v1/identity/logout-all", "/api/v1/identity/me", "/api/v1/identity/merchants/register", "/api/v1/identity/password/request", "/api/v1/identity/password/reset", "/api/v1/identity/refresh", "/api/v1/identity/sessions", "/api/v1/identity/sessions/{sessionId}", "/api/v1/merchants/account", "/api/v1/merchants/account/publishing-access" },
             paths.EnumerateObject().Select(path => path.Name).Order().ToArray());
         var operation = paths.GetProperty("/api/v1/health/live").GetProperty("get");
         var responses = operation.GetProperty("responses");

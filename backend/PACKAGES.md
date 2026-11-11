@@ -1,5 +1,9 @@
 # حزم Backend والتوافق والتراخيص
 
+## إضافة P02-S08
+
+لا حزم أو نسخ جديدة. [RemovePasswordAsync](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.usermanager-1.removepasswordasync?view=aspnetcore-10.0) و[AddPasswordAsync](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.usermanager-1.addpasswordasync?view=aspnetcore-10.0) من Identity القائمة؛ روجعت وظائفهما، والحفظان داخل معاملة DbContext نفسها بعد تحقق OTP محدود الغرض. الاختبار يفشل validator بعد removal فعلية ويقرأ NULL hash وconsumed challenge داخل المعاملة ثم يثبت rollback. لا token-provider package أو hashing مخصص أو SDK/MediatR/logging change. جرد119 زوجًا ثابت.
+
 ## إضافة P02-S07
 
 لا حزم أو نسخ جديدة. Authorization policies/requirements/handlers من Microsoft.AspNetCore.App القائم. راجعت [سياسات .NET10](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies?view=aspnetcore-10.0) و[ملكية الموارد](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/resource-based?view=aspnetcore-10.0). RequireClaim تعمل على principal يعاد بناؤه من SQL، وMerchant requirement تقرأ عقد Merchants العام في scoped handler، لا Entity أو Role يرسلها العميل. أسماء السياسات عقد Identity عام مستقل عن framework، وملكية الجلسات جزء من WHERE في query فعلية؛ لا يكفي وجود Authorize وحدها. الحزم/التراخيص119 كما في S05/S06؛ لا SDK/MediatR أو logging schema change.
