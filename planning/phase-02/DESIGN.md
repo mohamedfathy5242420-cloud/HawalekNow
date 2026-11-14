@@ -1,7 +1,7 @@
 # تصميم P02 وقواعد الحساب والأمان
 
-Updated: 2026-11-10
-Status: InProgress
+Updated: 2026-11-14
+Status: InReview
 ExecutionMode: Phase
 UserApproval: Pending
 V4: Pending
@@ -89,3 +89,7 @@ S01 يؤسس المستخدم وMerchantAccount والمعاملة وMigration �
 السجل الأولي: Docker API فشلت لغياب Engine؛ شغّل Docker Desktop وفحصت الموارد دون إيقاف أو حذف خدمات أخرى. التحديث حتى S04: Migration فعلية مطبقة على قاعدة التطوير المسماة، و174 اختبارًا ناجحًا على SQL وProgram وMailpit، بما فيها Hangfire SQL worker/restart وlost ACK. [أدلة كل خطوة](verification.json) تفصل الفشل والإصلاح. CI ناجحة على S03 فقط حتى تشغيل الرأس الجديد؛ ليست دليلًا على الخطوات اللاحقة. لا إنتاج أو Brevo أو وصول مضمون لصندوق المستلم.
 
 تنفيذ S04 يستخدم AES-GCM بمفتاح Outbox:EncryptionKey مستقل ثابت وIdentity:OtpKey لـHMAC، بدل DataProtection المقترحة أعلاه لpayload. الـjob تحمل CancellationToken فقط وتختار Outbox من SQL؛ لا secret أو email في args. Worker يستيقظ عند البدء وكل دقيقة، بlease دقيقتين وإرسال SMTP بمهلة 15 ثانية و10 محاولات وتأخير متزايد حتى خمس دقائق. تفاصيل القيم والفشل وحدود التشغيل في [دليل الهوية](../../backend/IDENTITY_OPERATIONS.md).
+
+## نتيجة التصميم المنفذ
+
+اكتملت S01–S09 تقنيًا؛ المرجع الحالي هو [مراجعة المرحلة](PHASE_REVIEW.md) و[الأدلة](verification.json). اختيار الجدولة النهائي هو job لكل طلب حذف بموعد وgeneration محفوظين، عبر encrypted Outbox وHangfire SQL، مع حراسة الحالة داخل المعاملة؛ لا sweep مفترضة أوDashboard عامة. أضيفت SubjectId للـOutbox وتنظيف الرسائل القديمة الآمن، وbinding لمفتاح حجز المعرّفات، وaudit تقنية مقتضبة وفق المتطلبات. تبقى القيم المقترحة الأولى أعلاه سجل التصميم؛ القيم المنفذة وتفاصيل الحدود موثقة في دليل الهوية.270 اختبارًا ناجحًا محليًا وفيCI على كود التنفيذ؛ UserApproval وV4 Pending وتسليمP03 Draft. لا Merge أوP03.

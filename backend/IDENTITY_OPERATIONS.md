@@ -1,7 +1,7 @@
 # تشغيل هوية HawalekNow محليًا
 
-Updated: 2026-11-10
-Status: InProgress
+Updated: 2026-11-14
+Status: InReview
 
 ## Admin bootstrap
 

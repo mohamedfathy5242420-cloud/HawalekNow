@@ -269,7 +269,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S09 حذف الحساب والاسترجاع
 
-- Status: InProgress؛ ExecutionStatus: InProgress؛ VerificationStatus: Pending؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S09.md).
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S09.md).
 
 - الاعتمادات السابقة: [P02-S08](#p02-s08).
 - المخرج المطلوب: Soft Delete لمدة 30 يومًا وRecovery OTP وجدولة الحذف النهائي.

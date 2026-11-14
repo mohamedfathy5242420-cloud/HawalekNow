@@ -1,7 +1,7 @@
 # مراجعة P02 الهوية والأمان
 
 Phase: P02
-Status: InProgress
+Status: InReview
 Updated: 2026-11-14
 ExecutionMode: Phase
 UserApproval: Pending
@@ -23,7 +23,7 @@ NextStep: P03-S01
 | [S06](steps/S06.md) | Verified: CSRF, quotas, peer/proxy and key-ring;210 tests | Pending |
 | [S07](steps/S07.md) | Verified:14 HTTP authorization cases, ownership and live SQL state;231 tests | Pending |
 | [S08](steps/S08.md) | Verified: password reset and session controls;247 tests in CI42985057946 | Pending |
-| [S09](steps/S09.md) | InProgress:25 focused SQL lifecycle/registration tests passed; full verification running | Pending |
+| [S09](steps/S09.md) | Verified:270 full solution tests passed locally and in CI43586473657 | Pending |
 
 ## خريطة API الفعلية
 
@@ -98,7 +98,7 @@ Domain وApplication مستقلتان عن ASP.NET وEF. ApplicationUser وIdent
 
 ## التحقق والقيود الحالية
 
-[CI S01–S08](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42985057946) على62ec070 نجحت بكل Jobs وبـ247 اختبارًا؛ لا تغطي S09 الجديدة. بناء S09 المحلي نجح دون warnings/errors، و47 Architecture و32 Unit و27 ApiFoundation و25 اختبارًا مركزًا للحذف والتسجيل نجحت. الحل الكامل والرأس النهائي ينتظران التحقق. فشل Docker وSQL السابق محفوظ في verification.json ولا يتحول إلى Passed.
+[CI S01–S09](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/43586473657) على4c410147ad4e8ca7773ff382f90a285797939804 نجحت بكل Jobs.270 اختبارًا نجحت محليًا وفيCI:47 Architecture+191 Integration+32 Unit،0 failed/skipped، وBuild0 warnings/errors. locked Restore وFormat verification والفاحصان و60 حالة بوابة نجحت. Migration الإضافية مطبقة على قاعدة التطوير المسماة. فشل Docker وSQL السابق محفوظ في verification.json ولا يتحول إلىPassed. آخر commit لتوثيق التسليم يحصل علىCI مستقلة تُرصد فيPR والتقرير النهائي دون إعادة كتابة الدليل ليشير إلى نفسه.
 
 التحقق المحلي يستخدم SQL Server فعلية وProgram وKestrel HTTPS وMailpit وHangfire SQL. لا اختبار إنتاج أوBrevo أوبريد خارجي. المعرّفان محجوزان دائمًا داخل AccountType وفق D014؛ مفتاح HMAC ثابت ومنسوخ بأمان وbinding ترفض تبديله. key-ring يحتاج تخزينًا وأذونات وحماية مناسبة للنشر؛ Windows يستخدم DPAPI، وLinux يحتاج حماية التخزين. حدود HTTP في الذاكرة وليست موزعة، ولا ثقة في ForwardedHeaders عشوائية. SQL live checks تمنع الوصول على الطلب التالي؛ طلب بدأ قبل تغير الحالة قد يكمل. لا حذف لبيانات تجارية مستقبلية أوReports؛ المراحل المالكة توسع سياسة الإخفاء والاحتفاظ قبل استخدامها.
 
@@ -107,3 +107,5 @@ LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete. 
 ## ما ينتظر المراجعة
 
 V4 وتجربة المستخدم في Scalar/Postman واعتماد P02 تظل Pending. عند اكتمال الأدلة تسلم المرحلة InReview وتسليم P03 بحالة Draft. الدمج وبدء P03 يتطلبان إذنهما. الشرح التعليمي المفصل مهمة منفصلة بعد التسليم.
+
+[تسليم P03](handoffs/S09-to-P03.md) Draft؛ [فهرس الملفات المتغيرة](FILES.md) يربط الملفات الجديدة والمعدلة من قاعدة main المعتمدة. تبقى مراجعة المستخدم وV4 Pending رغم نجاح التحقق التقني.

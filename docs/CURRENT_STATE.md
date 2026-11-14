@@ -1,10 +1,10 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-11-11
+آخر تحديث: 2026-11-14
 
 - Phase: P02
 - Step: P02-S09
-- Status: InProgress
+- Status: InReview
 - ExecutionMode: Phase
 - UserApproval: Pending
 - ReviewStatus: Pending
@@ -14,7 +14,7 @@
 - P03Status: NotStarted
 - Scope: تنفيذ P02-S01 إلى S09 بالتتابع وفق D012؛ لا دمج أو P03.
 - ActiveStepFile: planning/phase-02/steps/S09.md
-- NextStep: PhaseReview بعد تحقق S09؛ لا دمج أو P03.
+- NextStep: PhaseReview؛ اعتماد المستخدم وV4 Pending؛ P03 handoff Draft ولا إذن بدء.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## تنفيذ P02 الجاري
@@ -100,3 +100,5 @@ S04 Done وUserApproval Approved وApprovalDate 2026-10-13؛ تسليم S05 Read
 LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete
 
 تحديث التنفيذ2026-11-14: S08 Verified بعد [CI42985057946](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42985057946) على62ec070 و247 اختبارًا ناجحًا؛ [تسليم S09](../planning/phase-02/handoffs/S08-to-S09.md) InternalReady. S09 InProgress: Domain deletion وrecovery وجدولة Outbox/Hangfire وpurge وحجز HMAC ثابت وحراسة المفاتيح، و25 اختبار SQL مركزًا ناجحة. Migration الإضافية طُبقت على قاعدة التطوير المسماة، والحل الكامل جارٍ. أُصلح تعطل Docker1920 بإعادة تسمية مجلد الاتصالات المؤقتة مع حفظه، وعادEngine29.7.2؛ بيانات SQL وVolumes وموارد المشاريع الأخرى محفوظة. Postman P02 وScalar محدثان؛ مراجعة المستخدم وV4 Pending، ولا دمج أو P03.
+
+تسليم P02 للمراجعة: اكتملت S01–S09 بالتتابع وVerified تقنيًا، مع270 اختبارًا ناجحًا محليًا وفيCI43586473657 على4c41014؛ لا failed/skipped، وكل Jobs ناجحة. [مراجعة المرحلة](../planning/phase-02/PHASE_REVIEW.md) تضم خريطةAPI والصلاحيات والمعاملات والأحداث والمهام والقيود؛ [تسليم P03](../planning/phase-02/handoffs/S09-to-P03.md) Draft. لا Merge أوP03؛ UserApproval وV4 Pending. فشل Docker/SQL السابق محفوظ، ومراجعة Scalar/Postman والشرح التعليمي لم تُسجل كأنها حدثت. رأس توثيق التسليم النهائي وCI الخاصة به يثبتان منPR والتقرير النهائي.

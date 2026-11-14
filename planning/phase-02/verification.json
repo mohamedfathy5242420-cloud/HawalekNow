@@ -394,14 +394,139 @@
       "exitCode": 0,
       "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1; filtered dotnet test non-SQL projects",
       "detail": "Build0 warnings/errors;47 Architecture+32 Unit+27 ApiFoundation passed with0 failures/skips on2026-11-14. Subsequent OpenAPI description edit requires final verification."
+    },
+    {
+      "name": "S09Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Successful local command and CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804 observed. Release0 warnings/errors; locked dependency graph and format verification passed."
+    },
+    {
+      "name": "S09Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "270=47 Architecture+191 Integration+32 Unit;0 failed/skipped. Local full run and isolated current implementation-head CI agree; original126 tests retained."
+    },
+    {
+      "name": "S09Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Reviewed additive20261111082824 applied to HawalekNow_Development without recreation; full real SQL/HTTP/HTTPS/Mailpit/Hangfire suite passed, including lifecycle/races/rollback/restart/duplicate purge/legacy ciphertext/key binding."
+    },
+    {
+      "name": "S09LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Successful local command and CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804 observed. Release0 warnings/errors; locked dependency graph and format verification passed."
+    },
+    {
+      "name": "S09Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Successful local command and CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804 observed. Release0 warnings/errors; locked dependency graph and format verification passed."
+    },
+    {
+      "name": "S09DocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Roadmap/Git rules passed; original46 P01+14 P02 rejection cases passed against stable S09 InProgress baseline. Final InReview metadata will be rechecked."
+    },
+    {
+      "name": "LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel",
+      "detail": "Actual local exit0 and current implementation CI locked restore passed; package graph unchanged."
+    },
+    {
+      "name": "ReleaseBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions43586473657 Build on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Actual log observed: Build succeeded;0 warnings;0 errors."
+    },
+    {
+      "name": "Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1; PR CI43586473657",
+      "detail": "270 passed=47 Architecture+191 Integration+32 Unit;0 failed/skipped in local and isolated CI; normal parallelization."
+    },
+    {
+      "name": "Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "Actual local exit0 and current implementation CI passed."
+    },
+    {
+      "name": "Roadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "Actual final InReview baseline passed:701 local links/anchors, sequential all9 Verified steps, Pending human approval and Draft P03 gate. Current-state checker result is distinct from CI/runtime evidence."
+    },
+    {
+      "name": "GitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "Actual final InReview baseline passed:25 ignored and36 allowed path samples;280 tracked paths not ignored before adding final2 delivery files. CI rechecks committed paths."
+    },
+    {
+      "name": "DiffCheck",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git -c safe.directory=D:/HwalekNow diff --cached --check",
+      "detail": "Successful implementation commit whitespace check; final documentation is checked again before commit."
+    },
+    {
+      "name": "CI",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions PR run43586473657",
+      "detail": "Observed completed success on4c410147ad4e8ca7773ff382f90a285797939804; all3 required jobs success. Final documentation commit CI is observed separately in PR delivery body."
+    },
+    {
+      "name": "FinalReviewDocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1 (separate processes)",
+      "detail": "Observed final InReview metadata baseline pass on2026-11-14, human fields Pending and P03 prohibited. Final commit CI remains mandatory."
     }
   ],
   "tests": {
-    "passed": 247,
+    "passed": 270,
     "failed": 0,
     "skipped": 0
   },
-  "ci": null,
+  "ci": {
+    "runId": 43586473657,
+    "headSha": "4c410147ad4e8ca7773ff382f90a285797939804",
+    "event": "pull_request",
+    "conclusion": "success",
+    "coverage": "S01-S09 implementation; final delivery metadata commit must have its own observed CI",
+    "jobs": [
+      {
+        "name": "Documentation and Git rules",
+        "conclusion": "success"
+      },
+      {
+        "name": "Restore, build, tests and format",
+        "conclusion": "success"
+      },
+      {
+        "name": "API and SQL image builds",
+        "conclusion": "success"
+      }
+    ]
+  },
   "historicalCi": [
     {
       "runId": 42826018563,
