@@ -3,7 +3,7 @@
 آخر تحديث: 2026-11-11
 
 - Phase: P02
-- Step: P02-S08
+- Step: P02-S09
 - Status: InProgress
 - ExecutionMode: Phase
 - UserApproval: Pending
@@ -13,8 +13,8 @@
 - BaseMain: b7a502051ac52f06b57c541e24f4bdde270a3392
 - P03Status: NotStarted
 - Scope: تنفيذ P02-S01 إلى S09 بالتتابع وفق D012؛ لا دمج أو P03.
-- ActiveStepFile: planning/phase-02/steps/S08.md
-- NextStep: P02-S09 بعد نجاح تحقق S08 المطلوب؛ لا انتقال بعد فشل مانع.
+- ActiveStepFile: planning/phase-02/steps/S09.md
+- NextStep: PhaseReview بعد تحقق S09؛ لا دمج أو P03.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## تنفيذ P02 الجاري
@@ -98,3 +98,5 @@ S04 Done وUserApproval Approved وApprovalDate 2026-10-13؛ تسليم S05 Read
 [Draft PR #6](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/6) مفتوحة ومرفوعة ومرتبطة بالمهمة؛ كود 99d569d وتوثيق 77db4c2، وربط التسليم النهائي من Git history. main ما زال 4ff304825aef95728cba293c79b32523ebbb71ea دون دمج.
 
 LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete
+
+تحديث التنفيذ2026-11-14: S08 Verified بعد [CI42985057946](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42985057946) على62ec070 و247 اختبارًا ناجحًا؛ [تسليم S09](../planning/phase-02/handoffs/S08-to-S09.md) InternalReady. S09 InProgress: Domain deletion وrecovery وجدولة Outbox/Hangfire وpurge وحجز HMAC ثابت وحراسة المفاتيح، و25 اختبار SQL مركزًا ناجحة. Migration الإضافية طُبقت على قاعدة التطوير المسماة، والحل الكامل جارٍ. أُصلح تعطل Docker1920 بإعادة تسمية مجلد الاتصالات المؤقتة مع حفظه، وعادEngine29.7.2؛ بيانات SQL وVolumes وموارد المشاريع الأخرى محفوظة. Postman P02 وScalar محدثان؛ مراجعة المستخدم وV4 Pending، ولا دمج أو P03.

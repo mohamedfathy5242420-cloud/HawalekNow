@@ -259,7 +259,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S08 Password reset وsessions
 
-- Status: InProgress؛ ExecutionStatus: InProgress؛ VerificationStatus: Pending؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S08.md).
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S08.md).
 
 - الاعتمادات السابقة: [P02-S07](#p02-s07).
 - المخرج المطلوب: Reset بالبريد وإلغاء Refresh Tokens وتسجيل الخروج.
@@ -268,6 +268,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p02-s09"></a>
 
 ### P02-S09 حذف الحساب والاسترجاع
+
+- Status: InProgress؛ ExecutionStatus: InProgress؛ VerificationStatus: Pending؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S09.md).
 
 - الاعتمادات السابقة: [P02-S08](#p02-s08).
 - المخرج المطلوب: Soft Delete لمدة 30 يومًا وRecovery OTP وجدولة الحذف النهائي.

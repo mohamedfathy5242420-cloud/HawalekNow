@@ -43,6 +43,7 @@ public sealed class EmailOtpHandler(HawalekDbContext context, PayloadProtection 
         var valid = await context.Set<OtpChallenge>().AsNoTracking().AnyAsync(value => value.UserId == payload.UserId && value.Purpose == payload.Purpose &&
             value.Generation == payload.Generation && value.ConsumedAt == null && value.ExpiresAt > now, cancellationToken);
         var recovery = payload.Purpose == OtpPurpose.AccountRecovery;
+        if (recovery && !await context.Set<AccountDeletion>().AnyAsync(value => value.UserId == payload.UserId && value.RestoredAt == null && value.PurgeAt > now, cancellationToken)) return OutboxHandlingResult.Suppressed;
         if (!valid || !await context.Set<ApplicationUser>().AnyAsync(value => value.Id == payload.UserId &&
             (recovery ? value.AccessStatus == AccountAccessStatus.Deleted && value.AccountType != AccountType.Admin : value.AccessStatus == AccountAccessStatus.Active), cancellationToken))
             return OutboxHandlingResult.Suppressed;

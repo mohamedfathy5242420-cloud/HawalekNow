@@ -50,6 +50,8 @@ public sealed class OtpChallenge
         return true;
     }
 
+    public void Invalidate(DateTimeOffset now) => ConsumedAt ??= now;
+
     private void Unlock(DateTimeOffset now)
     {
         if (LockedUntil is not null && LockedUntil <= now) { LockedUntil = null; FailedAttempts = 0; }

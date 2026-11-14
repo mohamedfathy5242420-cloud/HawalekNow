@@ -10,7 +10,14 @@ public static class FoundationIdentityPorts
 {
     public static IServiceCollection AddFoundationIdentityPorts(this IServiceCollection services) =>
         services.AddScoped<IAccountRegistration, UnusedRegistration>().AddScoped<IEmailConfirmation, UnusedEmail>().AddScoped<IAccountSessions, UnusedSessions>()
-            .AddScoped<IIdentityAccountQueries, UnusedQueries>().AddScoped<IPasswordRecovery, UnusedPasswordRecovery>().AddScoped<IAccountSessionManagement, UnusedSessionManagement>();
+            .AddScoped<IIdentityAccountQueries, UnusedQueries>().AddScoped<IPasswordRecovery, UnusedPasswordRecovery>().AddScoped<IAccountSessionManagement, UnusedSessionManagement>().AddScoped<IAccountLifecycle, UnusedLifecycle>();
+
+    private sealed class UnusedLifecycle : IAccountLifecycle
+    {
+        public Task<Result> DeleteAsync(Guid userId, string password, CancellationToken cancellationToken) => throw new InvalidOperationException("An isolated foundation test invoked a business port.");
+        public Task<Result> RequestRecoveryAsync(string accountType, string email, CancellationToken cancellationToken) => throw new InvalidOperationException("An isolated foundation test invoked a business port.");
+        public Task<Result> RecoverAsync(string accountType, string email, string code, CancellationToken cancellationToken) => throw new InvalidOperationException("An isolated foundation test invoked a business port.");
+    }
 
     private sealed class UnusedPasswordRecovery : IPasswordRecovery
     {

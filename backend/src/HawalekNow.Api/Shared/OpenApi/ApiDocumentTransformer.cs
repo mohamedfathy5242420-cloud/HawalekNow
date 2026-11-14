@@ -12,7 +12,11 @@ public sealed class ApiDocumentTransformer : IOpenApiDocumentTransformer
         document.Info.Title = "HawalekNow API";
         document.Info.Version = "v1";
         document.Info.Description = "api/v1 is a fixed controller route prefix, not request version negotiation. " +
-            "Identity registration, email confirmation and HTTPS cookie sessions use CSRF protection and per-peer request quotas. SQL/email readiness is not checked. " +
+            "Identity registration, email confirmation, password reset, sessions and account recovery use HTTPS cookies, CSRF protection and per-peer request quotas. " +
+            "Fetch identity/csrf with the current cookie jar before every mutation. Access/refresh tokens are never returned in response bodies. " +
+            "Customer and Merchant accounts are separate; specify accountType for login and recovery. Confirmed Pending merchants can prepare their account but cannot publish. " +
+            "Self-delete requires password reauthentication and is forbidden for Admin. AccountRecovery OTP restores before the exact30-day deadline without reviving sessions. " +
+            "SQL/email readiness is not checked. " +
             "Unmatched routes return 404 and unsupported methods return 405 as application/problem+json " +
             "with type, title, status, code and correlationId; no request path or internal diagnostics.";
         foreach (var path in document.Paths.Values)

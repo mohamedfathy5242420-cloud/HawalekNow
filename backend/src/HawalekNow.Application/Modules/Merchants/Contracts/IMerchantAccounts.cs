@@ -7,4 +7,5 @@ public interface IMerchantAccounts
 {
     Task CreatePendingAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<MerchantAccountInfo?> FindByOwnerAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task RemoveIdentityProfileAsync(Guid userId, CancellationToken cancellationToken = default);
 }

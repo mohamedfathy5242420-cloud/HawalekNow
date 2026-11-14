@@ -30,7 +30,7 @@ if (Test-Path -LiteralPath $p02ServicePath) {
 } else {
     $p02Name = 'hawaleknow-p02-mailpit-' + [Guid]::NewGuid().ToString('N')
     $p02Image = 'axllent/mailpit:v1.31.6@sha256:23fe39e81bde596a918000b3135c0f85dc8bb4c9ea6be274b051143f3e300387'
-    & docker create --name $p02Name --label io.hawaleknow.owner=p02-mailpit --publish 127.0.0.1::1025 --publish 127.0.0.1::8025 --env MP_DISABLE_VERSION_CHECK=true --env MP_BLOCK_REMOTE_CSS_AND_FONTS=true --env MP_ENABLE_SPAMASSASSIN=false $p02Image | Out-Null
+    & docker create --name $p02Name --label io.hawaleknow.owner=p02-mailpit --publish 127.0.0.1::1025 --publish 127.0.0.1::8025 --env MP_DISABLE_VERSION_CHECK=true --env MP_BLOCK_REMOTE_CSS_AND_FONTS=true --env MP_SMTP_DISABLE_RDNS=true --env MP_ENABLE_SPAMASSASSIN=false $p02Image | Out-Null
     if ($LASTEXITCODE -ne 0) { throw 'Isolated Mailpit creation failed.' }
     $p02Mail = Read-OwnedContainer $p02Name 'io.hawaleknow.owner' 'p02-mailpit'
 }

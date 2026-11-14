@@ -20,6 +20,12 @@ public sealed class MerchantAccounts(HawalekDbContext context) : IMerchantAccoun
         return account is null ? null : new(account.Id, account.Status.ToString(), account.CanPrepareAccount,
             account.Status == MerchantApprovalStatus.Approved, account.Status == MerchantApprovalStatus.Suspended);
     }
+    public Task RemoveIdentityProfileAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        if (context.Database.CurrentTransaction is null) throw new InvalidOperationException("Profile removal requires the owning SQL transaction.");
+        // P02 owns only this empty identity profile. Future commercial data needs its own retention policy.
+        return context.Set<MerchantAccount>().Where(value => value.UserId == userId).ExecuteDeleteAsync(cancellationToken);
+    }
 }
 
 public static class MerchantRegistration

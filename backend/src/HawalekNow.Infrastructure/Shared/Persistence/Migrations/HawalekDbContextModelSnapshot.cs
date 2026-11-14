@@ -22,6 +22,73 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Identity.AccountDeletion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Generation")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("PurgeAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("RequestedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("RestoredAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("ScheduledJobId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PurgeAt");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("AccountDeletions", "identity");
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Identity.AccountDeletionAudit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Generation")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Generation", "Kind")
+                        .IsUnique();
+
+                    b.ToTable("AccountDeletionAudit", "identity");
+                });
+
             modelBuilder.Entity("HawalekNow.Domain.Modules.Identity.AccountSession", b =>
                 {
                     b.Property<Guid>("Id")
@@ -236,6 +303,26 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("HawalekNow.Infrastructure.Modules.Identity.IdentifierKeyBinding", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Fingerprint")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .IsUnicode(false)
+                        .HasColumnType("char(64)")
+                        .IsFixedLength();
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdentifierKeyBinding", "identity", t =>
+                        {
+                            t.HasCheckConstraint("CK_IdentifierKeyBinding_Singleton", "[Id] = 1");
+                        });
+                });
+
             modelBuilder.Entity("HawalekNow.Infrastructure.Modules.Identity.RefreshCredential", b =>
                 {
                     b.Property<Guid>("Id")
@@ -340,7 +427,12 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.Property<int>("State")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("SubjectId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SubjectId");
 
                     b.HasIndex("State", "NextAttemptAt");
 
@@ -413,6 +505,15 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("UserTokens", "identity");
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Identity.AccountDeletion", b =>
+                {
+                    b.HasOne("HawalekNow.Infrastructure.Modules.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HawalekNow.Domain.Modules.Identity.AccountSession", b =>

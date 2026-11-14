@@ -9,6 +9,7 @@ public sealed class OutboxMessage
     public Guid Id { get; set; } = Guid.CreateVersion7();
     public string Kind { get; set; } = "";
     public string ProtectedPayload { get; set; } = "";
+    public Guid? SubjectId { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset NextAttemptAt { get; set; }
     public OutboxState State { get; set; } = OutboxState.Pending;
@@ -28,5 +29,6 @@ public sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outbox
         builder.Property(value => value.LastFailureCode).HasMaxLength(40);
         builder.Property(value => value.RowVersion).IsRowVersion();
         builder.HasIndex(value => new { value.State, value.NextAttemptAt });
+        builder.HasIndex(value => value.SubjectId);
     }
 }

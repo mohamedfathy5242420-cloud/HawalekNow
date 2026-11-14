@@ -38,6 +38,9 @@ public static class IdentityPersistenceRegistration
         services.AddScoped<AccountSessionManagement>();
         services.AddScoped<IAccountSessionManagement>(provider => provider.GetRequiredService<AccountSessionManagement>());
         services.AddScoped<IPasswordRecovery, PasswordRecovery>();
+        services.AddScoped<IAccountLifecycle, AccountLifecycle>();
+        services.AddScoped<AccountPurgeJob>();
+        services.AddScoped<IOutboxHandler, DeletionScheduleHandler>();
         services.AddScoped<IIdentityAccountQueries, IdentityAccountQueries>();
         services.AddScoped<IdentityStateLock>();
         services.AddScoped<EmailConfirmationService>();

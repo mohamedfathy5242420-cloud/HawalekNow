@@ -1,3 +1,27 @@
+# تجربة API وScalar وPostman — P02
+
+الحالة الحالية تضيف الهوية والأمان إلى أساس P01. كل المسارات تحت /api/v1؛ OpenAPI وScalar في Development فقط. تعليمات P01 أسفل هذه الفقرة سجل تاريخي، وأعداد مساراتها ومتطلبات تشغيلها تخص وقتها. التشغيل الحالي يحتاج إعدادات [دليل الهوية](IDENTITY_OPERATIONS.md) وقاعدة HawalekNow_Development التي طُبقت عليها Migrations المراجعة، ومفاتيح مستقرة خارج Git وMailpit محلية وHTTPS بشهادة موثوقة محليًا. لا تحفظ القيم الحقيقية في Collection أو Environment متتبعة.
+
+بعد تجهيز الإعدادات والشهادة المحلية، مثال عنوان التشغيل: https://localhost:7080. افتح /scalar/ أو /openapi/v1.json على الأصل نفسه؛ فحص الحياة وحده لا يثبت جاهزية SQL أو SMTP. تبقى Secure cookies والتحقق من الشهادة مفعّلين. اختبارات الحل تستخدم Kestrel وCA خاصة بالاختبار دون تغيير مخزن ثقة الجهاز.
+
+## الرحلات الحالية في Scalar
+
+1. نفذ GET identity/csrf مع cookie jar الحالية، ثم أرسل requestToken في X-CSRF-TOKEN لكل POST أوDELETE. أعد جلبه بعد تغير principal أو انتهاء access؛ هو رمز حماية طلب وليس access أوrefresh.
+2. سجّل Customer في identity/customers/register بـusername وemail وpassword وacceptTerms=true. اقرأ أحدث EmailConfirmation في Mailpit، ثم identity/email/verify بـaccountType/email/code.204 التسجيل عامة ولا تثبت أن البريد جديد. ادخل في identity/login، ثم جرّب identity/me وidentity/customer-profile.
+3. سجّل Merchant مستقلًا عبر identity/merchants/register. D014 يسمح باستخدام البريد والاسم نفسيهما داخل نوع آخر. أكد بريده وادخل مع accountType=Merchant. GET merchants/account يسمح بالتجهيز في Pending، وpublishing-access يعطي403 قبل Approved. لا توجد موافقة تاجر عامة في P02؛ Approved ممثلة في اختبارات فقط.
+4. افتح جلستين ثم identity/password/request. استعمل رمز PasswordReset في identity/password/reset معnewPassword. النجاح يلغي كل الجلسات السابقة؛ تؤكد401 ذلك. ادخل بكلمة المرور الجديدة. رمز EmailConfirmation لا يعمل هنا.
+5. احذف حساب اختبار Customer أوMerchant عبر DELETE identity/account بكلمة المرور الحالية وCSRF. كل الجلسات تصبح ملغاة؛ me401. اطلب identity/recovery/request ثم استعمل AccountRecovery في recovery/verify قبل30 يومًا. النجاح لا يدخل المستخدم؛ me تبقى401 حتى login جديد. Admin يحصل403 عند self-delete. لا endpoint لتقديم الساعة أوpurge يدوي في الإنتاج؛ الموعد والسباقات تختبر بساعة قابلة للتحكم داخل الاختبارات.
+6. GET identity/sessions يعرض حتى50 جلسة نشطة والحالية أولًا. GET أوDELETE sessions/{sessionId} يقبل المملوكة فقط؛ الغريبة404 حتى Admin. logout يخرج الحالية، وlogout-all يلغي الكل. احترم Retry-After عند429؛ حدود الطلب في الذاكرة لكل peer، وعدادات المحاولات الخاصة بالحساب فيSQL.
+
+## Postman الحالي — مراجعة المستخدم Pending
+
+استورد [Collection P02](postman/HawalekNow.P02.postman_collection.json) و[Environment P02](postman/HawalekNow.P02.Local.postman_environment.json) محليًا. توجد28 طلبًا موزعة على الرحلات. baseUrl مثال HTTPS محلي، وكل قيم username/email/password/newPassword ورموز الأغراض وsessionId فارغة. املأ نسختك المحلية فقط ولا تصدرها بعد تعبئتها. لا حاجة إلى Bearer token؛ يستخدم Postman cookie jar الخاصة بالأصل.
+
+اختر طلبات الرحلة المقصودة بالترتيب وفق الخطوات أعلاه. Collection تجلب CSRF قبل كل mutation وتضع header في الطلب الحالي فقط. تختلف فروع Customer/Merchant/Admin وتتطلب رموزًا جديدة، لذلك تشغيل كل28 طلبًا آليًا دون إعداد الفروع والرموز ليس تجربة صحيحة. بعد reset عدّل قيمة password المحلية إلى الجديدة قبل login أوdelete. استعمل sessionId مملوكة من القائمة عند read/revoke، وامسح jar لسيناريو الزائر.
+
+فُحص JSON وسلامة JavaScript وقيم الأسرار الفارغة، وجُرّبت تهيئة CSRF بمثال محلي. لم تُنفذ Collection كاملة في Postman أوNewman ولم تُسجّل مراجعة المستخدم كأنها حدثت. رحلات Program الفعلية تُثبت باختبارات HTTP/SQL/HTTPS/SMTP المستقلة. نجاح Agent لا يحول V4 أوUserApproval إلىPassed. الـCollection التاريخية P01 باقية مع تحديث فحص المسارات لتقبل API الحالية.
+
+## سجل P01 التاريخي
 # OpenAPI وScalar وAPI v1 وHealth — P01-S07
 
 ## الفكرة خطوة بخطوة

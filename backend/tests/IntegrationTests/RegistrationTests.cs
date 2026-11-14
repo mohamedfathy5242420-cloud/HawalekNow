@@ -141,10 +141,12 @@ public sealed class RegistrationTests(SqlDatabase database) : IClassFixture<SqlD
         {
             var digests = scope.ServiceProvider.GetRequiredService<IdentifierDigests>();
             var normalizer = scope.ServiceProvider.GetRequiredService<ILookupNormalizer>();
-            await using var context = database.CreateContext();
+            var context = scope.ServiceProvider.GetRequiredService<HawalekDbContext>();
+            await using var transaction = await context.BeginAsync();
+            await scope.ServiceProvider.GetRequiredService<IdentifierLocks>().EnsureKeyBindingAsync(CancellationToken.None);
             context.Add(ReservedIdentifier.Create(AccountType.Customer, IdentifierKind.Email,
                 digests.Hash(AccountType.Customer, IdentifierKind.Email, normalizer.NormalizeEmail(details.Email)!)));
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(); await transaction.CommitAsync();
         }
         var body = new { username = details.Name, email = details.Email, password = details.Password, acceptTerms = true };
         using var customer = await client.PostBrowserJsonAsync("/api/v1/identity/customers/register", body);
@@ -171,5 +173,6 @@ public sealed class RegistrationTests(SqlDatabase database) : IClassFixture<SqlD
             throw new InvalidOperationException("test-only-failure-secret");
         }
         public Task<MerchantAccountInfo?> FindByOwnerAsync(Guid userId, CancellationToken cancellationToken = default) => Task.FromResult<MerchantAccountInfo?>(null);
+        public Task RemoveIdentityProfileAsync(Guid userId, CancellationToken cancellationToken = default) => throw new InvalidOperationException("Unused test operation.");
     }
 }

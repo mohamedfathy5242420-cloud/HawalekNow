@@ -331,10 +331,73 @@
       "exitCode": 1,
       "command": "./backend/test-p02.ps1 -NoBuild",
       "detail": "After Docker engine recovery, SQL was still recovering: pre-login connections closed; 47 Architecture +72 Integration +28 Unit passed,100 SQL fixtures failed,0 skipped. SQL later reached Healthy. A subsequent full run is pending; remote CI will verify the current source in isolated services. No assertion or test parallelism removed."
+    },
+    {
+      "name": "S08Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "Actual successful current-head CI job and steps observed; Release build0 warnings/errors; locked restore, format and documentation gates passed."
+    },
+    {
+      "name": "S08Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "47 Architecture +172 Integration +28 Unit =247;0 failed/skipped; normal parallelization; CI log observed."
+    },
+    {
+      "name": "S08Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "Actual SQL migrations/transactions/reset single-use/purpose/type/concurrency/rollback/session effects, HTTPS and Mailpit/Hangfire regression suite passed in isolated CI; local recovery/timeouts remain recorded."
+    },
+    {
+      "name": "S08LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "Actual successful current-head CI job and steps observed; Release build0 warnings/errors; locked restore, format and documentation gates passed."
+    },
+    {
+      "name": "S08Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "Actual successful current-head CI job and steps observed; Release build0 warnings/errors; locked restore, format and documentation gates passed."
+    },
+    {
+      "name": "S08DocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "Actual successful current-head CI job and steps observed; Release build0 warnings/errors; locked restore, format and documentation gates passed."
+    },
+    {
+      "name": "S08LocalHealthyRun",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "Local full run finished with47 Architecture +153 Integration +28 Unit passed,19 Integration failures,0 skipped. SQL fixture CREATE DATABASE/cleanup timeouts during Docker recovery/load. Separate isolated CI42985057946 on identical S08 source passed all247; local failures retained. No original tests removed or parallelization disabled."
+    },
+    {
+      "name": "S09FocusedTests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter FullyQualifiedName~AccountLifecycleTests|FullyQualifiedName~RegistrationTests",
+      "detail": "25 Integration passed,0 failed/skipped; actual SQL lifecycle/deadline/purpose/revocation/races/worker restart/duplicate jobs/key mismatch/transaction rollback/legacy outbox cleanup/type-scoped permanent reservation. Other projects had no matching filtered tests; all solution verification pending."
+    },
+    {
+      "name": "S09PreliminaryStatic",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1; filtered dotnet test non-SQL projects",
+      "detail": "Build0 warnings/errors;47 Architecture+32 Unit+27 ApiFoundation passed with0 failures/skips on2026-11-14. Subsequent OpenAPI description edit requires final verification."
     }
   ],
   "tests": {
-    "passed": 231,
+    "passed": 247,
     "failed": 0,
     "skipped": 0
   },
@@ -394,6 +457,18 @@
       "event": "pull_request",
       "conclusion": "success",
       "coverage": "S01-S07 only",
+      "jobs": [
+        "Restore, build, tests and format",
+        "Documentation and Git rules",
+        "API and SQL image builds"
+      ]
+    },
+    {
+      "runId": 42985057946,
+      "headSha": "62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "event": "pull_request",
+      "conclusion": "success",
+      "coverage": "S01-S08 only",
       "jobs": [
         "Restore, build, tests and format",
         "Documentation and Git rules",

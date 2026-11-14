@@ -12,6 +12,17 @@ public sealed class ApplicationUser : IdentityUser<Guid>
 
     public void RecordTermsAcceptance(DateTimeOffset acceptedAt) => TermsAcceptedAt = acceptedAt.ToUniversalTime();
 
+    public void MarkDeleted()
+    {
+        if (AccountType == AccountType.Admin || AccessStatus != AccountAccessStatus.Active) throw new InvalidOperationException("Self deletion is unavailable.");
+        AccessStatus = AccountAccessStatus.Deleted;
+    }
+    public void RestoreDeleted()
+    {
+        if (AccountType == AccountType.Admin || AccessStatus != AccountAccessStatus.Deleted) throw new InvalidOperationException("Account recovery is unavailable.");
+        AccessStatus = AccountAccessStatus.Active;
+    }
+
     private ApplicationUser() { }
 
     public static ApplicationUser Create(AccountType accountType, string username, string email)

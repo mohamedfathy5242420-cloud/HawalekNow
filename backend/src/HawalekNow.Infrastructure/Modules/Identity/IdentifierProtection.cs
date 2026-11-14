@@ -25,6 +25,22 @@ public sealed class IdentifierDigests
 
     public string Hash(AccountType type, IdentifierKind kind, string normalizedValue) =>
         Convert.ToHexString(HMACSHA256.HashData(key, Encoding.UTF8.GetBytes($"{(int)type}:{(int)kind}:{normalizedValue}")));
+    public string Fingerprint => Convert.ToHexString(HMACSHA256.HashData(key, "HawalekNow.identifier-key.v1"u8));
+}
+
+public sealed class IdentifierKeyBinding
+{
+    public int Id { get; set; } = 1;
+    public string Fingerprint { get; set; } = "";
+}
+public sealed class IdentifierKeyBindingConfiguration : IEntityTypeConfiguration<IdentifierKeyBinding>
+{
+    public void Configure(EntityTypeBuilder<IdentifierKeyBinding> builder)
+    {
+        builder.ToTable("IdentifierKeyBinding", "identity", table => table.HasCheckConstraint("CK_IdentifierKeyBinding_Singleton", "[Id] = 1"));
+        builder.HasKey(value => value.Id); builder.Property(value => value.Id).ValueGeneratedNever();
+        builder.Property(value => value.Fingerprint).HasMaxLength(64).IsFixedLength().IsUnicode(false).IsRequired();
+    }
 }
 
 // These rows survive permanent deletion. Original usernames/emails and credentials are never stored here.
@@ -55,6 +71,7 @@ public sealed class IdentifierLocks(HawalekDbContext context, IdentifierDigests 
 {
     public async Task AcquireAsync(AccountType type, string normalizedName, string normalizedEmail, CancellationToken cancellationToken)
     {
+        await EnsureKeyBindingAsync(cancellationToken);
         var resources = new[] { digests.Hash(type, IdentifierKind.Username, normalizedName), digests.Hash(type, IdentifierKind.Email, normalizedEmail) };
         foreach (var resource in resources.Order(StringComparer.Ordinal))
         {
@@ -64,5 +81,25 @@ public sealed class IdentifierLocks(HawalekDbContext context, IdentifierDigests 
                 IF @result < 0 THROW 51002, N'Account transaction lock unavailable.', 1;
                 """, cancellationToken);
         }
+    }
+    public async Task EnsureKeyBindingAsync(CancellationToken cancellationToken)
+    {
+        if (context.Database.CurrentTransaction is null) throw new InvalidOperationException("Identifier protection requires the owning transaction.");
+        var binding = await context.Set<IdentifierKeyBinding>().AsNoTracking().SingleOrDefaultAsync(cancellationToken);
+        if (binding is null)
+        {
+            await context.Database.ExecuteSqlRawAsync("""
+                DECLARE @result int;
+                EXEC @result = sys.sp_getapplock @Resource=N'identity.key-binding.v1', @LockMode=N'Exclusive', @LockOwner=N'Transaction', @LockTimeout=10000;
+                IF @result < 0 THROW 51002, N'Account transaction lock unavailable.', 1;
+                """, cancellationToken);
+            binding = await context.Set<IdentifierKeyBinding>().AsNoTracking().SingleOrDefaultAsync(cancellationToken);
+            if (binding is null)
+            {
+                if (await context.Set<ReservedIdentifier>().AnyAsync(cancellationToken)) throw new InvalidOperationException("Identifier key binding requires operator reconciliation.");
+                binding = new() { Fingerprint = digests.Fingerprint }; context.Add(binding); await context.SaveChangesAsync(cancellationToken);
+            }
+        }
+        if (binding.Fingerprint != digests.Fingerprint) throw new InvalidOperationException("Identifier key does not match the durable binding.");
     }
 }

@@ -52,7 +52,7 @@ public sealed class EmailConfirmationService(HawalekDbContext context, ILookupNo
         do { code = secrets.Generate(); } while (previous.Any(value => secrets.Matches(value, code)));
         var generation = Guid.CreateVersion7();
         if (!challenge.Issue(generation, secrets.Hash(user.Id, purpose, generation, code), clock.GetUtcNow())) return false;
-        outbox.Add(EmailOtpHandler.MessageKind, protection.Protect(EmailOtpHandler.MessageKind, new EmailOtpPayload(user.Id, purpose, generation, user.Email!, code)));
+        outbox.Add(EmailOtpHandler.MessageKind, protection.Protect(EmailOtpHandler.MessageKind, new EmailOtpPayload(user.Id, purpose, generation, user.Email!, code)), user.Id);
         return true;
     }
     public Task<ApplicationUser?> FindAsync(string accountType, string email, CancellationToken cancellationToken)
