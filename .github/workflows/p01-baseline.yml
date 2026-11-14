@@ -1,4 +1,4 @@
-name: P01 baseline
+name: Backend baseline and P02 identity
 
 on:
   pull_request:
@@ -45,6 +45,8 @@ jobs:
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: '1'
       DOTNET_NOLOGO: '1'
+      P02_SQL_CONTAINER: hawaleknow-p02-ci-sql-${{ github.run_id }}-${{ github.run_attempt }}
+      P02_MAILPIT_CONTAINER: hawaleknow-p02-ci-mailpit-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -67,10 +69,70 @@ jobs:
           dotnet restore backend/HawalekNow.slnx --locked-mode
       - name: Build
         run: dotnet build backend/HawalekNow.slnx --configuration Release --no-restore
+      - name: Start isolated SQL Server for actual migrations and transaction tests
+        run: |
+          p02_sql_password="Ci9!$(openssl rand -hex 24)"
+          echo "::add-mask::$p02_sql_password"
+          p02_sql_image=$(sed -n 's/^FROM //p' docker/sql/Dockerfile | head -1)
+          test -n "$p02_sql_image"
+          docker run --detach --name "$P02_SQL_CONTAINER" \
+            --label "io.hawaleknow.test-run=${{ github.run_id }}" \
+            --env ACCEPT_EULA=Y --env MSSQL_PID=EnterpriseDeveloper \
+            --env MSSQL_MEMORY_LIMIT_MB=2048 --env MSSQL_SA_PASSWORD="$p02_sql_password" \
+            --publish 127.0.0.1::1433 "$p02_sql_image"
+          p02_sql_port=$(docker inspect --format '{{(index (index .NetworkSettings.Ports "1433/tcp") 0).HostPort}}' "$P02_SQL_CONTAINER")
+          p02_sql_connection="Server=127.0.0.1,$p02_sql_port;Database=master;User ID=sa;Password=$p02_sql_password;Encrypt=True;TrustServerCertificate=True;Connect Timeout=15"
+          echo "::add-mask::$p02_sql_connection"
+          echo "HAWALEKNOW_TEST_SQL=$p02_sql_connection" >> "$GITHUB_ENV"
+          p02_sql_ready=false
+          for attempt in $(seq 1 60); do
+            if docker exec --env SQLCMDPASSWORD="$p02_sql_password" "$P02_SQL_CONTAINER" \
+              /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -C -b -l 2 -Q 'SELECT 1' >/dev/null 2>&1; then
+              p02_sql_ready=true
+              break
+            fi
+            sleep 2
+          done
+          test "$p02_sql_ready" = true
+      - name: Start isolated local Mailpit for SMTP acceptance and lost-ACK tests
+        run: |
+          docker run --detach --name "$P02_MAILPIT_CONTAINER" \
+            --label "io.hawaleknow.test-run=${{ github.run_id }}" \
+            --env MP_DISABLE_VERSION_CHECK=true --env MP_BLOCK_REMOTE_CSS_AND_FONTS=true \
+            --env MP_SMTP_DISABLE_RDNS=true \
+            --publish 127.0.0.1::1025 --publish 127.0.0.1::8025 \
+            axllent/mailpit:v1.31.6@sha256:23fe39e81bde596a918000b3135c0f85dc8bb4c9ea6be274b051143f3e300387
+          p02_smtp_port=$(docker inspect --format '{{(index (index .NetworkSettings.Ports "1025/tcp") 0).HostPort}}' "$P02_MAILPIT_CONTAINER")
+          p02_mailpit_port=$(docker inspect --format '{{(index (index .NetworkSettings.Ports "8025/tcp") 0).HostPort}}' "$P02_MAILPIT_CONTAINER")
+          echo "HAWALEKNOW_TEST_SMTP_PORT=$p02_smtp_port" >> "$GITHUB_ENV"
+          echo "HAWALEKNOW_TEST_MAILPIT_URL=http://127.0.0.1:$p02_mailpit_port" >> "$GITHUB_ENV"
+          p02_mailpit_ready=false
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent "http://127.0.0.1:$p02_mailpit_port/readyz" >/dev/null; then
+              p02_mailpit_ready=true
+              break
+            fi
+            sleep 1
+          done
+          test "$p02_mailpit_ready" = true
       - name: Test with the normal parallelization settings
         run: dotnet test backend/HawalekNow.slnx --configuration Release --no-build --no-restore
       - name: Verify format without modifying files
         run: dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore
+      - name: Remove only this run's SQL container
+        if: always()
+        run: |
+          if docker inspect "$P02_SQL_CONTAINER" >/dev/null 2>&1; then
+            test "$(docker inspect --format '{{index .Config.Labels "io.hawaleknow.test-run"}}' "$P02_SQL_CONTAINER")" = "${{ github.run_id }}"
+            docker rm --force "$P02_SQL_CONTAINER"
+          fi
+      - name: Remove only this run's Mailpit container
+        if: always()
+        run: |
+          if docker inspect "$P02_MAILPIT_CONTAINER" >/dev/null 2>&1; then
+            test "$(docker inspect --format '{{index .Config.Labels "io.hawaleknow.test-run"}}' "$P02_MAILPIT_CONTAINER")" = "${{ github.run_id }}"
+            docker rm --force "$P02_MAILPIT_CONTAINER"
+          fi
 
   docker:
     name: API and SQL image builds

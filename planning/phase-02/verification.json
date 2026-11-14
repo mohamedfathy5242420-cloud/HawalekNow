@@ -1,0 +1,604 @@
+{
+  "phase": "P02",
+  "baseMain": "b7a502051ac52f06b57c541e24f4bdde270a3392",
+  "predecessor": {
+    "phase": "P01",
+    "approval": "D013",
+    "pr": 8,
+    "merged": true,
+    "mergedAt": "2026-11-10T11:01:00Z"
+  },
+  "checks": [
+    {
+      "name": "S01Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 (Release build included)",
+      "detail": "All projects compiled; zero compiler warnings/errors after Pkcs correction"
+    },
+    {
+      "name": "S01Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +77 Integration +9 Unit =133; zero failed/skipped"
+    },
+    {
+      "name": "S01Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet ef database update --project backend/src/HawalekNow.Infrastructure --configuration Release --no-build; PersistenceTests via test-p02",
+      "detail": "SQL Server 17.0.5015.4; additive migration; type-scoped unique constraints; actual UserOnlyStore; atomic commit/rollback; RowVersion"
+    },
+    {
+      "name": "S01LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel"
+    },
+    {
+      "name": "S01Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S02Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 (Release build included)"
+    },
+    {
+      "name": "S02Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +83 Integration +9 Unit =139; no failed/skipped"
+    },
+    {
+      "name": "S02Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "AdminSeedTests via ./backend/test-p02.ps1",
+      "detail": "Concurrent first-admin seed; unchanged credentials on repeat; actual Program command twice; missing/invalid configuration; no secret output"
+    },
+    {
+      "name": "S02Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S03InitialTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture and16 Unit passed; Integration91 passed/1 failed. Migration preservation assertion used runtime GetCollation; replaced by actual SQL sys.columns query. No skipped tests or weakened assertions."
+    },
+    {
+      "name": "S03Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "0 warnings/errors; subsequent test build also succeeded"
+    },
+    {
+      "name": "S03Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "47 Architecture +94 Integration +23 Unit =164; 0 failed/skipped; prior failing run retained"
+    },
+    {
+      "name": "S03Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "RegistrationTests/PersistenceTests via test-p02; dotnet ef database update --project backend/src/HawalekNow.Infrastructure --configuration Release --no-build",
+      "detail": "Actual SQL migration preserves prior row; 6 concurrent registrations; cross-module rollback; type-scoped uniqueness; reserved identifiers"
+    },
+    {
+      "name": "S03Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S04InitialBuild",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore",
+      "detail": "Test-only missing Configuration using and wrong monitoring method corrected; collection assertions made analyzer-compliant."
+    },
+    {
+      "name": "S04InitialTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -Filter OTP",
+      "detail": "6 Integration +3 Unit passed; one exact exception-type assertion failed. Corrected to AuthenticationTagMismatchException; retained all assertions."
+    },
+    {
+      "name": "S04Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "Release test build succeeded; no compiler warnings/errors"
+    },
+    {
+      "name": "S04Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +101 Integration +26 Unit =174; 0 failed/skipped; prior failures retained"
+    },
+    {
+      "name": "S04Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "OtpOutboxTests via test-p02; dotnet ef database update --project backend/src/HawalekNow.Infrastructure --configuration Release --no-build",
+      "detail": "SQL/HTTP single-use concurrency, transactional rollback, lease recovery, Hangfire SQL worker restart, Mailpit concurrency and real lost SMTP ACK; additive migration applied to named development DB"
+    },
+    {
+      "name": "S04LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel"
+    },
+    {
+      "name": "S04Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S05InitialTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -Filter FullyQualifiedName~SessionTests",
+      "detail": "10 Integration +2 Unit passed, 1 HTTPS failed at Schannel handshake with purely ephemeral key; disposable default-key import fixed Windows handshake while keeping custom CA validation/Secure. Focused real HTTPS rerun passed."
+    },
+    {
+      "name": "S05InitialFullTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1",
+      "detail": "Architecture27 passed/20 failed due one forbidden API implementation dependency and domain enum in API DTO. Integration116 passed/1 failed at intermittent worker duplicate shutdown. Unit28 passed. Tests unchanged; wiring moved to Program, DTO uses string, worker disposal takes ownership atomically. Reverification pending."
+    },
+    {
+      "name": "S05Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 (Release build included)",
+      "detail": "All solution projects compiled for Release; no compiler warnings/errors in final run"
+    },
+    {
+      "name": "S05Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +118 Integration +28 Unit =193; 0 failed/skipped; all original tests retained; prior failures recorded"
+    },
+    {
+      "name": "S05Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "SessionTests/OtpOutboxTests via ./backend/test-p02.ps1; dotnet ef database update --project backend/src/HawalekNow.Infrastructure --configuration Release --no-build",
+      "detail": "Real SQL migrations/rotation/replay/concurrency/revocation/restart; actual Kestrel HTTPS custom CA and Secure cookie container; repeated/concurrent worker shutdown; reviewed additive migration applied to HawalekNow_Development without recreation"
+    },
+    {
+      "name": "S05LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel"
+    },
+    {
+      "name": "S05Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S05InitialDocGate",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./planning/test-phase-gates.ps1",
+      "detail": "46 P01 cases passed; P02 snapshot copied during documentation/handoff edit and observed new S05 link before its target. Rerun against stable files required; no gate changes."
+    },
+    {
+      "name": "S05DocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1; ./planning/test-phase-gates.ps1 (separate processes); git diff --check",
+      "detail": "Stable documentation baseline passed; 46 original P01 +14 P02 rejection cases retained. Prior snapshot-copy failure recorded."
+    },
+    {
+      "name": "S06InitialTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -Filter BrowserSecurity/Registration/OTP/Session",
+      "detail": "25 Integration failed, 0 passed; AutoValidateAntiforgeryToken ViewFeatures filter missing under AddControllers caused safe500 even for CSRF GET. Replaced attribute with API authorization filter calling IAntiforgery.ValidateRequestAsync and existing safe400 contract; no logging/schema/test weakening."
+    },
+    {
+      "name": "S06CacheAssertionTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -Filter Token_requires_its_own_cookie/Separate_routes",
+      "detail": "Registration passed after filter fix; CSRF test failed only because equivalent Cache-Control directives appeared in reverse order. Assertion now checks NoCache and NoStore flags; no security expectation removed."
+    },
+    {
+      "name": "S06KeyRingTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -Filter BrowserSecurity/Registration/OTP/Session",
+      "detail": "25 passed/1 failed; explicit key-ring restart test found no key files in owned directory because startup read configuration before WebApplicationFactory providers. KeyManagementOptions now resolve final configuration through DI; startup validation retained. Framework Development default key ring was not deleted."
+    },
+    {
+      "name": "S06InitialFullTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +134 Integration +28 Unit passed; one plain-HTTP login assertion failed (500) because framework Secure-cookie verification rejects insecure transport with InvalidOperationException. Filter now explicitly rejects non-HTTPS mutation as existing403 before verifier; Secure remains enabled and original S05 assertion restored."
+    },
+    {
+      "name": "S06Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 (Release build included)",
+      "detail": "All solution projects compiled; no compiler warnings/errors in final run"
+    },
+    {
+      "name": "S06Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +135 Integration +28 Unit =210; 0 failed/skipped; all original tests retained"
+    },
+    {
+      "name": "S06Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "BrowserSecurityTests and all existing SQL/HTTP/SMTP/worker tests via ./backend/test-p02.ps1",
+      "detail": "Real Program + SQL migrations/transactions; rejected CSRF leaves DB unchanged; valid principal-bound mutations and persistent key-ring restart; quotas and spoofed peer headers; Kestrel HTTPS; no new migration"
+    },
+    {
+      "name": "S06LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel"
+    },
+    {
+      "name": "S06Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S06DocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1; ./planning/test-phase-gates.ps1 (separate processes); git diff --check",
+      "detail": "507 links/anchors and sequential P02 handoffs valid; all 46 original P01 and14 P02 rejection cases retained; TARGET_SCHEDULE untracked with original SHA256"
+    },
+    {
+      "name": "S07Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1; ./backend/test-p02.ps1",
+      "detail": "Initial explicit build and final test build succeeded without compiler warnings/errors"
+    },
+    {
+      "name": "S07Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture +156 Integration +28 Unit =231; 0 failed/skipped; original tests and assertions retained"
+    },
+    {
+      "name": "S07Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "AuthorizationTests/PersistenceTests via ./backend/test-p02.ps1; dotnet ef database update --project backend/src/HawalekNow.Infrastructure --configuration Release --no-build",
+      "detail": "14 HTTP matrix rows and SQL live-state/ownership, inactive OTP, FK-linked session binding, forged claims, status constraint; legacy migration preserves identity and defaults active; additive migration applied to named development DB"
+    },
+    {
+      "name": "S07LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel"
+    },
+    {
+      "name": "S07Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore"
+    },
+    {
+      "name": "S07DocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1; ./planning/test-phase-gates.ps1 (separate processes); git diff --check",
+      "detail": "513 local links/anchors; sequential handoffs; all46 P01 and14 P02 rejection cases; TARGET_SCHEDULE original hash and untracked"
+    },
+    {
+      "name": "S08InitialFullTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1",
+      "detail": "47 Architecture and28 Unit passed; Integration72 passed/100 failed at SQL fixture connection (total172). Docker Linux engine pipe was absent; no business test or migration bypassed. Restore locked graph passed. Restore existing engine/services and rerun same full suite."
+    },
+    {
+      "name": "S08SqlRecoveryRun",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "After Docker engine recovery, SQL was still recovering: pre-login connections closed; 47 Architecture +72 Integration +28 Unit passed,100 SQL fixtures failed,0 skipped. SQL later reached Healthy. A subsequent full run is pending; remote CI will verify the current source in isolated services. No assertion or test parallelism removed."
+    },
+    {
+      "name": "S08Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "Actual successful current-head CI job and steps observed; Release build0 warnings/errors; locked restore, format and documentation gates passed."
+    },
+    {
+      "name": "S08Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "47 Architecture +172 Integration +28 Unit =247;0 failed/skipped; normal parallelization; CI log observed."
+    },
+    {
+      "name": "S08Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "Actual SQL migrations/transactions/reset single-use/purpose/type/concurrency/rollback/session effects, HTTPS and Mailpit/Hangfire regression suite passed in isolated CI; local recovery/timeouts remain recorded."
+    },
+    {
+      "name": "S08LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "Actual successful current-head CI job and steps observed; Release build0 warnings/errors; locked restore, format and documentation gates passed."
+    },
+    {
+      "name": "S08Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "Actual successful current-head CI job and steps observed; Release build0 warnings/errors; locked restore, format and documentation gates passed."
+    },
+    {
+      "name": "S08DocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions run42985057946 on62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "detail": "Actual successful current-head CI job and steps observed; Release build0 warnings/errors; locked restore, format and documentation gates passed."
+    },
+    {
+      "name": "S08LocalHealthyRun",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "Local full run finished with47 Architecture +153 Integration +28 Unit passed,19 Integration failures,0 skipped. SQL fixture CREATE DATABASE/cleanup timeouts during Docker recovery/load. Separate isolated CI42985057946 on identical S08 source passed all247; local failures retained. No original tests removed or parallelization disabled."
+    },
+    {
+      "name": "S09FocusedTests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter FullyQualifiedName~AccountLifecycleTests|FullyQualifiedName~RegistrationTests",
+      "detail": "25 Integration passed,0 failed/skipped; actual SQL lifecycle/deadline/purpose/revocation/races/worker restart/duplicate jobs/key mismatch/transaction rollback/legacy outbox cleanup/type-scoped permanent reservation. Other projects had no matching filtered tests; all solution verification pending."
+    },
+    {
+      "name": "S09PreliminaryStatic",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1; filtered dotnet test non-SQL projects",
+      "detail": "Build0 warnings/errors;47 Architecture+32 Unit+27 ApiFoundation passed with0 failures/skips on2026-11-14. Subsequent OpenAPI description edit requires final verification."
+    },
+    {
+      "name": "S09Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Successful local command and CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804 observed. Release0 warnings/errors; locked dependency graph and format verification passed."
+    },
+    {
+      "name": "S09Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "270=47 Architecture+191 Integration+32 Unit;0 failed/skipped. Local full run and isolated current implementation-head CI agree; original126 tests retained."
+    },
+    {
+      "name": "S09Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Reviewed additive20261111082824 applied to HawalekNow_Development without recreation; full real SQL/HTTP/HTTPS/Mailpit/Hangfire suite passed, including lifecycle/races/rollback/restart/duplicate purge/legacy ciphertext/key binding."
+    },
+    {
+      "name": "S09LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Successful local command and CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804 observed. Release0 warnings/errors; locked dependency graph and format verification passed."
+    },
+    {
+      "name": "S09Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Successful local command and CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804 observed. Release0 warnings/errors; locked dependency graph and format verification passed."
+    },
+    {
+      "name": "S09DocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "Local full test-p02.ps1 / locked restore / format verification; PR CI43586473657 on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Roadmap/Git rules passed; original46 P01+14 P02 rejection cases passed against stable S09 InProgress baseline. Final InReview metadata will be rechecked."
+    },
+    {
+      "name": "LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel",
+      "detail": "Actual local exit0 and current implementation CI locked restore passed; package graph unchanged."
+    },
+    {
+      "name": "ReleaseBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions43586473657 Build on4c410147ad4e8ca7773ff382f90a285797939804",
+      "detail": "Actual log observed: Build succeeded;0 warnings;0 errors."
+    },
+    {
+      "name": "Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1; PR CI43586473657",
+      "detail": "270 passed=47 Architecture+191 Integration+32 Unit;0 failed/skipped in local and isolated CI; normal parallelization."
+    },
+    {
+      "name": "Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "Actual local exit0 and current implementation CI passed."
+    },
+    {
+      "name": "Roadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "Actual final InReview baseline passed:701 local links/anchors, sequential all9 Verified steps, Pending human approval and Draft P03 gate. Current-state checker result is distinct from CI/runtime evidence."
+    },
+    {
+      "name": "GitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "Actual final InReview baseline passed:25 ignored and36 allowed path samples;280 tracked paths not ignored before adding final2 delivery files. CI rechecks committed paths."
+    },
+    {
+      "name": "DiffCheck",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git -c safe.directory=D:/HwalekNow diff --cached --check",
+      "detail": "Successful implementation commit whitespace check; final documentation is checked again before commit."
+    },
+    {
+      "name": "CI",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions PR run43586473657",
+      "detail": "Observed completed success on4c410147ad4e8ca7773ff382f90a285797939804; all3 required jobs success. Final documentation commit CI is observed separately in PR delivery body."
+    },
+    {
+      "name": "FinalReviewDocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1 (separate processes)",
+      "detail": "Observed final InReview metadata baseline pass on2026-11-14, human fields Pending and P03 prohibited. Final commit CI remains mandatory."
+    }
+  ],
+  "tests": {
+    "passed": 270,
+    "failed": 0,
+    "skipped": 0
+  },
+  "ci": {
+    "runId": 43586473657,
+    "headSha": "4c410147ad4e8ca7773ff382f90a285797939804",
+    "event": "pull_request",
+    "conclusion": "success",
+    "coverage": "S01-S09 implementation; final delivery metadata commit must have its own observed CI",
+    "jobs": [
+      {
+        "name": "Documentation and Git rules",
+        "conclusion": "success"
+      },
+      {
+        "name": "Restore, build, tests and format",
+        "conclusion": "success"
+      },
+      {
+        "name": "API and SQL image builds",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "historicalCi": [
+    {
+      "runId": 42826018563,
+      "headSha": "31ae1792ac7e69929a8e56f4837ceea2eaa0dc6b",
+      "event": "pull_request",
+      "conclusion": "success",
+      "coverage": "S01-S03 only",
+      "jobs": [
+        "Restore, build, tests and format",
+        "Documentation and Git rules",
+        "API and SQL image builds"
+      ]
+    },
+    {
+      "runId": 42849693832,
+      "headSha": "1a8564b2c8dc37d89ed6095893b50131fb8aae20",
+      "event": "pull_request",
+      "conclusion": "success",
+      "coverage": "S01-S04 only",
+      "jobs": [
+        "Restore, build, tests and format",
+        "Documentation and Git rules",
+        "API and SQL image builds"
+      ]
+    },
+    {
+      "runId": 42912520689,
+      "headSha": "9d97f8297b082cb9e0857d98ed1795e1b0da0c71",
+      "event": "pull_request",
+      "conclusion": "success",
+      "coverage": "S01-S05 only",
+      "jobs": [
+        "Restore, build, tests and format",
+        "Documentation and Git rules",
+        "API and SQL image builds"
+      ]
+    },
+    {
+      "runId": 42918478621,
+      "headSha": "951f02caef38d96373d86e7a59b31123b277a84f",
+      "event": "pull_request",
+      "conclusion": "success",
+      "coverage": "S01-S06 only",
+      "jobs": [
+        "Restore, build, tests and format",
+        "Documentation and Git rules",
+        "API and SQL image builds"
+      ]
+    },
+    {
+      "runId": 42922283143,
+      "headSha": "755e559716e8f083fadab7d5200eb0415826986a",
+      "event": "pull_request",
+      "conclusion": "success",
+      "coverage": "S01-S07 only",
+      "jobs": [
+        "Restore, build, tests and format",
+        "Documentation and Git rules",
+        "API and SQL image builds"
+      ]
+    },
+    {
+      "runId": 42985057946,
+      "headSha": "62ec07065e5db1a32d9080f8f21a33a6254ef034",
+      "event": "pull_request",
+      "conclusion": "success",
+      "coverage": "S01-S08 only",
+      "jobs": [
+        "Restore, build, tests and format",
+        "Documentation and Git rules",
+        "API and SQL image builds"
+      ]
+    }
+  ]
+}

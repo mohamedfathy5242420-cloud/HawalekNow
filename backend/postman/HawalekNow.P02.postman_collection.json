@@ -1,0 +1,930 @@
+{
+  "info": {
+    "description": "Run selected journey requests after supplying local test inputs. Different account types and OTP purposes require separate branches; this is not a blind full-collection runner. Keep TLS verification enabled and use the shared cookie jar. Every mutation obtains fresh principal-bound CSRF. Secret input values are intentionally blank; never export filled credentials or OTP. See API_EXPLORATION.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "name": "HawalekNow P02 identity and account security"
+  },
+  "item": [
+    {
+      "name": "Foundation and current API",
+      "item": [
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/health/live",
+            "description": ""
+          },
+          "name": "Liveness"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/openapi/v1.json",
+            "description": ""
+          },
+          "name": "Current OpenAPI"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/scalar/",
+            "description": ""
+          },
+          "name": "Scalar HTML"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/csrf",
+            "description": ""
+          },
+          "name": "CSRF bootstrap"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(401));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('Safe ProblemDetails shape', () => pm.expect(Object.keys(pm.response.json()).sort()).to.eql(['code','correlationId','status','title','type']));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/me",
+            "description": "Run with an empty cookie jar."
+          },
+          "name": "Anonymous protected identity"
+        }
+      ]
+    },
+    {
+      "name": "Registration and email confirmation",
+      "item": [
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              },
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/customers/register",
+            "description": "Use fresh local test details. Set accountType=Customer for subsequent requests.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"password\": \"{{password}}\",\r\n  \"email\": \"{{email}}\",\r\n  \"acceptTerms\": true,\r\n  \"username\": \"{{username}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "name": "Register customer"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              },
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/merchants/register",
+            "description": "Separate account. Set accountType=Merchant for its journey. Email confirmation leaves Pending approval.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"password\": \"{{password}}\",\r\n  \"email\": \"{{email}}\",\r\n  \"acceptTerms\": true,\r\n  \"username\": \"{{username}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "name": "Register merchant"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              },
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/email/request",
+            "description": "Registration already issues a code; resend requires60 seconds and account/IP limits.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"accountType\": \"{{accountType}}\",\r\n  \"email\": \"{{email}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "name": "Request confirmation code"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              },
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/email/verify",
+            "description": "Read the latest EmailConfirmation code in local Mailpit. Enter it in a local secret variable; do not export filled environments.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"code\": \"{{emailCode}}\",\r\n  \"accountType\": \"{{accountType}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "name": "Verify email"
+        }
+      ]
+    },
+    {
+      "name": "Cookie login and authorization",
+      "item": [
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              },
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/login",
+            "description": "Tokens arrive only in HttpOnly Secure cookies. Keep certificate verification enabled; use the local trusted HTTPS endpoint.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"password\": \"{{password}}\",\r\n  \"identifier\": \"{{email}}\",\r\n  \"accountType\": \"{{accountType}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "name": "Login"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/me",
+            "description": ""
+          },
+          "name": "Own identity"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/customer-profile",
+            "description": "Confirmed Customer; other active account types receive403."
+          },
+          "name": "Verified customer identity"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/account",
+            "description": "Confirmed Merchant in Pending,ChangesRequested orApproved."
+          },
+          "name": "Confirmed Pending merchant setup"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(403));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('Safe ProblemDetails shape', () => pm.expect(Object.keys(pm.response.json()).sort()).to.eql(['code','correlationId','status','title','type']));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/account/publishing-access",
+            "description": "Pending fixture/manual newly registered merchant. Approved returns200; no approval API is added in P02."
+          },
+          "name": "Pending merchant cannot publish"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/admin/session",
+            "description": "Use an explicitly bootstrapped confirmed Admin session. Customer/Merchant receive403."
+          },
+          "name": "Admin session"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/refresh",
+            "description": ""
+          },
+          "name": "Rotate refresh cookie"
+        }
+      ]
+    },
+    {
+      "name": "Sessions and password reset",
+      "item": [
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/sessions",
+            "description": ""
+          },
+          "name": "List own active sessions"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/sessions/{{sessionId}}",
+            "description": "Copy an owned sessionId locally from the list. Foreign IDs return404, including for Admin."
+          },
+          "name": "Read owned session"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/sessions/{{sessionId}}",
+            "description": ""
+          },
+          "name": "Revoke owned session"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              },
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/password/request",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"accountType\": \"{{accountType}}\",\r\n  \"email\": \"{{email}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "name": "Request password reset"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              },
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/password/reset",
+            "description": "Use PasswordReset purpose code. Subsequent login requires newPassword; update your local password variable. Existing sessions are revoked.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"newPassword\": \"{{newPassword}}\",\r\n  \"code\": \"{{resetCode}}\",\r\n  \"accountType\": \"{{accountType}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "name": "Reset password and revoke all sessions"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/logout",
+            "description": "Also works when access expired; refresh cookie proves ownership. Generic204."
+          },
+          "name": "Logout current session"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/logout-all",
+            "description": "Requires an active session; log in first."
+          },
+          "name": "Logout all owned sessions"
+        }
+      ]
+    },
+    {
+      "name": "Account deletion and recovery",
+      "item": [
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              },
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/account",
+            "description": "Customer/Merchant only; password reauthentication and CSRF. Admin403. Revokes all sessions and starts30 days.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"password\": \"{{password}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "name": "Soft delete own account"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(401));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('Safe ProblemDetails shape', () => pm.expect(Object.keys(pm.response.json()).sort()).to.eql(['code','correlationId','status','title','type']));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/me",
+            "description": ""
+          },
+          "name": "Deleted account cannot use old session"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              },
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/recovery/request",
+            "description": "Generic acknowledgement; eligible deleted Customer/Merchant only before30 days.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"accountType\": \"{{accountType}}\",\r\n  \"email\": \"{{email}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "name": "Request account recovery"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('No response body', () => pm.expect(pm.response.text()).to.equal(''));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              },
+              {
+                "value": "application/json",
+                "key": "Content-Type"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/recovery/verify",
+            "description": "Use AccountRecovery purpose. Does not log in or revive old sessions. Log in again. Exact30-day boundary rejects recovery.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"code\": \"{{recoveryCode}}\",\r\n  \"accountType\": \"{{accountType}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "name": "Recover deleted account"
+        },
+        {
+          "event": [
+            {
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(401));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "pm.test('Safe ProblemDetails shape', () => pm.expect(Object.keys(pm.response.json()).sort()).to.eql(['code','correlationId','status','title','type']));"
+                ]
+              },
+              "listen": "test"
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/me",
+            "description": ""
+          },
+          "name": "Recovery still requires fresh login"
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const method = pm.request.method.toUpperCase();",
+          "if (!['GET','HEAD','OPTIONS','TRACE'].includes(method)) {",
+          "  const base = pm.environment.get('baseUrl');",
+          "  if (!/^https:\\/\\/(localhost|127\\.0\\.0\\.1)(:\\d+)?$/.test(base || '')) throw new Error('Configure a trusted local HTTPS baseUrl.');",
+          "  pm.sendRequest({ url: base + '/api/v1/identity/csrf', method: 'GET' }, (error, response) => {",
+          "    if (error || response.code !== 200) throw new Error('CSRF bootstrap failed.');",
+          "    const csrf = response.json();",
+          "    pm.request.headers.upsert({ key: csrf.headerName, value: csrf.requestToken });",
+          "  });",
+          "}"
+        ]
+      },
+      "listen": "prerequest"
+    }
+  ]
+}

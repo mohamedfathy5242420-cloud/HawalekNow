@@ -16,7 +16,11 @@ PR واحد للمرحلة إلى main يجمع مخرجات الخطوات وأ
 
 سجل المرحلة InProgress عند البدء، ثم InReview عند جاهزية مراجعتها. تميز الخطوة ExecutionStatus وVerificationStatus عن UserApproval وV4؛ InternalReady مسموح للتسليم داخل المرحلة بعد التحقق. لا تسجل Done أو تسليم المرحلة التالية Ready قبل اعتماد المستخدم المطلوب. سجل الفحوص الفعلية وسبب N/A والفشل والعائق؛ وجود PR أو نجاح Push أو CI لا يعني اعتماد المرحلة. لا دمج أو تغيير Branch Protection أو تكاملات في إذن تنفيذ P01 الحالي.
 
-## إذن إغلاق P01 الحالي
+## إذن P02 الجاري
+
+وفق D015 وطلب المستخدم في 2026-11-10 يبدأ P02 من main b7a502051ac52f06b57c541e24f4bdde270a3392 بعد تحقق D013 ودمج PR #8 وتسليم Ready. الفرع codex/p02-implement-identity-and-account-security وDraft PR واحدة؛ Commits معبرة لكل تغيير، والتنفيذ S01–S09 بالتتابع بعد التحقق التقني. P02 تسلم InReview مع UserApproval/V4 Pending وP03 Handoff Draft؛ لا دمج أو P03 أو تغيير Branch Protection. ملف الجدول دون تعديل أو staging، والفروع والتاريخ وموارد المشاريع الأخرى محفوظة.
+
+## إذن إغلاق P01 السابق — تاريخي
 
 وفق D013 بتاريخ 2026-11-10 أذن المستخدم Commit/Push على فرع PR #8 الموجود ثم Ready for Review وSquash Merge بعد إعادة نجاح فحوص الإغلاق وCI على الرأس الفعلي وفحص الحماية وقابلية الدمج. هذا يستبدل منع الدمج في إذن التنفيذ السابق أعلاه لـP01 فقط؛ لا تغيير حماية أو force push أو حذف فرع. main يحدث بأمان مع فحوص بعد الدمج وCI main. P02 NotStarted وتسليمها Ready؛ لا إذن تنفيذها. التجارب الشخصية والتعليمية Deferred بقرار القبول وليست Passed. ملف TARGET_SCHEDULE.md بلا تعديل أو staging.
 

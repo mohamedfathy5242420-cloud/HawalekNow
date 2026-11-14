@@ -63,3 +63,8 @@ docker rm --force hawaleknow-api-review
 ```
 
 لا prune أو down -v أو حذف Volumes أو تغيير خدمات قائمة. أوامر SQL/Mailpit وbootstrap والأسرار المحلية في [Docker README](../docker/README.md)؛ تلك الموارد متوقفة وقت مراجعة P01 الحالية ولم تُعد تشغيلها. الأدلة التاريخية للاستمرار تبقى في S06، والفحص الحالي للقراءة فقط لا يعيد اختبارها. [PHASE_REVIEW](../planning/phase-01/PHASE_REVIEW.md) يسجل النتائج الحالية وCI run والقيود والمراجعات البشرية Pending.
+## تنفيذ P02 الحالي
+
+Workflow backend يشغّل SQL Server وMailpit معزولين لكل Run، بأسماء وlabel مرتبطة بـrun_id وports loopback عشوائية. كلمة مرور SQL مولدة وتُحجب من السجلات، ولا ترفع artifacts تحمل إعدادات أو رسائل. HAWALEKNOW_TEST_SQL يشير إلى master في خادم الاختبار؛ كل fixture تنشئ قاعدة جديدة وتطبق EF migrations وتزيل قاعدتها فقط. HAWALEKNOW_TEST_SMTP_PORT وHAWALEKNOW_TEST_MAILPIT_URL يوجهان SMTP والقراءة إلى Mailpit التشغيل دون relay خارجي. اختبار lost ACK يستخدم TCP proxy محليًا إلى Mailpit الفعلية.
+
+الاختبارات تعمل بالتوازي المعتاد وProgram الحقيقي، مع Worker SQL في اختبارات restart؛ لا EF InMemory أو اعتماد على Docker/أسرار جهاز المستخدم. always cleanup يتحقق من label قبل حذف كل حاوية محددة. أمثلة P01 أعلاه تاريخية؛ التشغيل الحالي للـAPI يحتاج مفاتيح Identity/Outbox وإعداد قاعدة محددة كما في [دليل الهوية](IDENTITY_OPERATIONS.md). فحص Docker liveness يمرر مفاتيح اختبار عشوائية ويعطل Worker دون ادعاء readiness أو فتح SQL.

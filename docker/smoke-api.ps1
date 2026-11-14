@@ -1,10 +1,11 @@
 param([string]$Image = 'hawaleknow/api:p01-ci')
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'api-smoke-contracts.ps1')
-# Isolated task container only: no mounts, SQL, mail, credentials or Compose operations.
+# Isolated liveness container: no mounts, SQL/mail connection or Compose operations; generated test-only runtime key.
 $name = 'hawaleknow-p01-smoke-' + [guid]::NewGuid().ToString('N')
 try {
-    $id = & docker run --detach --name $name --cpus=1 --memory=256m --read-only --tmpfs /tmp:rw,noexec,nosuid,size=16m --publish 127.0.0.1::8080 $Image
+    $p02SmokeKey = [Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
+    $id = & docker run --detach --name $name --cpus=1 --memory=256m --read-only --tmpfs /tmp:rw,noexec,nosuid,size=16m --publish 127.0.0.1::8080 --env "Identity__IdentifierKey=$p02SmokeKey" --env "Identity__OtpKey=$([Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(32)))" --env "Outbox__EncryptionKey=$([Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(32)))" --env "Jwt__SigningKey=$([Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(32)))" --env 'Jwt__Issuer=hawaleknow-smoke' --env 'Jwt__Audience=hawaleknow-smoke-client' --env 'Security__KeyRingPath=/tmp/hawaleknow-smoke-keys' --env 'Background__Enabled=false' --env 'ConnectionStrings__Application=Server=unused.invalid;Database=HawalekNow_HostContract;Integrated Security=True;Encrypt=True' $Image
     if ($LASTEXITCODE -ne 0) { throw 'Cannot start the task API container.' }
     $port = & docker inspect --format '{{(index (index .NetworkSettings.Ports "8080/tcp") 0).HostPort}}' $id
     if ($LASTEXITCODE -ne 0 -or $port -notmatch '^\d+$') { throw 'Cannot resolve the task container port.' }

@@ -186,7 +186,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S01 تأسيس Identity model
 
-- Status: NotStarted؛ Handoff P01 Ready؛ لا إذن تنفيذ P02 في مهمة الإغلاق.
+- Status: InReview؛ Handoff P01 Ready؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S01.md).
 - الاعتمادات السابقة: [P01-S08](#p01-s08) + Phase Review وHandoff للمرحلة السابقة.
 - المخرج المطلوب: ApplicationUser وAccountType وMerchantAccount وGuid v7 وSchemas.
 - بوابة التحقق: V2 Domain وV3 Migration.
@@ -197,6 +197,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S02 Seeding آمن للـAdmin
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S02.md).
+
 - الاعتمادات السابقة: [P02-S01](#p02-s01).
 - المخرج المطلوب: Admin أول من Environment Variables وSeeder قابل لإعادة التشغيل.
 - بوابة التحقق: V3 Seed مرتين دون تكرار.
@@ -205,6 +207,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S03 تسجيل العميل والتاجر
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S03.md).
+
 - الاعتمادات السابقة: [P02-S02](#p02-s02).
 - المخرج المطلوب: Endpoints منفصلة وقواعد التفرد والشروط وحالة Pending.
 - بوابة التحقق: V2 Validators وV3 API وSQL.
@@ -212,6 +216,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p02-s04"></a>
 
 ### P02-S04 Email OTP
+
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S04.md).
 
 - الاعتمادات السابقة: [P02-S03](#p02-s03).
 - المخرج المطلوب: توليد آمن وHash وانتهاء ومحاولات وإرسال Mailpit عبر Hangfire.
@@ -223,6 +229,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S05 Login وJWT cookies
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S05.md).
+
 - الاعتمادات السابقة: [P02-S04](#p02-s04).
 - المخرج المطلوب: Access وRefresh rotation داخل HttpOnly Secure Cookies.
 - بوابة التحقق: V2 token rules وV3 cookie flow.
@@ -230,6 +238,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p02-s06"></a>
 
 ### P02-S06 CSRF وRate Limiting
+
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S06.md).
 
 - الاعتمادات السابقة: [P02-S05](#p02-s05).
 - المخرج المطلوب: حماية العمليات المعدلة وسياسات OTP وLogin والبحث.
@@ -239,6 +249,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S07 Authorization policies
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S07.md).
+
 - الاعتمادات السابقة: [P02-S06](#p02-s06).
 - المخرج المطلوب: AdminOnly وVerifiedCustomer وApprovedMerchant.
 - بوابة التحقق: V2 Policies وV3 matrix للصلاحيات.
@@ -247,6 +259,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P02-S08 Password reset وsessions
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S08.md).
+
 - الاعتمادات السابقة: [P02-S07](#p02-s07).
 - المخرج المطلوب: Reset بالبريد وإلغاء Refresh Tokens وتسجيل الخروج.
 - بوابة التحقق: V3 رحلة كاملة ومحاولات إعادة الاستخدام.
@@ -254,6 +268,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p02-s09"></a>
 
 ### P02-S09 حذف الحساب والاسترجاع
+
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-02/steps/S09.md).
 
 - الاعتمادات السابقة: [P02-S08](#p02-s08).
 - المخرج المطلوب: Soft Delete لمدة 30 يومًا وRecovery OTP وجدولة الحذف النهائي.

@@ -33,6 +33,7 @@ public sealed class ApiErrorTests
         builder.Services.AddSerilog(configuration => configuration.ConfigureSafePipelineLogging().WriteTo.Sink(sink),
             preserveStaticLogger: true);
         builder.Services.AddApplication(typeof(ApiErrorTests).Assembly);
+        builder.Services.AddFoundationIdentityPorts();
         builder.Services.AddScoped<PipelineTests.Probe>();
         builder.Services.AddSingleton<ClientCancellationProbe>();
         builder.Services.AddSingleton<StartedResponseProbe>();

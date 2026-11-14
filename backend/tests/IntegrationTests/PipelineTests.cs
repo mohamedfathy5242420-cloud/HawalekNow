@@ -24,6 +24,7 @@ public sealed class PipelineTests
         services.AddSerilog(configuration => configuration.ConfigureSafePipelineLogging().WriteTo.Sink(sink),
             preserveStaticLogger: true);
         services.AddApplication(typeof(PipelineTests).Assembly);
+        services.AddFoundationIdentityPorts();
         services.AddScoped<Probe>();
         return (services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true }), sink);
     }
