@@ -499,6 +499,41 @@
       "exitCode": 0,
       "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1 (separate processes)",
       "detail": "Observed final InReview metadata baseline pass on2026-11-14, human fields Pending and P03 prohibited. Final commit CI remains mandatory."
+    },
+    {
+      "name": "ClosureLockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel",
+      "detail": "2026-11-21; outside sandbox after sandbox attempt exited1 without diagnostics"
+    },
+    {
+      "name": "ClosureReleaseBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "2026-11-21; exit0 outside sandbox;0 warnings/errors"
+    },
+    {
+      "name": "ClosureTests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "2026-11-21; after SQL Healthy;47 Architecture+191 Integration+32 Unit=270;0 failed/skipped; owned random SQL test databases only"
+    },
+    {
+      "name": "ClosureFormat",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "2026-11-21;exit0; no source changes afterward"
+    },
+    {
+      "name": "ClosureInitialSqlStartup",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "2026-11-21 first attempt: SQL not Healthy within startup timeout; tests not started; retained in CLOSURE_ATTEMPT.md"
     }
   ],
   "tests": {

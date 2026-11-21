@@ -1,13 +1,24 @@
 # مراجعة P02 الهوية والأمان
 
 Phase: P02
-Status: InReview
-Updated: 2026-11-14
+Status: Done
+Updated: 2026-11-21
 ExecutionMode: Phase
-UserApproval: Pending
-ReviewStatus: Pending
-V4: Pending
+UserApproval: Approved
+ReviewStatus: Approved
+V4: Approved
+AcceptanceBasis: CodeTestsCI
+AcceptanceDecision: D017
+ApprovalDate: 2026-11-21
+EducationalWalkthrough: Deferred
+ReviewedHead: d08e057e11516b25dca7fb22403a39a12b5b976b
+UserPostmanReview: Deferred
+UserScalarReview: Deferred
 NextStep: P03-S01
+
+اعتماد P02 الحالي وفق D017؛ التجارب الشخصية والشرح Deferred وليستا Passed. [الإغلاق](CLOSURE.md) يسجل إعادة الفحوص وشروط الدمج؛ [تسليم P03](handoffs/S09-to-P03.md) Ready مع بقاء التنفيذ مشروطًا بالدمج والتحقق بعده.
+
+## سجل التسليم قبل القبول — تاريخي
 
 الفرع codex/p02-implement-identity-and-account-security بدأ من main=b7a502051ac52f06b57c541e24f4bdde270a3392 بعد اعتماد P01 ودمج PR8 وفق D013/D015. توجد [Draft PR9 واحدة](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/9). اعتماد المستخدم وV4 ما زالا Pending؛ لا دمج أو بدء P03. [التصميم](DESIGN.md) و[الأدلة](verification.json) يحفظان القواعد والنتائج والأخفاقات. جلسة شرح الكود والطلبات والأحداث والتجربة التعليمية مهمة منفصلة بعد تسليم التنفيذ.
 

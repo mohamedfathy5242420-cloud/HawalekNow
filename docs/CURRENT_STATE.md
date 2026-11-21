@@ -1,23 +1,32 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-11-14
+آخر تحديث: 2026-11-21
+
+اعتمد المستخدم P02 وفق D017 بتاريخ 2026-11-21. نجحت إعادة اختبارات الإغلاق:270 passed دون failed/skipped بعد أن أصبحت SQL Healthy. [سجل الإغلاق](../planning/phase-02/CLOSURE.md) يحفظ الفحوص؛ [المحاولة الأولى](../planning/phase-02/CLOSURE_ATTEMPT.md) محفوظة تاريخيًا. Commit الإغلاق وCI والدمج وفحوص ما بعده لم تثبت بعد؛ لا بدء P03 قبل اكتمالها. [الحالة قبل القبول](P02_REVIEWED_STATE.md) محفوظة دون إعادة كتابة التاريخ.
 
 - Phase: P02
 - Step: P02-S09
-- Status: InReview
+- Status: Done
 - ExecutionMode: Phase
-- UserApproval: Pending
-- ReviewStatus: Pending
-- V4: Pending
+- UserApproval: Approved
+- ReviewStatus: Approved
+- V4: Approved
+- AcceptanceBasis: CodeTestsCI
+- AcceptanceDecision: D017
+- ApprovalDate: 2026-11-21
+- EducationalWalkthrough: Deferred
+- ReviewedHead: d08e057e11516b25dca7fb22403a39a12b5b976b
+- UserPostmanReview: Deferred
+- UserScalarReview: Deferred
 - ExecutionAuthorization: D015
 - BaseMain: b7a502051ac52f06b57c541e24f4bdde270a3392
 - P03Status: NotStarted
-- Scope: تنفيذ P02-S01 إلى S09 بالتتابع وفق D012؛ لا دمج أو P03.
+- Scope: إغلاق P02 وفق D017؛ تنفيذ P03 مشروط بنجاح الدمج والتحقق بعده.
 - ActiveStepFile: planning/phase-02/steps/S09.md
-- NextStep: PhaseReview؛ اعتماد المستخدم وV4 Pending؛ P03 handoff Draft ولا إذن بدء.
+- NextStep: Commit الإغلاق ثم CI على رأسه وReady/Squash لـPR #9 وفحوص main؛ بعدها فقط P03.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
-## تنفيذ P02 الجاري
+## سجل تنفيذ P02 السابق — تاريخي
 
 تحققت البوابة: P01 Done وApproved وفق D013، وPR #8 merged=true في 2026-11-10T11:01:00Z، وتسليم P02 Ready. بدأ الفرع codex/p02-implement-identity-and-account-security من main المحدثة. [سجل P01 المغلق](../planning/phase-01/CLOSED_STATE.md) يحفظ الحالة السابقة، و[تصميم P02](../planning/phase-02/DESIGN.md) و[S01](../planning/phase-02/steps/S01.md) يسجلان التنفيذ الجاري. جواب المستخدم D014 يثبت التفرد داخل نوع الحساب والحجز الدائم للمعرّفات بعد الحذف. S01 InReview وVerified تقنيًا: DbContext واحد وIdentity وMerchantAccount وUoW وMigration فعلية مطبقة على HawalekNow_Development؛ 133 اختبارًا ناجحًا (47+77+9) بلا failed/skipped، منها SQL للتفرد والتزامن وUserManager وrollback بين الوحدتين. locked-mode Restore وRelease build وFormat verification وفاحصا التوثيق وdiff نجحت، مع 46 حالة بوابة سابقة و14 حالة P02 مرفوضة. لا اعتماد بشري مفترض؛ [تسليم S02](../planning/phase-02/handoffs/S01-to-S02.md) InternalReady. Docker بدأ بعد غياب Engine وفحصت الموارد؛ SQL المملوك للمشروع Healthy، وMailpit القديمة فشلت بسبب حجز منفذ 1025 دون إيقاف أو حذف أي مورد. صححت تحذيرات Pkcs بpin للنسخة المصححة دون تعطيل audit. CI عُدّل لتوفير SQL معزولة وسر عشوائي خاص بالتشغيل؛ لم يشغّل على PR لـP02 بعد. الملف TARGET_SCHEDULE.md محفوظ خارج staging ببصمته الأصلية. LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete.
 
