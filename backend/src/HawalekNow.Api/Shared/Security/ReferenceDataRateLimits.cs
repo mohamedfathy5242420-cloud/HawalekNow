@@ -1,11 +1,11 @@
 using System.Threading.RateLimiting;
 
-namespace HawalekNow.Api.Modules.Catalog;
+namespace HawalekNow.Api.Shared.Security;
 
-public static class CatalogRateLimits
+public static class ReferenceDataRateLimits
 {
-    public const string Mutation = "catalog-reference-mutation";
-    public static IServiceCollection AddCatalogRateLimits(this IServiceCollection services)
+    public const string Mutation = "reference-data-mutation";
+    public static IServiceCollection AddReferenceDataRateLimits(this IServiceCollection services)
     {
         services.AddRateLimiter(options => options.AddPolicy(Mutation, context => RateLimitPartition.GetFixedWindowLimiter(
             context.Connection.RemoteIpAddress?.MapToIPv6().ToString() ?? "unknown-peer", _ => new FixedWindowRateLimiterOptions

@@ -23,6 +23,8 @@ Updated: 2026-10-11
 
 ## تأسيس P03 الجاري
 
+تحديث S03: Locations تملك Governorate وCity وArea وعقود الإدارة والاختيار، وschema locations. FK مركبة للمدينة والمحافظة تحمي المنطقة من زوج غير متطابق؛ لا مرجع إلى Entities في Catalog أوMerchants. إدارة Catalog وLocations تستخدم محدد المعدل التقني ReferenceDataRateLimits في Api.Shared.Security، دون نقل ملكية البيانات إلىShared أوتغيير سياسات Identity. لا Seed أوgeography أومرادفات أوCache منفذة في هذا التحديث؛ لكل منها خطوتها التالية.
+
 P03-S01 أضاف Activity وCategory وقواعد الأسماء في Domain.Catalog وتكويناتها في Infrastructure.Catalog؛ schema catalog ومفاتيح الأنشطة والأشقاء والانتماء للنشاط. [تصميم P03](../planning/phase-03/DESIGN.md) يحدد بقية كيانات Locations وSearch وخدماتها؛ لا نقل ملكية أو مدخل عام لجداول الوحدات. لا منتجات أو متاجر أو فروع ضمن P03. عبارات عدم وجود أنواع في سجل P01 أدناه تاريخية، وحدود الاعتماد نفسها ملزمة.
 
 ## الطبقات والمجلدات وNamespaces

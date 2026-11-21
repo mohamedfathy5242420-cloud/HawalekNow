@@ -1,4 +1,5 @@
 using HawalekNow.Api.Shared.Errors;
+using HawalekNow.Api.Shared.Security;
 using HawalekNow.Application.Modules.Catalog;
 using HawalekNow.Application.Modules.Identity.Contracts;
 using MediatR;
@@ -36,35 +37,35 @@ public sealed class CatalogAdminController(ISender sender) : ControllerBase
     [ProducesResponseType<CatalogPage<CategoryAdminDto>>(200)]
     public async Task<IActionResult> Categories(Guid activityId, Guid? parentId = null, int page = 1, int pageSize = 30, CancellationToken cancellationToken = default) =>
         (await sender.Send(new ListAdminCategoriesQuery(activityId, parentId, page, pageSize), cancellationToken)).ToActionResult(HttpContext);
-    [HttpPost("activities"), EnableRateLimiting(CatalogRateLimits.Mutation)]
+    [HttpPost("activities"), EnableRateLimiting(ReferenceDataRateLimits.Mutation)]
     [ProducesResponseType<ActivityAdminDto>(200)]
     [ProducesResponseType<ProblemDetails>(409, "application/problem+json")]
     public async Task<IActionResult> CreateActivity(ActivityWrite value, CancellationToken cancellationToken) =>
         (await sender.Send(new SaveActivityCommand(null, value), cancellationToken)).ToActionResult(HttpContext);
-    [HttpPut("activities/{id:guid}"), EnableRateLimiting(CatalogRateLimits.Mutation)]
+    [HttpPut("activities/{id:guid}"), EnableRateLimiting(ReferenceDataRateLimits.Mutation)]
     [ProducesResponseType<ActivityAdminDto>(200)]
     [ProducesResponseType<ProblemDetails>(404, "application/problem+json")]
     [ProducesResponseType<ProblemDetails>(409, "application/problem+json")]
     public async Task<IActionResult> UpdateActivity(Guid id, ActivityWrite value, CancellationToken cancellationToken) =>
         (await sender.Send(new SaveActivityCommand(id, value), cancellationToken)).ToActionResult(HttpContext);
-    [HttpDelete("activities/{id:guid}"), EnableRateLimiting(CatalogRateLimits.Mutation)]
+    [HttpDelete("activities/{id:guid}"), EnableRateLimiting(ReferenceDataRateLimits.Mutation)]
     [ProducesResponseType(204)]
     [ProducesResponseType<ProblemDetails>(404, "application/problem+json")]
     [ProducesResponseType<ProblemDetails>(409, "application/problem+json")]
     public async Task<IActionResult> DeleteActivity(Guid id, [FromBody] DeleteReference value, CancellationToken cancellationToken) =>
         (await sender.Send(new DeleteActivityCommand(id, value.RowVersion), cancellationToken)).ToActionResult(HttpContext);
-    [HttpPost("categories"), EnableRateLimiting(CatalogRateLimits.Mutation)]
+    [HttpPost("categories"), EnableRateLimiting(ReferenceDataRateLimits.Mutation)]
     [ProducesResponseType<CategoryAdminDto>(200)]
     [ProducesResponseType<ProblemDetails>(409, "application/problem+json")]
     public async Task<IActionResult> CreateCategory(CategoryWrite value, CancellationToken cancellationToken) =>
         (await sender.Send(new SaveCategoryCommand(null, value), cancellationToken)).ToActionResult(HttpContext);
-    [HttpPut("categories/{id:guid}"), EnableRateLimiting(CatalogRateLimits.Mutation)]
+    [HttpPut("categories/{id:guid}"), EnableRateLimiting(ReferenceDataRateLimits.Mutation)]
     [ProducesResponseType<CategoryAdminDto>(200)]
     [ProducesResponseType<ProblemDetails>(404, "application/problem+json")]
     [ProducesResponseType<ProblemDetails>(409, "application/problem+json")]
     public async Task<IActionResult> UpdateCategory(Guid id, CategoryWrite value, CancellationToken cancellationToken) =>
         (await sender.Send(new SaveCategoryCommand(id, value), cancellationToken)).ToActionResult(HttpContext);
-    [HttpDelete("categories/{id:guid}"), EnableRateLimiting(CatalogRateLimits.Mutation)]
+    [HttpDelete("categories/{id:guid}"), EnableRateLimiting(ReferenceDataRateLimits.Mutation)]
     [ProducesResponseType(204)]
     [ProducesResponseType<ProblemDetails>(404, "application/problem+json")]
     [ProducesResponseType<ProblemDetails>(409, "application/problem+json")]

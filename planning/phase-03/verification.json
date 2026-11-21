@@ -130,13 +130,62 @@
       "exitCode": 0,
       "command": "./backend/test-p02.ps1 -NoBuild -Filter FullyQualifiedName~CatalogHttpTests|FullyQualifiedName~ApiFoundationTests",
       "detail": "36 actual HTTP/OpenAPI cases passed after final metadata changes;0 failed/skipped; exact old+new route set maintained"
+    },
+    {
+      "name": "S02CI",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions pull_request run44902212497 ond25294fd950ac83be27f6eb2857c5fb18e75f3b4",
+      "detail": "All three jobs success; covers final S02 only"
+    },
+    {
+      "name": "S03Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "0 warnings/errors; after full Locations code and SQL composite-key transfer implementation"
+    },
+    {
+      "name": "S03Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "47 Architecture+226 Integration+46 Unit=319 passed;0 failed/skipped; all prior tests and normal parallelization retained"
+    },
+    {
+      "name": "S03Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "Actual additive migration; prior Catalog preserved; paired-parent FK/orphans/delete/rollback; real concurrent city transfer versus area creation; preserved distinct English homonyms"
+    },
+    {
+      "name": "S03Postman",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "node tmp/validate-p03-postman.cjs",
+      "detail": "27 requests; JSON/JS and local HTTPS CSRF guard validated; saved credentials empty; no full application collection execution"
+    },
+    {
+      "name": "S03Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "After all S03 C# code; no mutations"
+    },
+    {
+      "name": "S03DocGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1; ./planning/test-phase-gates.ps1; git diff --check",
+      "detail": "Actual S03 baseline accepted;46 P01+27 P02+14 P03 rejection cases passed; no scheduled/user file staged"
     }
   ],
   "tests": {
     "architecture": 47,
-    "integration": 212,
-    "unit": 42,
-    "passed": 301,
+    "integration": 226,
+    "unit": 46,
+    "passed": 319,
     "failed": 0,
     "skipped": 0
   },

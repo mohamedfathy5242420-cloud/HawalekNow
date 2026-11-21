@@ -401,6 +401,473 @@
         }
       ],
       "name": "Catalog"
+    },
+    {
+      "item": [
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ],
+          "name": "Public governorates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/locations/governorates?language=ar&page=1&pageSize=30"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ],
+          "name": "Admin governorates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/locations/governorates?page=1&pageSize=30"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const row = pm.response.json(); pm.environment.set('governorateId', row.id); pm.environment.set('governorateRowVersion', row.rowVersion); }"
+                ]
+              }
+            }
+          ],
+          "name": "Create review governorate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isActive\": true,\r\n  \"nameEn\": \"Isolated review governorate\",\r\n  \"nameAr\": \"محافظة تجربة معزولة\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/v1/admin/locations/governorates"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const row = pm.response.json(); pm.environment.set('governorateId', row.id); pm.environment.set('governorateRowVersion', row.rowVersion); }"
+                ]
+              }
+            }
+          ],
+          "name": "Update review governorate",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isActive\": true,\r\n  \"rowVersion\": \"{{governorateRowVersion}}\",\r\n  \"nameEn\": \"Isolated review governorate\",\r\n  \"nameAr\": \"محافظة تجربة معزولة\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/v1/admin/locations/governorates/{{governorateId}}"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ],
+          "name": "Public cities",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/locations/cities?language=ar&page=1&pageSize=30&governorateId={{governorateId}}"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ],
+          "name": "Admin cities",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/locations/cities?page=1&pageSize=30&governorateId={{governorateId}}"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const row = pm.response.json(); pm.environment.set('cityId', row.id); pm.environment.set('cityRowVersion', row.rowVersion); }"
+                ]
+              }
+            }
+          ],
+          "name": "Create review city",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isActive\": true,\r\n  \"governorateId\": \"{{governorateId}}\",\r\n  \"nameEn\": \"Isolated review city\",\r\n  \"nameAr\": \"مدينة تجربة معزولة\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/v1/admin/locations/cities"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const row = pm.response.json(); pm.environment.set('cityId', row.id); pm.environment.set('cityRowVersion', row.rowVersion); }"
+                ]
+              }
+            }
+          ],
+          "name": "Update review city",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isActive\": true,\r\n  \"governorateId\": \"{{governorateId}}\",\r\n  \"rowVersion\": \"{{cityRowVersion}}\",\r\n  \"nameEn\": \"Isolated review city\",\r\n  \"nameAr\": \"مدينة تجربة معزولة\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/v1/admin/locations/cities/{{cityId}}"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ],
+          "name": "Public areas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/locations/areas?language=ar&page=1&pageSize=30&governorateId={{governorateId}}&cityId={{cityId}}"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ],
+          "name": "Admin areas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/locations/areas?page=1&pageSize=30&governorateId={{governorateId}}&cityId={{cityId}}"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const row = pm.response.json(); pm.environment.set('areaId', row.id); pm.environment.set('areaRowVersion', row.rowVersion); }"
+                ]
+              }
+            }
+          ],
+          "name": "Create review area",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isActive\": true,\r\n  \"governorateId\": \"{{governorateId}}\",\r\n  \"cityId\": \"{{cityId}}\",\r\n  \"nameEn\": \"Isolated review area\",\r\n  \"nameAr\": \"منطقة تجربة معزولة\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/v1/admin/locations/areas"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const row = pm.response.json(); pm.environment.set('areaId', row.id); pm.environment.set('areaRowVersion', row.rowVersion); }"
+                ]
+              }
+            }
+          ],
+          "name": "Update review area",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"cityId\": \"{{cityId}}\",\r\n  \"governorateId\": \"{{governorateId}}\",\r\n  \"nameEn\": \"Isolated review area\",\r\n  \"isActive\": true,\r\n  \"nameAr\": \"منطقة تجربة معزولة\",\r\n  \"rowVersion\": \"{{areaRowVersion}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/v1/admin/locations/areas/{{areaId}}"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ],
+          "name": "Delete own review area",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{areaRowVersion}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/v1/admin/locations/areas/{{areaId}}"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ],
+          "name": "Delete own review city",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{cityRowVersion}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/v1/admin/locations/cities/{{cityId}}"
+          }
+        },
+        {
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ],
+          "name": "Delete own review governorate",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{governorateRowVersion}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/v1/admin/locations/governorates/{{governorateId}}"
+          }
+        }
+      ],
+      "name": "Locations"
     }
   ]
 }

@@ -303,6 +303,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S03 المحافظات والمدن والمناطق
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S03.md).
+
 - الاعتمادات السابقة: [P03-S02](#p03-s02).
 - المخرج المطلوب: Hierarchy ثنائي اللغة وEndpoints للاختيار.
 - بوابة التحقق: V2 hierarchy وV3 API pagination.

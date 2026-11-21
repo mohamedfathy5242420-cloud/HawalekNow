@@ -1,4 +1,4 @@
-name: Backend baseline and P02 identity
+name: Backend baseline and P03 reference data
 
 on:
   pull_request:
