@@ -1,0 +1,2 @@
+# Accepted upstream seed files are hash-pinned; preserve their bytes on every platform.
+backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/*.json -text

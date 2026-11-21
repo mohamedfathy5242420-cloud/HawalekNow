@@ -179,6 +179,48 @@
       "exitCode": 0,
       "command": "./planning/verify-roadmap.ps1; ./planning/verify-git-workflow.ps1; ./planning/test-phase-gates.ps1; git diff --check",
       "detail": "Actual S03 baseline accepted;46 P01+27 P02+14 P03 rejection cases passed; no scheduled/user file staged"
+    },
+    {
+      "detail": "Completed success on the exact S03 head.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "GitHub Actions pull_request run44905203122 onff517a221288dc1951711e78b4bb4ae409be6821",
+      "name": "S03CI"
+    },
+    {
+      "detail": "Test code Activity ambiguous with System.Diagnostics; explicit alias fixed all six compile errors.",
+      "exitCode": 1,
+      "status": "Failed",
+      "command": "./tmp/p03-verify-s04.ps1",
+      "name": "S04InitialBuild"
+    },
+    {
+      "detail": "28 Architecture passed,19 failed because isolated Roslyn compilation does not run GeneratedRegex generator;54 Integration+7 Unit passed. Replaced unnecessary generated regex with bounded standard Regex without changing architecture checks.",
+      "exitCode": 1,
+      "status": "Failed",
+      "command": "./tmp/p03-verify-s04.ps1",
+      "name": "S04InitialArchitecture"
+    },
+    {
+      "detail": "Final seed source validation built with zero warnings/errors.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "name": "S04Build"
+    },
+    {
+      "detail": "54 actual Integration cases and7 Unit passed; final47 Architecture+7 Unit passed after regex fix. Focused counts overlap; no full solution total inferred.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter ReferenceSeed and foundation regression; dotnet test --filter architecture and ReferenceSeedRules",
+      "name": "S04Tests"
+    },
+    {
+      "detail": "5 seed tests included in54 Integration passed: every6108 bilingual names/parent links; rerun zero changes; Admin edits/deletions preserved; forced failure after parent saves rolls back both modules; concurrent import; actual Program CLI twice without account creation.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter FullyQualifiedName~ReferenceSeed",
+      "name": "S04Sql"
     }
   ],
   "tests": {

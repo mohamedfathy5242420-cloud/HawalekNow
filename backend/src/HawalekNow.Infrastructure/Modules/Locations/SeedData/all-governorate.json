@@ -1,0 +1,920 @@
+[
+  {
+    "id": "EG02",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "الاسكندرية",
+      "en": "Alexandria",
+      "slug": "alexandria-eg02"
+    },
+    "code": {
+      "id": "EG02",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 19,
+      "shiyakha": 141
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "30.798",
+      "lon": "29.708"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/alexandria-eg02/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG25",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "أسيوط",
+      "en": "Assiut",
+      "slug": "assiut-eg25"
+    },
+    "code": {
+      "id": "EG25",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 15,
+      "shiyakha": 261
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "27.359",
+      "lon": "31.795"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/assiut-eg25/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG28",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "أسوان",
+      "en": "Aswan",
+      "slug": "aswan-eg28"
+    },
+    "code": {
+      "id": "EG28",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 10,
+      "shiyakha": 122
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "23.606",
+      "lon": "32.264"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/aswan-eg28/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG18",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "البحيرة",
+      "en": "Behera",
+      "slug": "behera-eg18"
+    },
+    "code": {
+      "id": "EG18",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 19,
+      "shiyakha": 534
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "30.689",
+      "lon": "30.356"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/behera-eg18/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG22",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "بنى سويف",
+      "en": "Beni Suef",
+      "slug": "beni-suef-eg22"
+    },
+    "code": {
+      "id": "EG22",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 10,
+      "shiyakha": 240
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "28.725",
+      "lon": "31.338"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/beni-suef-eg22/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG01",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "القاهرة",
+      "en": "Cairo",
+      "slug": "cairo-eg01"
+    },
+    "code": {
+      "id": "EG01",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 42,
+      "shiyakha": 324
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "29.966",
+      "lon": "31.573"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/cairo-eg01/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG12",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "الدقهلية",
+      "en": "Dakahlia",
+      "slug": "dakahlia-eg12"
+    },
+    "code": {
+      "id": "EG12",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 21,
+      "shiyakha": 513
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "30.966",
+      "lon": "31.469"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/dakahlia-eg12/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG11",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "دمياط",
+      "en": "Damietta",
+      "slug": "damietta-eg11"
+    },
+    "code": {
+      "id": "EG11",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 9,
+      "shiyakha": 101
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "31.394",
+      "lon": "31.628"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/damietta-eg11/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG23",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "الفيوم",
+      "en": "Fayoum",
+      "slug": "fayoum-eg23"
+    },
+    "code": {
+      "id": "EG23",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 9,
+      "shiyakha": 174
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "29.318",
+      "lon": "30.585"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/fayoum-eg23/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG16",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "الغربية",
+      "en": "Gharbia",
+      "slug": "gharbia-eg16"
+    },
+    "code": {
+      "id": "EG16",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 12,
+      "shiyakha": 350
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "30.872",
+      "lon": "31.017"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/gharbia-eg16/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG21",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "الجيزة",
+      "en": "Giza",
+      "slug": "giza-eg21"
+    },
+    "code": {
+      "id": "EG21",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 22,
+      "shiyakha": 239
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "28.935",
+      "lon": "29.392"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/giza-eg21/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG19",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "الإسماعيلية",
+      "en": "Ismailia",
+      "slug": "ismailia-eg19"
+    },
+    "code": {
+      "id": "EG19",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 8,
+      "shiyakha": 56
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "30.603",
+      "lon": "32.55"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/ismailia-eg19/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG15",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "كفر الشيخ",
+      "en": "Kafr El-Shikh",
+      "slug": "kafr-el-shikh-eg15"
+    },
+    "code": {
+      "id": "EG15",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 12,
+      "shiyakha": 226
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "31.31",
+      "lon": "30.901"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/kafr-el-shikh-eg15/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG14",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "القليوبية",
+      "en": "Kalyoubia",
+      "slug": "kalyoubia-eg14"
+    },
+    "code": {
+      "id": "EG14",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 15,
+      "shiyakha": 216
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "30.36",
+      "lon": "31.209"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/kalyoubia-eg14/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG29",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "مدينة الأقصر",
+      "en": "Luxor",
+      "slug": "luxor-eg29"
+    },
+    "code": {
+      "id": "EG29",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 4,
+      "shiyakha": 23
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "25.658",
+      "lon": "32.725"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/luxor-eg29/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG33",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "مطروح",
+      "en": "Matrouh",
+      "slug": "matrouh-eg33"
+    },
+    "code": {
+      "id": "EG33",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 8,
+      "shiyakha": 113
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "29.667",
+      "lon": "27.403"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/matrouh-eg33/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG24",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "المنيا",
+      "en": "Menia",
+      "slug": "menia-eg24"
+    },
+    "code": {
+      "id": "EG24",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 13,
+      "shiyakha": 378
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "28.156",
+      "lon": "31.61"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/menia-eg24/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG17",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "المنوفية",
+      "en": "Menoufia",
+      "slug": "menoufia-eg17"
+    },
+    "code": {
+      "id": "EG17",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 12,
+      "shiyakha": 330
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "30.358",
+      "lon": "30.661"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/menoufia-eg17/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG32",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "الوادى الجديد",
+      "en": "New Valley",
+      "slug": "new-valley-eg32"
+    },
+    "code": {
+      "id": "EG32",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 4,
+      "shiyakha": 75
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "24.719",
+      "lon": "28.709"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/new-valley-eg32/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG34",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "شمال سيناء",
+      "en": "North Sinai",
+      "slug": "north-sinai-eg34"
+    },
+    "code": {
+      "id": "EG34",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 11,
+      "shiyakha": 96
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "30.425",
+      "lon": "33.701"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/north-sinai-eg34/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG03",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "بورسعيد",
+      "en": "Port Said",
+      "slug": "port-said-eg03"
+    },
+    "code": {
+      "id": "EG03",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 12,
+      "shiyakha": 22
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "31.067",
+      "lon": "32.43"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/port-said-eg03/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG27",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "قنا",
+      "en": "Qena",
+      "slug": "qena-eg27"
+    },
+    "code": {
+      "id": "EG27",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 14,
+      "shiyakha": 203
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "25.963",
+      "lon": "33.154"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/qena-eg27/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG31",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "البحر الأحمر",
+      "en": "Red Sea",
+      "slug": "red-sea-eg31"
+    },
+    "code": {
+      "id": "EG31",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 8,
+      "shiyakha": 41
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "25.588",
+      "lon": "33.944"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/red-sea-eg31/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG13",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "الشرقية",
+      "en": "Sharkia",
+      "slug": "sharkia-eg13"
+    },
+    "code": {
+      "id": "EG13",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 22,
+      "shiyakha": 531
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "30.65",
+      "lon": "31.772"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/sharkia-eg13/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG35",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "جنوب سيناء",
+      "en": "South Sinai",
+      "slug": "south-sinai-eg35"
+    },
+    "code": {
+      "id": "EG35",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 8,
+      "shiyakha": 99
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "28.836",
+      "lon": "33.902"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/south-sinai-eg35/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG04",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "السويس",
+      "en": "Suez",
+      "slug": "suez-eg04"
+    },
+    "code": {
+      "id": "EG04",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 6,
+      "shiyakha": 18
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "29.622",
+      "lon": "32.121"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/suez-eg04/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  },
+  {
+    "id": "EG26",
+    "level": 1,
+    "level_name": {
+      "local": "محافظة",
+      "en": "Governorate"
+    },
+    "name": {
+      "local": "سوهاج",
+      "en": "Suhag",
+      "slug": "suhag-eg26"
+    },
+    "code": {
+      "id": "EG26",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "district": 20,
+      "shiyakha": 290
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "26.726",
+      "lon": "32.175"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/eg/governorates/suhag-eg26/",
+      "api": "https://openadmindata.org/api/eg/"
+    }
+  }
+]

@@ -73,6 +73,34 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Catalog.ActivitySeedKey", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SourceKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<string>("SourceVersion")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceKey")
+                        .IsUnique();
+
+                    b.ToTable("SeedKeys", "catalog");
+                });
+
             modelBuilder.Entity("HawalekNow.Domain.Modules.Catalog.Category", b =>
                 {
                     b.Property<Guid>("Id")
@@ -415,6 +443,40 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.ToTable("Governorates", "locations", t =>
                         {
                             t.HasCheckConstraint("CK_Governorates_Names", "LEN([NameAr]) > 0 AND LEN([NameEn]) > 0");
+                        });
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Locations.LocationSeedKey", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ReferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SourceCommit")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("SourceKey")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceKey")
+                        .IsUnique();
+
+                    b.ToTable("SeedKeys", "locations", t =>
+                        {
+                            t.HasCheckConstraint("CK_LocationSeedKeys_Kind", "[Kind] IN (1,2,3)");
                         });
                 });
 

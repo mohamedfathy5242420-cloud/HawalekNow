@@ -313,6 +313,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S04 Seed البيانات الأولية
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S04.md).
+
 - الاعتمادات السابقة: [P03-S03](#p03-s03).
 - المخرج المطلوب: الأنشطة الأربعة وبيانات مواقع قابلة لإعادة التشغيل.
 - بوابة التحقق: V3 Seed idempotency وفحص العد.

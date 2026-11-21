@@ -6,6 +6,7 @@ using HawalekNow.Api.Shared.Errors;
 using HawalekNow.Api.Shared.OpenApi;
 using HawalekNow.Api.Shared.Routing;
 using HawalekNow.Application.Shared;
+using HawalekNow.Application.Modules.Locations;
 using HawalekNow.Infrastructure.Modules.Identity;
 using HawalekNow.Infrastructure.Modules.Merchants;
 using HawalekNow.Infrastructure.Modules.Catalog;
@@ -15,6 +16,25 @@ using HawalekNow.Infrastructure.Shared.Messaging;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
+
+if (args.Contains("--seed-reference-data", StringComparer.Ordinal))
+{
+    try
+    {
+        if (args.Contains("--seed-admin", StringComparer.Ordinal)) throw new InvalidOperationException("Choose one explicit bootstrap command.");
+        var bootstrap = Host.CreateApplicationBuilder(args.Where(argument => argument != "--seed-reference-data").ToArray());
+        bootstrap.Logging.ClearProviders();
+        bootstrap.Services.AddPersistence(bootstrap.Configuration).AddCatalogReferenceData().AddLocationsReferenceData();
+        using var bootstrapHost = bootstrap.Build(); await using var scope = bootstrapHost.Services.CreateAsyncScope();
+        var result = await scope.ServiceProvider.GetRequiredService<IReferenceDataSeeder>().SeedAsync();
+        Console.WriteLine($"Reference seed completed. Added activities={result.ActivitiesAdded}; governorates={result.GovernoratesAdded}; cities={result.CitiesAdded}; areas={result.AreasAdded}. Existing Admin data preserved; nationwide completeness not claimed.");
+    }
+    catch (Exception)
+    {
+        Console.Error.WriteLine("Reference seed failed. Check the reviewed database configuration and pinned dataset."); Environment.ExitCode = 1;
+    }
+    return;
+}
 
 if (args.Contains("--seed-admin", StringComparer.Ordinal))
 {
