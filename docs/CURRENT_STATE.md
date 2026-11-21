@@ -2,7 +2,7 @@
 
 آخر تحديث: 2026-11-21
 
-اعتمد المستخدم P02 وفق D017 بتاريخ 2026-11-21. نجحت إعادة اختبارات الإغلاق:270 passed دون failed/skipped بعد أن أصبحت SQL Healthy. [سجل الإغلاق](../planning/phase-02/CLOSURE.md) يحفظ الفحوص؛ [المحاولة الأولى](../planning/phase-02/CLOSURE_ATTEMPT.md) محفوظة تاريخيًا. Commit الإغلاق وCI والدمج وفحوص ما بعده لم تثبت بعد؛ لا بدء P03 قبل اكتمالها. [الحالة قبل القبول](P02_REVIEWED_STATE.md) محفوظة دون إعادة كتابة التاريخ.
+اعتمد المستخدم P02 وفق D017 بتاريخ 2026-11-21. أغلقت PR #9 ودمجت Squash على main=5e4250ff31f84c8806649c7ef1786574da7dd00a، ونجحت CI وفحوص ما بعد الدمج كاملة:270 اختبارًا دون failed/skipped. [تقرير الدمج الفعلي](../planning/phase-02/MERGE_RECEIPT.md) يحفظ SHA وروابط CI والنتائج؛ [المحاولة الأولى](../planning/phase-02/CLOSURE_ATTEMPT.md) و[الحالة قبل القبول](P02_REVIEWED_STATE.md) تاريخيتان محفوظتان. D018 يسجل إذن تنفيذ P03 بعد البوابة؛ الفرع الجديد بدأ من SHA الدمج، وكود المرحلة لم يبدأ بانتظار [حسم مصدر Seed الجغرافية](P03_SOURCE_REVIEW.md) في السؤال المعروض للمستخدم.
 
 - Phase: P02
 - Step: P02-S09
@@ -21,9 +21,9 @@
 - ExecutionAuthorization: D015
 - BaseMain: b7a502051ac52f06b57c541e24f4bdde270a3392
 - P03Status: NotStarted
-- Scope: إغلاق P02 وفق D017؛ تنفيذ P03 مشروط بنجاح الدمج والتحقق بعده.
+- Scope: P02 مغلقة ومتحققة بعد الدمج؛ تجهيز P03 وفق D018 دون كود قبل حسم مصدر الجغرافية.
 - ActiveStepFile: planning/phase-02/steps/S09.md
-- NextStep: Commit الإغلاق ثم CI على رأسه وReady/Squash لـPR #9 وفحوص main؛ بعدها فقط P03.
+- NextStep: جواب المستخدم عن مصدر Seed؛ ثم تنفيذ P03-S01 إلى S07 بالتتابع تحت D018، وتسليم InReview دون دمج أو P04.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## سجل تنفيذ P02 السابق — تاريخي

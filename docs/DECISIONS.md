@@ -2,6 +2,22 @@
 
 آخر تحديث: 2026-11-21
 
+## D018 إذن تنفيذ P03 بعد اكتمال بوابة P02
+
+Status: Approved
+ApprovalDate: 2026-11-21
+ExecutionMode: Phase
+AuthorizedPhase: P03
+PhaseUserApproval: Pending
+MergeAuthorization: NotAuthorized
+P04Execution: NotAuthorized
+BaseMain: 5e4250ff31f84c8806649c7ef1786574da7dd00a
+PredecessorAcceptance: D017
+
+طلب المستخدم الأصلي أذن بتنفيذ P03-S01 إلى S07 بعد إغلاق ودمج P02 والتحقق بعدها. تحققت البوابة: PR #9 merged=true على SHA أعلاه، وCI main44892733967 ناجحة بكل Jobs، وإعادة محلية بعد الدمج لـlocked Restore وRelease Build و270 اختبارًا وFormat والفاحصين و46+27 حالة بوابة وdiff نجحت. [تقرير الإغلاق الفعلي](../planning/phase-02/MERGE_RECEIPT.md) يسجل الروابط والحدود دون تغيير تاريخ السجلات السابقة.
+
+الفرع codex/p03-implement-reference-data-and-locations بدأ من main المذكورة. هذا إذن تنفيذ وليس اعتماد مخرجات؛ P03 وV4 تبقيان Pending حتى المراجعة، وتسليم P04 يكون Draft، دون دمج P03 أو بدء P04. التنفيذ المتتابع والعقود والأمن والمعاملات وحدود النطاق في طلب المستخدم ملزمة. قبل بدء الكود يوجد سؤال مؤثر غير محسوم عن مصدر Seed الجغرافية ونطاق التغطية، موثق في [مراجعة المصدر](P03_SOURCE_REVIEW.md)؛ لا يفترض اعتماد المصدر أو أسماء بديلة قبل جواب المستخدم. لم تبدأ ملفات خطوات P03 أوكودها بعد.
+
 ## D017 قبول P02 وإذن إغلاقها وبدء P03 بعد البوابة
 
 Status: Approved
