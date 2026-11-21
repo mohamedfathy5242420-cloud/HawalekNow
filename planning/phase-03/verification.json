@@ -263,6 +263,48 @@
       "detail": "31 requests parsed/scripts checked and local HTTPS guard tested; empty credentials; full application collection not executed.",
       "name": "S05Postman",
       "command": "node tmp/validate-p03-postman.cjs"
+    },
+    {
+      "exitCode": 0,
+      "command": "GitHub pull_request run44922582446 on7d74a69450c2552d2bf77f099da533e59dae5e23",
+      "status": "Passed",
+      "detail": "All jobs success.",
+      "name": "S05CI"
+    },
+    {
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter GeographyTests|GeoPointTests|ArchitectureTests",
+      "status": "Failed",
+      "detail": "47 Architecture+1 SQL+13 Unit passed; malformed NTS Point with null Coordinate caused NullReference. Added explicit null Coordinate guard and valid empty factory-point rejection without weakening assertions.",
+      "name": "S06FirstTests"
+    },
+    {
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "status": "Passed",
+      "detail": "Final zero warnings/errors.",
+      "name": "S06Build"
+    },
+    {
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter GeographyTests|GeoPointTests|ArchitectureTests",
+      "status": "Passed",
+      "detail": "47 Architecture+2 Integration+13 Unit passed; zero failed/skipped.",
+      "name": "S06Tests"
+    },
+    {
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter FullyQualifiedName~GeographyTests",
+      "status": "Passed",
+      "detail": "Same HawalekDbContext with test-only model customization: real geography column and EF converter roundtrip; SQL axes/SRID4326; known equatorial degree in meters with300m tolerance; wrong SRID rejected; ordinary production model excludes test entity and has no pending changes.",
+      "name": "S06Sql"
+    },
+    {
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel",
+      "status": "Passed",
+      "detail": "Only required NTS provider10.0.14/NTS2.6.0/SqlServerBytes2.1.0 added; all existing resolved versions unchanged. nuspec license expressions MIT/BSD-3-Clause/BSD-3-Clause inspected.",
+      "name": "S06LockedRestore"
     }
   ],
   "tests": {

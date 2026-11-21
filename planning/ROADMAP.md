@@ -333,6 +333,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S06 نقاط geography
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S06.md).
+
 - الاعتمادات السابقة: [P03-S05](#p03-s05).
 - المخرج المطلوب: Point SRID 4326 والتحقق من Latitude وLongitude.
 - بوابة التحقق: V2 coordinates وV3 SQL geography.
