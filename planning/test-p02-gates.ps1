@@ -17,6 +17,13 @@ if ((Get-Content -LiteralPath (Join-Path $fixture 'docs/CURRENT_STATE.md') -Raw)
     $legacyMap = [IO.File]::ReadAllText($mapPath)
     $legacyMap = [regex]::Replace($legacyMap, '(?ms)(^### P03-S0[1-7] .*?)(?=^### |\z)', { param($m) [regex]::Replace($m.Value, '(?m)^- Status: [^\r\n]+\r?\n', '') })
     [IO.File]::WriteAllText($mapPath, $legacyMap)
+    # The historical P02 baseline intentionally contains no P03 execution files.
+    # Preserve current documentation in the real worktree; remove only its forward links inside this fixture.
+    foreach ($legacyDoc in (Get-ChildItem -LiteralPath $fixture -Filter '*.md' -Recurse -File)) {
+        $legacyText = [IO.File]::ReadAllText($legacyDoc.FullName)
+        $legacyText = [regex]::Replace($legacyText, '\[([^\]\r\n]+)\]\([^)\r\n]*phase-03[^)\r\n]*\)', '$1')
+        [IO.File]::WriteAllText($legacyDoc.FullName, $legacyText)
+    }
 }
 function Check-P02Fixture { & (Join-Path $fixture 'planning/verify-roadmap.ps1') -Root $fixture | Out-Null }
 function Reject-P02([string]$Label, [string]$Path, [scriptblock]$Mutation) {

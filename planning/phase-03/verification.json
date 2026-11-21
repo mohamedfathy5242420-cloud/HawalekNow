@@ -67,6 +67,13 @@
       "exitCode": 0,
       "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel",
       "detail": "Unchanged dependency graph"
+    },
+    {
+      "name": "S01FirstCI",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "GitHub Actions pull_request run44899813592 on627d32f7013e1132b334988e71ca5a0a204a7c1c",
+      "detail": "Backend tests/build/format and API/SQL image jobs succeeded. Historical P02 fixture rejected the new backend/MODULES.md link to excluded phase-03/DESIGN.md. Fix removes forward links only inside the P02 fixture, preserving real documentation and all rejection cases."
     }
   ],
   "tests": {
