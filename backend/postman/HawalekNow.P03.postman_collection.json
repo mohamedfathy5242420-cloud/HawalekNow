@@ -868,6 +868,136 @@
         }
       ],
       "name": "Locations"
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "GET review synonyms",
+          "request": {
+            "url": "{{baseUrl}}/api/v1/admin/search/synonym-groups?page=1&pageSize=30",
+            "method": "GET",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ]
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "POST review synonyms",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"isActive\": true,\r\n  \"nameEn\": \"Review synonyms\",\r\n  \"terms\": [\r\n    \"تيشرت\",\r\n    \"تي شيرت\",\r\n    \"T-shirt\",\r\n    \"Tshirt\"\r\n  ],\r\n  \"nameAr\": \"مرادفات تجربة\"\r\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/search/synonym-groups",
+            "method": "POST",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ]
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code === 200){const row=pm.response.json();pm.environment.set('synonymId',row.id);pm.environment.set('synonymRowVersion',row.rowVersion);}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "PUT review synonyms",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"isActive\": true,\r\n  \"nameEn\": \"Review synonyms\",\r\n  \"terms\": [\r\n    \"تيشرت\",\r\n    \"تي شيرت\",\r\n    \"T-shirt\",\r\n    \"Tshirt\"\r\n  ],\r\n  \"rowVersion\": \"{{synonymRowVersion}}\",\r\n  \"nameAr\": \"مرادفات تجربة\"\r\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/search/synonym-groups/{{synonymId}}",
+            "method": "PUT",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ]
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code === 200){const row=pm.response.json();pm.environment.set('synonymId',row.id);pm.environment.set('synonymRowVersion',row.rowVersion);}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "DELETE review synonyms",
+          "request": {
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"rowVersion\": \"{{synonymRowVersion}}\"\r\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/admin/search/synonym-groups/{{synonymId}}",
+            "method": "DELETE",
+            "header": [
+              {
+                "value": "{{correlationId}}",
+                "key": "X-Correlation-ID"
+              }
+            ]
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -509,6 +509,72 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Search.SynonymGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SynonymGroups", "search", t =>
+                        {
+                            t.HasCheckConstraint("CK_SynonymGroups_Names", "LEN([NameAr]) > 0 AND LEN([NameEn]) > 0");
+                        });
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Search.SynonymTerm", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NormalizedKey")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<string>("Original")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("NormalizedKey")
+                        .IsUnique();
+
+                    b.ToTable("SynonymTerms", "search", t =>
+                        {
+                            t.HasCheckConstraint("CK_SynonymTerms_Text", "LEN([Original]) > 0 AND LEN([NormalizedKey]) > 0");
+                        });
+                });
+
             modelBuilder.Entity("HawalekNow.Infrastructure.Modules.Identity.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -863,6 +929,15 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("GovernorateId")
                         .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Search.SynonymTerm", b =>
+                {
+                    b.HasOne("HawalekNow.Domain.Modules.Search.SynonymGroup", null)
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

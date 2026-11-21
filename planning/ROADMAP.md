@@ -323,6 +323,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S05 المرادفات
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S05.md).
+
 - الاعتمادات السابقة: [P03-S04](#p03-s04).
 - المخرج المطلوب: إدارة Synonym Groups عربية وإنجليزية للبحث.
 - بوابة التحقق: V2 normalization وV3 Admin API.

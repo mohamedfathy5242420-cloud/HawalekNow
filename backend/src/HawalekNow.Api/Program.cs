@@ -1,3 +1,4 @@
+using HawalekNow.Infrastructure.Modules.Search;
 using HawalekNow.Api.Shared.Diagnostics;
 using HawalekNow.Api.Modules.Identity;
 using HawalekNow.Api.Modules.Catalog;
@@ -74,6 +75,7 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
 builder.Services.AddPersistence(builder.Configuration).AddIdentityPersistence().AddMerchantAccounts().AddBackgroundProcessing();
 builder.Services.AddCatalogReferenceData();
 builder.Services.AddLocationsReferenceData();
+builder.Services.AddSearchReferenceData();
 builder.Services.AddApiErrorHandling().AddMvcOptions(options => options.Conventions.Add(new ApiV1RouteConvention()));
 builder.Services.AddHealthChecks();
 builder.Services.AddOpenApi("v1", options => options.AddDocumentTransformer<ApiDocumentTransformer>());

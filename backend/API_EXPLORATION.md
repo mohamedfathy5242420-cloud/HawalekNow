@@ -113,3 +113,10 @@ dotnet run --project backend/src/HawalekNow.Api --no-build --no-restore --no-lau
 ApiFoundationTests تستخدم WebApplicationFactory<Program> وتسجيل ومكونات الإنتاج الفعلية. تغيير البيئة وحقن check فاشل أو service بترمي استثناء أو إضافة Controller اختبار مخفي هما فقط تعديلات الاختبار؛ مفيش نسخة بديلة من Program. الـprobes لا تسجل في الإنتاج، وإضافة probe المخفي تختبر فعليًا وجوده في HTTP وغيابه من JSON. التصحيح للـLogger هو ownership مع preserveStaticLogger: true في Program؛ الفلتر والسياسة لا يتغيران ولا يستخدم التطبيق Log.Logger static. اختبارات S05 وعزل السجلات والتوازي والسرية وnull بلا تعديل، والاختبارات المعمارية بلا تخفيف.
 
 نتائج التنفيذ الفعلية والفشل والإصلاح والمراجعة في [S07](../planning/phase-01/steps/S07.md)، والحزم والمصادر في [PACKAGES](PACKAGES.md). وفق D012 تظل S07 InReview وVerified تقنيًا، وتسليم S08 InternalReady ضمن إذن تنفيذ P01؛ تجربتك Scalar/Postman وV4 تنتقل إلى [مراجعة P01](../planning/phase-01/PHASE_REVIEW.md) وتبقى Pending. لا دمج أو P02 قبل اعتمادك وإذنك. الشرح التفصيلي وتجربة التعلم في مهمة لاحقة مخصصة.
+# مرادفات P03-S05
+
+المسارات الفعلية تحت `/api/v1/admin/search/synonym-groups`: GET بصفحات `page/pageSize`، POST، PUT وDELETE على `/{id}`. كلها AdminOnly؛ الكتابة تستخدم HTTPS وCSRF والمعدل المرجعي المشترك. PUT يحتاج RowVersion، وDELETE يحمل `{ "rowVersion": "..." }`. لا مسار بحث أو مرادفات عام حاليًا.
+
+POST/PUT يحملان NameAr وNameEn وIsActive وTerms؛ المصطلحات أصلية للعرض ومطَبعة FormKC/فراغات/حالة أحرف للمقارنة فقط. الحدود: الاسم100، المصطلح80، من1 إلى100 مصطلح؛ لا حذف للتشكيل أوتوحيد أحرف عربية أوالشرطات. المفتاح فريد عالميًا حتى للمجموعة المعطلة، ولا نقل صامت بين مجموعتين. التعديل يستبدل مجموعة مصطلحاتها ذريًا ويحرك RowVersion حتى إذا لم تتغير الأسماء. GET إدارية تشمل المعطل، مرتبة بمعرف المجموعة ومفتاح المصطلح. لا تفترض ترتيب إدخال المصطلحات.
+
+Collection P03 تحتوي31 طلبًا مع Search. اختبرها على قاعدة مراجعة معزولة وبحساب Admin أُنشئ وفق دليل Identity المحلي؛ الأسرار المحفوظة فارغة. لا يعد تحليل JSON/scripts تنفيذًا للرحلة أو اعتمادًا يدويًا.

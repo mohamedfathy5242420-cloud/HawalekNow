@@ -221,6 +221,48 @@
       "status": "Passed",
       "command": "./backend/test-p02.ps1 -NoBuild -Filter FullyQualifiedName~ReferenceSeed",
       "name": "S04Sql"
+    },
+    {
+      "exitCode": 0,
+      "status": "Passed",
+      "detail": "All workflow jobs completed successfully.",
+      "name": "S04CI",
+      "command": "GitHub pull_request run44907461424 on990a1696902507336f809147153b3501493e8d14"
+    },
+    {
+      "exitCode": 1,
+      "status": "Failed",
+      "detail": "47 Architecture+55 Integration+5 Unit passed;2 Integration assertions failed: expected exception instead of safe Conflict result; ImmutableArray reference equality instead of contents. Assertions corrected; rollback probe and all SQL state assertions retained.",
+      "name": "S05FirstTests",
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter Synonym and foundation regressions"
+    },
+    {
+      "exitCode": 0,
+      "status": "Passed",
+      "detail": "Final Build zero warnings/errors; additive migration creates only two Search tables and constraints.",
+      "name": "S05Build",
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1"
+    },
+    {
+      "exitCode": 0,
+      "status": "Passed",
+      "detail": "35 Integration+5 Unit passed; zero failed/skipped. Prior unchanged production sources passed47 Architecture and foundation Logger/Pipeline cases in focused first run. Counts overlap; final full run pending S07.",
+      "name": "S05Tests",
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter FullyQualifiedName~Synonym|FullyQualifiedName~ApiFoundationTests"
+    },
+    {
+      "exitCode": 0,
+      "status": "Passed",
+      "detail": "Actual SQL unique normalized membership/FK; two DMV-proven concurrent lock waiters one winner; terms-only RowVersion; stale writes/deletes; forced failure after first Save rolls back names/version/terms. Actual Program HTTP covers all roles, CRUD/hidden public route, CSRF/HTTPS/shared quota and safe errors.",
+      "name": "S05Sql",
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter FullyQualifiedName~Synonym"
+    },
+    {
+      "exitCode": 0,
+      "status": "Passed",
+      "detail": "31 requests parsed/scripts checked and local HTTPS guard tested; empty credentials; full application collection not executed.",
+      "name": "S05Postman",
+      "command": "node tmp/validate-p03-postman.cjs"
     }
   ],
   "tests": {

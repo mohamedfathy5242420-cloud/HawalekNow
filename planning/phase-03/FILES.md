@@ -17,6 +17,7 @@ Status: InProgress
 | [backend/REFERENCE_DATA_OPERATIONS.md](../../backend/REFERENCE_DATA_OPERATIONS.md) | توثيق وحوكمة وأدلة |
 | [backend/src/HawalekNow.Api/Modules/Catalog/CatalogControllers.cs](../../backend/src/HawalekNow.Api/Modules/Catalog/CatalogControllers.cs) | HTTP والأمن والتوثيق |
 | [backend/src/HawalekNow.Api/Modules/Locations/LocationControllers.cs](../../backend/src/HawalekNow.Api/Modules/Locations/LocationControllers.cs) | HTTP والأمن والتوثيق |
+| [backend/src/HawalekNow.Api/Modules/Search/SynonymController.cs](../../backend/src/HawalekNow.Api/Modules/Search/SynonymController.cs) | HTTP والأمن والتوثيق |
 | [backend/src/HawalekNow.Api/Program.cs](../../backend/src/HawalekNow.Api/Program.cs) | HTTP والأمن والتوثيق |
 | [backend/src/HawalekNow.Api/Shared/OpenApi/ApiDocumentTransformer.cs](../../backend/src/HawalekNow.Api/Shared/OpenApi/ApiDocumentTransformer.cs) | HTTP والأمن والتوثيق |
 | [backend/src/HawalekNow.Api/Shared/Security/ReferenceDataRateLimits.cs](../../backend/src/HawalekNow.Api/Shared/Security/ReferenceDataRateLimits.cs) | HTTP والأمن والتوثيق |
@@ -24,6 +25,7 @@ Status: InProgress
 | [backend/src/HawalekNow.Application/Modules/Catalog/Contracts/IInitialActivities.cs](../../backend/src/HawalekNow.Application/Modules/Catalog/Contracts/IInitialActivities.cs) | عقود CQRS وDTO والتحقق |
 | [backend/src/HawalekNow.Application/Modules/Locations/LocationRequests.cs](../../backend/src/HawalekNow.Application/Modules/Locations/LocationRequests.cs) | عقود CQRS وDTO والتحقق |
 | [backend/src/HawalekNow.Application/Modules/Locations/ReferenceSeed.cs](../../backend/src/HawalekNow.Application/Modules/Locations/ReferenceSeed.cs) | عقود CQRS وDTO والتحقق |
+| [backend/src/HawalekNow.Application/Modules/Search/SynonymRequests.cs](../../backend/src/HawalekNow.Application/Modules/Search/SynonymRequests.cs) | عقود CQRS وDTO والتحقق |
 | [backend/src/HawalekNow.Domain/Modules/Catalog/Activity.cs](../../backend/src/HawalekNow.Domain/Modules/Catalog/Activity.cs) | قواعد الوحدة المستقلة عن Framework |
 | [backend/src/HawalekNow.Domain/Modules/Catalog/ActivitySeedKey.cs](../../backend/src/HawalekNow.Domain/Modules/Catalog/ActivitySeedKey.cs) | قواعد الوحدة المستقلة عن Framework |
 | [backend/src/HawalekNow.Domain/Modules/Catalog/CatalogNames.cs](../../backend/src/HawalekNow.Domain/Modules/Catalog/CatalogNames.cs) | قواعد الوحدة المستقلة عن Framework |
@@ -31,6 +33,7 @@ Status: InProgress
 | [backend/src/HawalekNow.Domain/Modules/Catalog/CategoryPath.cs](../../backend/src/HawalekNow.Domain/Modules/Catalog/CategoryPath.cs) | قواعد الوحدة المستقلة عن Framework |
 | [backend/src/HawalekNow.Domain/Modules/Locations/AdministrativePlaces.cs](../../backend/src/HawalekNow.Domain/Modules/Locations/AdministrativePlaces.cs) | قواعد الوحدة المستقلة عن Framework |
 | [backend/src/HawalekNow.Domain/Modules/Locations/LocationSeedKey.cs](../../backend/src/HawalekNow.Domain/Modules/Locations/LocationSeedKey.cs) | قواعد الوحدة المستقلة عن Framework |
+| [backend/src/HawalekNow.Domain/Modules/Search/Synonyms.cs](../../backend/src/HawalekNow.Domain/Modules/Search/Synonyms.cs) | قواعد الوحدة المستقلة عن Framework |
 | [backend/src/HawalekNow.Infrastructure/HawalekNow.Infrastructure.csproj](../../backend/src/HawalekNow.Infrastructure/HawalekNow.Infrastructure.csproj) | تنفيذ SQL والاستعلامات والمعاملات |
 | [backend/src/HawalekNow.Infrastructure/Modules/Catalog/CatalogAdministration.cs](../../backend/src/HawalekNow.Infrastructure/Modules/Catalog/CatalogAdministration.cs) | تنفيذ SQL والاستعلامات والمعاملات |
 | [backend/src/HawalekNow.Infrastructure/Modules/Catalog/CatalogConfiguration.cs](../../backend/src/HawalekNow.Infrastructure/Modules/Catalog/CatalogConfiguration.cs) | تنفيذ SQL والاستعلامات والمعاملات |
@@ -50,12 +53,15 @@ Status: InProgress
 | [backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/all-shiyakha.json](../../backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/all-shiyakha.json) | تنفيذ SQL والاستعلامات والمعاملات |
 | [backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/LICENSE.txt](../../backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/LICENSE.txt) | تنفيذ SQL والاستعلامات والمعاملات |
 | [backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/SOURCE.md](../../backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/SOURCE.md) | تنفيذ SQL والاستعلامات والمعاملات |
+| [backend/src/HawalekNow.Infrastructure/Modules/Search/SynonymAdministration.cs](../../backend/src/HawalekNow.Infrastructure/Modules/Search/SynonymAdministration.cs) | تنفيذ SQL والاستعلامات والمعاملات |
 | [backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121111950_P03CatalogFoundation.cs](../../backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121111950_P03CatalogFoundation.cs) | Migration إضافية أو snapshot |
 | [backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121111950_P03CatalogFoundation.Designer.cs](../../backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121111950_P03CatalogFoundation.Designer.cs) | Migration إضافية أو snapshot |
 | [backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121121520_P03LocationsHierarchy.cs](../../backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121121520_P03LocationsHierarchy.cs) | Migration إضافية أو snapshot |
 | [backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121121520_P03LocationsHierarchy.Designer.cs](../../backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121121520_P03LocationsHierarchy.Designer.cs) | Migration إضافية أو snapshot |
 | [backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121124845_P03ReferenceSeedKeys.cs](../../backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121124845_P03ReferenceSeedKeys.cs) | Migration إضافية أو snapshot |
 | [backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121124845_P03ReferenceSeedKeys.Designer.cs](../../backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121124845_P03ReferenceSeedKeys.Designer.cs) | Migration إضافية أو snapshot |
+| [backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121155717_P03SynonymGroups.cs](../../backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121155717_P03SynonymGroups.cs) | Migration إضافية أو snapshot |
+| [backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121155717_P03SynonymGroups.Designer.cs](../../backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/20261121155717_P03SynonymGroups.Designer.cs) | Migration إضافية أو snapshot |
 | [backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/HawalekDbContextModelSnapshot.cs](../../backend/src/HawalekNow.Infrastructure/Shared/Persistence/Migrations/HawalekDbContextModelSnapshot.cs) | Migration إضافية أو snapshot |
 | [backend/tests/IntegrationTests/ApiFoundationTests.cs](../../backend/tests/IntegrationTests/ApiFoundationTests.cs) | اختبارات وفواصل عزل |
 | [backend/tests/IntegrationTests/CatalogConcurrencyTests.cs](../../backend/tests/IntegrationTests/CatalogConcurrencyTests.cs) | اختبارات وفواصل عزل |
@@ -64,13 +70,17 @@ Status: InProgress
 | [backend/tests/IntegrationTests/FoundationCatalogPorts.cs](../../backend/tests/IntegrationTests/FoundationCatalogPorts.cs) | اختبارات وفواصل عزل |
 | [backend/tests/IntegrationTests/FoundationIdentityPorts.cs](../../backend/tests/IntegrationTests/FoundationIdentityPorts.cs) | اختبارات وفواصل عزل |
 | [backend/tests/IntegrationTests/FoundationLocationPorts.cs](../../backend/tests/IntegrationTests/FoundationLocationPorts.cs) | اختبارات وفواصل عزل |
+| [backend/tests/IntegrationTests/FoundationSearchPorts.cs](../../backend/tests/IntegrationTests/FoundationSearchPorts.cs) | اختبارات وفواصل عزل |
 | [backend/tests/IntegrationTests/LocationHttpTests.cs](../../backend/tests/IntegrationTests/LocationHttpTests.cs) | اختبارات وفواصل عزل |
 | [backend/tests/IntegrationTests/LocationPersistenceTests.cs](../../backend/tests/IntegrationTests/LocationPersistenceTests.cs) | اختبارات وفواصل عزل |
 | [backend/tests/IntegrationTests/ReferenceSeedTests.cs](../../backend/tests/IntegrationTests/ReferenceSeedTests.cs) | اختبارات وفواصل عزل |
+| [backend/tests/IntegrationTests/SynonymHttpTests.cs](../../backend/tests/IntegrationTests/SynonymHttpTests.cs) | اختبارات وفواصل عزل |
+| [backend/tests/IntegrationTests/SynonymPersistenceTests.cs](../../backend/tests/IntegrationTests/SynonymPersistenceTests.cs) | اختبارات وفواصل عزل |
 | [backend/tests/UnitTests/CatalogModelTests.cs](../../backend/tests/UnitTests/CatalogModelTests.cs) | اختبارات وفواصل عزل |
 | [backend/tests/UnitTests/CategoryPathTests.cs](../../backend/tests/UnitTests/CategoryPathTests.cs) | اختبارات وفواصل عزل |
 | [backend/tests/UnitTests/LocationModelTests.cs](../../backend/tests/UnitTests/LocationModelTests.cs) | اختبارات وفواصل عزل |
 | [backend/tests/UnitTests/ReferenceSeedRulesTests.cs](../../backend/tests/UnitTests/ReferenceSeedRulesTests.cs) | اختبارات وفواصل عزل |
+| [backend/tests/UnitTests/SynonymTextTests.cs](../../backend/tests/UnitTests/SynonymTextTests.cs) | اختبارات وفواصل عزل |
 | [docs/CURRENT_STATE.md](../../docs/CURRENT_STATE.md) | توثيق وحوكمة وأدلة |
 | [docs/DECISIONS.md](../../docs/DECISIONS.md) | توثيق وحوكمة وأدلة |
 | [docs/P02_CLOSED_STATE.md](../../docs/P02_CLOSED_STATE.md) | توثيق وحوكمة وأدلة |
@@ -81,10 +91,12 @@ Status: InProgress
 | [planning/phase-03/handoffs/S02-to-S03.md](handoffs/S02-to-S03.md) | توثيق وحوكمة وأدلة |
 | [planning/phase-03/handoffs/S03-to-S04.md](handoffs/S03-to-S04.md) | توثيق وحوكمة وأدلة |
 | [planning/phase-03/handoffs/S04-to-S05.md](handoffs/S04-to-S05.md) | توثيق وحوكمة وأدلة |
+| [planning/phase-03/handoffs/S05-to-S06.md](handoffs/S05-to-S06.md) | توثيق وحوكمة وأدلة |
 | [planning/phase-03/steps/S01.md](steps/S01.md) | توثيق وحوكمة وأدلة |
 | [planning/phase-03/steps/S02.md](steps/S02.md) | توثيق وحوكمة وأدلة |
 | [planning/phase-03/steps/S03.md](steps/S03.md) | توثيق وحوكمة وأدلة |
 | [planning/phase-03/steps/S04.md](steps/S04.md) | توثيق وحوكمة وأدلة |
+| [planning/phase-03/steps/S05.md](steps/S05.md) | توثيق وحوكمة وأدلة |
 | [planning/phase-03/verification.json](verification.json) | توثيق وحوكمة وأدلة |
 | [planning/ROADMAP.md](../ROADMAP.md) | توثيق وحوكمة وأدلة |
 | [planning/test-p02-gates.ps1](../test-p02-gates.ps1) | توثيق وحوكمة وأدلة |
