@@ -21,6 +21,10 @@ Updated: 2026-10-11
 
 عمليات Admin الخاصة بالموافقات والتصنيفات والمرادفات والبلاغات والمحتوى والإحصاءات موجودة في الوحدة صاحبة البيانات. Admin صلاحية داخل Identity وليست Module. Audit يسجل فعل الإدارة؛ لا يملك العملية التجارية. الخدمات التشغيلية مثل Outbox وHangfire وLogging والتخزين ليست وحدات تجارية جديدة؛ تتأسس في توقيتها المحدد في Q003-01 إلى Q003-06.
 
+## تأسيس P03 الجاري
+
+P03-S01 أضاف Activity وCategory وقواعد الأسماء في Domain.Catalog وتكويناتها في Infrastructure.Catalog؛ schema catalog ومفاتيح الأنشطة والأشقاء والانتماء للنشاط. [تصميم P03](../planning/phase-03/DESIGN.md) يحدد بقية كيانات Locations وSearch وخدماتها؛ لا نقل ملكية أو مدخل عام لجداول الوحدات. لا منتجات أو متاجر أو فروع ضمن P03. عبارات عدم وجود أنواع في سجل P01 أدناه تاريخية، وحدود الاعتماد نفسها ملزمة.
+
 ## الطبقات والمجلدات وNamespaces
 
 داخل كل مشروع إنتاج توجد `Modules/<Module>/README.md` لتثبيت المجلد وNamespace `HawalekNow.<Layer>.Modules.<Module>`. اختيار `<Layer>` من Domain وApplication وInfrastructure وApi فقط. الـREADME يحجز Namespace ويحدد دور الطبقة؛ لا أنواع compiled في الوحدات حاليًا، ولا Marker أو Base classes لإعطاء مظهر تنفيذ غير موجود.

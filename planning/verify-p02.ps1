@@ -1,4 +1,4 @@
-param([string]$Root = (Split-Path $PSScriptRoot -Parent))
+param([string]$Root = (Split-Path $PSScriptRoot -Parent), [string]$StatePath = 'docs/CURRENT_STATE.md', [switch]$AllowAuthorizedP03)
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 function Read-P02([string]$Path) { Get-Content -LiteralPath (Join-Path $Root $Path) -Raw }
@@ -11,7 +11,7 @@ function P02-Expect([string]$Text, [string]$Name, [string]$Value, [string]$Prefi
     if ((P02-Field $Text $Name $Prefix) -ne $Value) { throw "P02 invalid field: $Name; expected $Value" }
 }
 function P02-Require([bool]$Condition, [string]$Message) { if (-not $Condition) { throw $Message } }
-$state = Read-P02 'docs/CURRENT_STATE.md'
+$state = Read-P02 $StatePath
 P02-Expect $state 'Phase' 'P02' '- '
 P02-Expect $state 'ExecutionAuthorization' 'D015' '- '
 P02-Expect $state 'P03Status' 'NotStarted' '- '
@@ -94,7 +94,14 @@ if (Test-Path $nextHandoffPath) {
     if ($closed) { P02-ClosureFields $handoff }
 }
 $future = Join-Path $Root 'planning/phase-03'
-P02-Require (-not (Test-Path $future) -or @(Get-ChildItem -LiteralPath $future -Recurse -File).Count -eq 0) 'P03 execution is not authorized.'
+if ($AllowAuthorizedP03) {
+    P02-Require $closed 'P03 requires closed P02.'
+    $authorization = [regex]::Match((Read-P02 'docs/DECISIONS.md'), '(?ms)^## D018 .*?(?=^## |\z)').Value
+    P02-Expect $authorization 'Status' 'Approved'
+    P02-Expect $authorization 'AuthorizedPhase' 'P03'
+} else {
+    P02-Require (-not (Test-Path $future) -or @(Get-ChildItem -LiteralPath $future -Recurse -File).Count -eq 0) 'P03 execution is not authorized.'
+}
 if ($phaseStatus -in @('InReview', 'Done')) {
     P02-Require ($number -eq 9 -and $execution -eq 'Verified' -and (Test-Path $nextHandoffPath)) 'Phase review requires all nine verified steps and Draft P03 handoff.'
     foreach ($name in @('LockedRestore', 'ReleaseBuild', 'Tests', 'Format', 'Roadmap', 'GitRules', 'DiffCheck', 'CI')) { P02-Require ($checks.ContainsKey($name) -and $checks[$name].status -eq 'Passed') "Missing phase verification: $name" }

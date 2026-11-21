@@ -283,6 +283,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S01 نموذج الأنشطة والتصنيفات
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S01.md).
+
 - الاعتمادات السابقة: [P02-S09](#p02-s09) + Phase Review وHandoff للمرحلة السابقة.
 - المخرج المطلوب: شجرة غير محدودة العمق واسم عربي وإنجليزي وحالات تفعيل.
 - بوابة التحقق: V2 قواعد الشجرة وV3 Migration.

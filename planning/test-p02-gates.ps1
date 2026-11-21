@@ -6,9 +6,17 @@ $paths = @(& git -c "safe.directory=$([IO.Path]::GetFullPath($Root).Replace('\',
 if ($LASTEXITCODE -ne 0) { throw 'Cannot enumerate P02 gate fixture.' }
 foreach ($path in $paths | Sort-Object -Unique) {
     if ($path -eq 'docs/TARGET_SCHEDULE.md') { continue }
+    if ($path.StartsWith('planning/phase-03/')) { continue }
     $destination = Join-Path $fixture $path
     [IO.Directory]::CreateDirectory((Split-Path $destination -Parent)) | Out-Null
     [IO.File]::Copy((Join-Path $Root $path), $destination)
+}
+if ((Get-Content -LiteralPath (Join-Path $fixture 'docs/CURRENT_STATE.md') -Raw) -match '(?m)^- Phase: P03\r?$') {
+    [IO.File]::Copy((Join-Path $fixture 'docs/P02_CLOSED_STATE.md'), (Join-Path $fixture 'docs/CURRENT_STATE.md'), $true)
+    $mapPath = Join-Path $fixture 'planning/ROADMAP.md'
+    $legacyMap = [IO.File]::ReadAllText($mapPath)
+    $legacyMap = [regex]::Replace($legacyMap, '(?ms)(^### P03-S0[1-7] .*?)(?=^### |\z)', { param($m) [regex]::Replace($m.Value, '(?m)^- Status: [^\r\n]+\r?\n', '') })
+    [IO.File]::WriteAllText($mapPath, $legacyMap)
 }
 function Check-P02Fixture { & (Join-Path $fixture 'planning/verify-roadmap.ps1') -Root $fixture | Out-Null }
 function Reject-P02([string]$Label, [string]$Path, [scriptblock]$Mutation) {

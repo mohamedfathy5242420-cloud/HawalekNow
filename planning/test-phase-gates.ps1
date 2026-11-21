@@ -7,7 +7,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Cannot enumerate fixture source files.' }
 foreach ($path in $paths | Sort-Object -Unique) {
     if ($path -eq 'docs/TARGET_SCHEDULE.md') { continue }
     # The original 46 cases remain a P01 fixture. P02 is exercised separately below.
-    if ($path.StartsWith('planning/phase-02/')) { continue }
+    if ($path.StartsWith('planning/phase-02/') -or $path.StartsWith('planning/phase-03/')) { continue }
     $destination = Join-Path $fixture $path
     [IO.Directory]::CreateDirectory((Split-Path $destination -Parent)) | Out-Null
     [IO.File]::Copy((Join-Path $Root $path), $destination)
@@ -19,7 +19,7 @@ function Write-Fixture([string]$Path, [string]$Text) {
     [IO.File]::WriteAllText($destination, $Text, $utf8)
 }
 function Read-Fixture([string]$Path) { [IO.File]::ReadAllText((Join-Path $fixture $Path)) }
-if ((Read-Fixture 'docs/CURRENT_STATE.md') -match '(?m)^- Phase: P02\r?$') {
+if ((Read-Fixture 'docs/CURRENT_STATE.md') -match '(?m)^- Phase: P0[23]\r?$') {
     $legacyState = (Read-Fixture 'planning/phase-01/CLOSED_STATE.md').Replace('(CLOSURE.md)', '(../planning/phase-01/CLOSURE.md)').Replace('(PHASE_REVIEW.md)', '(../planning/phase-01/PHASE_REVIEW.md)')
     Write-Fixture 'docs/CURRENT_STATE.md' $legacyState
     $legacyMap = Read-Fixture 'planning/ROADMAP.md'
@@ -35,7 +35,7 @@ if ((Read-Fixture 'docs/CURRENT_STATE.md') -match '(?m)^- Phase: P02\r?$') {
     # Modern documentation links are outside the historical P01 fixture, whose gate prohibits all P02 files.
     foreach ($legacyDoc in (Get-ChildItem -LiteralPath $fixture -Filter '*.md' -Recurse -File)) {
         $legacyText = [IO.File]::ReadAllText($legacyDoc.FullName)
-        $legacyText = [regex]::Replace($legacyText, '\[([^\]\r\n]+)\]\([^)\r\n]*phase-02[^)\r\n]*\)', '$1')
+        $legacyText = [regex]::Replace($legacyText, '\[([^\]\r\n]+)\]\([^)\r\n]*phase-0[23][^)\r\n]*\)', '$1')
         [IO.File]::WriteAllText($legacyDoc.FullName, $legacyText)
     }
 }
@@ -174,6 +174,9 @@ if ($closedBaseline) {
     Check-Fixture
 }
 Write-Output "PASS: actual state, unapproved review and approved closure baselines accepted; $script:rejections invalid transitions/evidence claims rejected. Original 24 review rejections retained; source files and user schedule untouched."
-if ((Get-Content -LiteralPath (Join-Path $Root 'docs/CURRENT_STATE.md') -Raw) -match '(?m)^- Phase: P02\r?$') {
+if ((Get-Content -LiteralPath (Join-Path $Root 'docs/CURRENT_STATE.md') -Raw) -match '(?m)^- Phase: P0[23]\r?$') {
     & (Join-Path $PSScriptRoot 'test-p02-gates.ps1') -Root $Root
+}
+if ((Get-Content -LiteralPath (Join-Path $Root 'docs/CURRENT_STATE.md') -Raw) -match '(?m)^- Phase: P03\r?$') {
+    & (Join-Path $PSScriptRoot 'test-p03-gates.ps1') -Root $Root
 }
