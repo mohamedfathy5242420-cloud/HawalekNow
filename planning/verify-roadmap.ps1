@@ -62,6 +62,10 @@ if(Test-Path $moduleRoot){
     ForEach-Object {[IO.Path]::GetRelativePath($Root,$_.FullName)})
 }
 $links=0
+foreach($candidate in @('planning/phase-01/CLOSED_STATE.md')){if(Test-Path (Join-Path $Root $candidate)){$files += $candidate}}
+if(Test-Path (Join-Path $Root 'planning/phase-02')){
+  $files += @(Get-ChildItem -LiteralPath (Join-Path $Root 'planning/phase-02') -Filter '*.md' -Recurse -File | ForEach-Object {[IO.Path]::GetRelativePath($Root,$_.FullName)})
+}
 foreach($file in $files){
   $path=Join-Path $Root $file
   $text=Get-Content -LiteralPath $path -Raw
@@ -85,7 +89,7 @@ foreach($kind in @('STEP','HANDOFF')){
 $s02=Get-Content (Join-Path $Root 'planning/phase-00/steps/S02.md') -Raw
 $s03=Get-Content (Join-Path $Root 'planning/phase-00/steps/S03.md') -Raw
 $state=Get-Content (Join-Path $Root 'docs/CURRENT_STATE.md') -Raw
-if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: (P00-S04|P01-S01|P01-S02|P01-S03|P01-S04|P01-S05|P01-S06|P01-S07|P01-S08)\r?$'){throw 'Closure state mismatch'}
+if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: (P00-S04|P01-S0[1-8]|P02-S0[1-9])\r?$'){throw 'Closure state mismatch'}
 $handoff=Get-Content (Join-Path $Root 'planning/phase-00/handoffs/S03-to-S04.md') -Raw
 if($handoff -notmatch '(?m)^Status: Ready\r?$' -or $handoff -notmatch '(?m)^From: P00-S03\r?$' -or $handoff -notmatch '(?m)^To: P00-S04\r?$'){throw 'Closure handoff mismatch'}
 $currentStatus=[regex]::Match($state,'(?m)^- Status: (\w+)\r?$').Groups[1].Value
@@ -93,9 +97,11 @@ $s04Path=Join-Path $Root 'planning/phase-00/steps/S04.md'
 $currentStep=[regex]::Match($state,'(?m)^- Step: (P\d{2}-S\d{2})\r?$').Groups[1].Value
 $displayStep=$currentStep; $displayStatus=$currentStatus
 $phaseExecution=$state -match '(?m)^- ExecutionMode: Phase\r?$'
+$p02Execution=$state -match '(?m)^- Phase: P02\r?$'
 $s06Closed=$phaseExecution -or $currentStep -eq 'P01-S07'
 if($phaseExecution){
   & (Join-Path $PSScriptRoot 'verify-phase.ps1') -Root $Root
+  if($p02Execution){$state=Get-Content (Join-Path $Root 'planning/phase-01/CLOSED_STATE.md') -Raw}
   # Preserve every historical S01-S06 and P00 closure assertion below.
   $currentStep='P01-S06'; $currentStatus='Done'
 }elseif($s06Closed){
@@ -167,7 +173,7 @@ if($currentStep -in @('P01-S01','P01-S02','P01-S03','P01-S04','P01-S05','P01-S06
               $closedMap=[regex]::Match($map,'(?ms)^### P01-S06 .*?(?=^### |\z)').Value
               foreach($token in @('Status: Done','UserApproval: Approved','ReviewStatus: Approved','ApprovalDate: 2026-10-22','ReviewedHead: 6244fa36e1a802be07cb69b072093453e1ef5cc9')){if(-not $closedMap.Contains($token)){throw "S06 roadmap closure mismatch: $token"}}
               $nextMap=[regex]::Match($map,'(?ms)^### P01-S07 .*?(?=^### |\z)').Value
-              $expectedS07=if($phaseExecution -and $displayStatus -ne 'Done'){'InReview'}else{$displayStatus}
+              $expectedS07=if($p02Execution){'Done'}elseif($phaseExecution -and $displayStatus -ne 'Done'){'InReview'}else{$displayStatus}
               if(-not $nextMap.Contains("Status: $expectedS07")){throw 'S07 roadmap state mismatch'}
             }elseif($currentStatus -eq 'NotStarted'){
               if($state -notmatch '(?m)^- ActiveStepFile: None؛' -or (Test-Path $activeS06Path)){throw 'NotStarted S06 must have no execution file'}

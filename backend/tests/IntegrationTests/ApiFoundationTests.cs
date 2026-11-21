@@ -3,7 +3,9 @@ using System.Reflection;
 using System.Text.Json;
 using HawalekNow.Api.Shared.Diagnostics;
 using HawalekNow.Api.Shared.Routing;
+using HawalekNow.Api.Shared.Security;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
@@ -13,6 +15,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace HawalekNow.IntegrationTests;
@@ -97,7 +100,8 @@ public sealed class ApiFoundationTests
         var root = document.RootElement;
         Assert.StartsWith("3.1", root.GetProperty("openapi").GetString());
         var paths = root.GetProperty("paths");
-        Assert.Equal("/api/v1/health/live", Assert.Single(paths.EnumerateObject()).Name);
+        Assert.Equal(new[] { "/api/v1/health/live", "/api/v1/identity/account", "/api/v1/identity/admin/session", "/api/v1/identity/csrf", "/api/v1/identity/customer-profile", "/api/v1/identity/customers/register", "/api/v1/identity/email/request", "/api/v1/identity/email/verify", "/api/v1/identity/login", "/api/v1/identity/logout", "/api/v1/identity/logout-all", "/api/v1/identity/me", "/api/v1/identity/merchants/register", "/api/v1/identity/password/request", "/api/v1/identity/password/reset", "/api/v1/identity/recovery/request", "/api/v1/identity/recovery/verify", "/api/v1/identity/refresh", "/api/v1/identity/sessions", "/api/v1/identity/sessions/{sessionId}", "/api/v1/merchants/account", "/api/v1/merchants/account/publishing-access" },
+            paths.EnumerateObject().Select(path => path.Name).Order().ToArray());
         var operation = paths.GetProperty("/api/v1/health/live").GetProperty("get");
         var responses = operation.GetProperty("responses");
         Assert.Equal(new[] { "200", "500", "503" }, responses.EnumerateObject().Select(p => p.Name).Order().ToArray());
@@ -115,6 +119,10 @@ public sealed class ApiFoundationTests
         var header = Assert.Single(operation.GetProperty("parameters").EnumerateArray());
         Assert.Equal(Header, header.GetProperty("name").GetString());
         Assert.Equal("header", header.GetProperty("in").GetString());
+        var signup = paths.GetProperty("/api/v1/identity/customers/register").GetProperty("post");
+        var csrf = Assert.Single(signup.GetProperty("parameters").EnumerateArray(), value => value.GetProperty("name").GetString() == BrowserSecurity.CsrfHeader);
+        Assert.True(csrf.GetProperty("required").GetBoolean());
+        foreach (var code in new[] { "400", "403", "429" }) Assert.True(signup.GetProperty("responses").TryGetProperty(code, out _));
         Assert.DoesNotContain("_tests", paths.GetRawText());
         // The same host really registered the hidden controller, so absence from the document is meaningful.
         using var probe = await client.GetAsync("/api/v1/_tests/routes");
@@ -250,11 +258,18 @@ public sealed class ApiFoundationTests
 
     private sealed class ApiFactory(string environment, Action<IServiceCollection>? configure = null) : WebApplicationFactory<Program>
     {
+        private readonly string identifierKey = TestIdentityConfiguration.NewKey();
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment(environment);
+            builder.ConfigureAppConfiguration((_, configuration) => configuration.AddInMemoryCollection(TestIdentityConfiguration.Values(
+                "Server=unused.invalid;Database=HawalekNow_HostContract;Integrated Security=True;Encrypt=True", identifierKey)));
             // No copied service/pipeline configuration: all normal registrations and mappings come from Program.
-            if (configure is not null) builder.ConfigureTestServices(configure);
+            builder.ConfigureTestServices(services =>
+            {
+                services.AddDataProtection().UseEphemeralDataProtectionProvider();
+                configure?.Invoke(services);
+            });
         }
     }
 

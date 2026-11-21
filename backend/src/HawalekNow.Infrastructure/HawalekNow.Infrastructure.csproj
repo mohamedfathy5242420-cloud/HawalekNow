@@ -1,6 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="[8.19.2]" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="[10.0.14]" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="[10.0.14]" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="[10.0.14]" PrivateAssets="all" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="[10.0.14]" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="[1.8.25]" />
+    <PackageReference Include="Hangfire.SqlServer" Version="[1.8.25]" />
+    <PackageReference Include="Newtonsoft.Json" Version="[13.0.4]" />
     <ProjectReference Include="..\HawalekNow.Application\HawalekNow.Application.csproj" />
     <ProjectReference Include="..\HawalekNow.Domain\HawalekNow.Domain.csproj" />
   </ItemGroup>
@@ -9,6 +18,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
 </Project>

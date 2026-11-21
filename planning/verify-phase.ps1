@@ -13,6 +13,14 @@ function Expect([string]$Text, [string]$Name, [string]$Value, [string]$Prefix = 
 }
 $state = Read-Record 'docs/CURRENT_STATE.md'
 $decisions = Read-Record 'docs/DECISIONS.md'
+$p02Active = (Field $state 'Phase' '- ') -eq 'P02'
+if ($p02Active) {
+    $p02Authorization = [regex]::Match($decisions, '(?ms)^## D015 .*?(?=^## |\z)').Value
+    foreach ($pair in @(@('Status', 'Approved'), @('AuthorizedPhase', 'P02'), @('ExecutionMode', 'Phase'), @('MergeAuthorization', 'NotAuthorized'), @('P03Execution', 'NotAuthorized'))) { Expect $p02Authorization $pair[0] $pair[1] }
+    # Run every P01 closure assertion against its captured closed record, not P02's active state.
+    $state = Read-Record 'planning/phase-01/CLOSED_STATE.md'
+    Expect $state 'Status' 'Done' '- '
+}
 $decision = [regex]::Match($decisions, '(?ms)^## D012 .*?(?=^## |\z)').Value
 Expect $decision 'Status' 'Approved'
 Expect $decision 'EffectiveFrom' 'P01-S07'
@@ -138,7 +146,7 @@ foreach ($text in @($internal, $handoff)) {
     foreach ($heading in [regex]::Matches((Read-Record 'planning/templates/HANDOFF_TEMPLATE.md'), '(?m)^## .+$')) { Require ($text.Contains($heading.Value.Trim())) 'Missing handoff heading.' }
 }
 $future = Join-Path $Root 'planning/phase-02'
-Require (-not (Test-Path $future) -or @(Get-ChildItem -LiteralPath $future -Recurse -File).Count -eq 0) 'P02 execution cannot start before phase approval and authorization.'
+Require ($p02Active -or -not (Test-Path $future) -or @(Get-ChildItem -LiteralPath $future -Recurse -File).Count -eq 0) 'P02 execution cannot start before phase approval and authorization.'
 $map = Read-Record 'planning/ROADMAP.md'
 foreach ($id in @('P01-S07', 'P01-S08')) {
     $block = [regex]::Match($map, '(?ms)^### ' + $id + ' .*?(?=^### |\z)').Value
@@ -152,11 +160,12 @@ foreach ($id in @('P01-S07', 'P01-S08')) {
 }
 if ($closed) {
     $next = [regex]::Match($map, '(?ms)^### P02-S01 .*?(?=^### |\z)').Value
-    Require ($next -match '(?m)^- Status: NotStarted؛') 'P02 roadmap must remain NotStarted.'
+    if (-not $p02Active) { Require ($next -match '(?m)^- Status: NotStarted؛') 'P02 roadmap must remain NotStarted.' }
     foreach ($id in @('P01-S07', 'P01-S08')) {
         $block = [regex]::Match($map, '(?ms)^### ' + $id + ' .*?(?=^### |\z)').Value
         foreach ($value in @('UserApproval: Approved', 'ReviewStatus: Approved', 'V4: Approved', 'ApprovalDate: 2026-11-10', 'ReviewedHead: 4b4d5a574dd459eda0e091311eab908439cb2fd0')) { Require ($block.Contains($value)) "Missing closed roadmap field: $id $value" }
     }
 }
-Write-Output "PASS: D012/D013 phase gate; state=$status; approval=$approval; personal educational reviews=$manual; all technical/CI evidence required; P02 remains unstarted."
+if ($p02Active) { & (Join-Path $PSScriptRoot 'verify-p02.ps1') -Root $Root }
+Write-Output "PASS: D012/D013 predecessor gate; P01 state=$status; approval=$approval; personal educational reviews=$manual; all predecessor technical/CI evidence required; P02 authorized=$p02Active."
 Write-Output 'LIMIT: recorded evidence consistency only; this script does not execute .NET/Docker or query GitHub. CI and runtime evidence must be collected separately.'
