@@ -74,13 +74,69 @@
       "exitCode": 1,
       "command": "GitHub Actions pull_request run44899813592 on627d32f7013e1132b334988e71ca5a0a204a7c1c",
       "detail": "Backend tests/build/format and API/SQL image jobs succeeded. Historical P02 fixture rejected the new backend/MODULES.md link to excluded phase-03/DESIGN.md. Fix removes forward links only inside the P02 fixture, preserving real documentation and all rejection cases."
+    },
+    {
+      "name": "S01CIFixtureFix",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub Actions pull_request run44900780755 onc6b5a588f92eedb191262395f023d763e10f50c4",
+      "detail": "All three jobs success after forward-link fix; covers S01 and metadata only, not uncommitted S02"
+    },
+    {
+      "name": "S02FocusedTests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter FullyQualifiedName~Catalog|FullyQualifiedName~CategoryPath",
+      "detail": "18 Integration+10 Unit passed;0 failed/skipped; before additional HTTP pagination/quota/move cases"
+    },
+    {
+      "name": "S02FirstFullTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "47 Architecture+167 Integration+42 Unit=256 passed;45 Integration failed;0 skipped. Foundation DI lacks new Catalog ports and OpenAPI exact route list lacks six new real paths. Fixtures and route list updated, preserving logger/parallel assertions; full rerun pending."
+    },
+    {
+      "name": "S02Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Final metadata and fixture fix built with0 warnings/errors"
+    },
+    {
+      "name": "S02Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild; focused HTTP/OpenAPI rerun after metadata update",
+      "detail": "Full run:47 Architecture+212 Integration+42 Unit=301;0 failed/skipped. After adding OpenAPI metadata/test and stable SQL Guid pagination assertion,36 matching HTTP/OpenAPI tests passed; counts overlap and are not summed."
+    },
+    {
+      "name": "S02Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "Two actual SQL lock waiters, opposite cross-row moves: one success and one Conflict; no cycle. Stale and duplicate mutations preserve prior row/version. Actual Program HTTP role/CSRF/HTTPS/quota/activation/delete/pagination tests passed."
+    },
+    {
+      "name": "S02Postman",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "node tmp/validate-p03-postman.cjs",
+      "detail": "12 requests; JSON/JS parsed; actual pre-request script invoked mocked local CSRF exchange and rejected remote base URL; all saved credentials empty. Not a full application collection run."
+    },
+    {
+      "name": "S02HttpMetadata",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter FullyQualifiedName~CatalogHttpTests|FullyQualifiedName~ApiFoundationTests",
+      "detail": "36 actual HTTP/OpenAPI cases passed after final metadata changes;0 failed/skipped; exact old+new route set maintained"
     }
   ],
   "tests": {
     "architecture": 47,
-    "integration": 202,
-    "unit": 40,
-    "passed": 289,
+    "integration": 212,
+    "unit": 42,
+    "passed": 301,
     "failed": 0,
     "skipped": 0
   },

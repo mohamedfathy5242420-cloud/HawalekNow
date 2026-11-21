@@ -293,6 +293,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S02 إدارة التصنيفات للـAdmin
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S02.md).
+
 - الاعتمادات السابقة: [P03-S01](#p03-s01).
 - المخرج المطلوب: CRUD آمن ومنع الدورات والحذف المؤثر.
 - بوابة التحقق: V2 Domain وV3 API وConcurrency.

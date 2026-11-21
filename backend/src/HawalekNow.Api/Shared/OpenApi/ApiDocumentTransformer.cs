@@ -16,6 +16,7 @@ public sealed class ApiDocumentTransformer : IOpenApiDocumentTransformer
             "Fetch identity/csrf with the current cookie jar before every mutation. Access/refresh tokens are never returned in response bodies. " +
             "Customer and Merchant accounts are separate; specify accountType for login and recovery. Confirmed Pending merchants can prepare their account but cannot publish. " +
             "Self-delete requires password reauthentication and is forbidden for Admin. AccountRecovery OTP restores before the exact30-day deadline without reviving sessions. " +
+            "Public Catalog options expose active paths only and use bounded pages with ar/en display names. Admin Catalog writes require AdminOnly, HTTPS, CSRF, quotas and a rowVersion for updates/deletes; conflicting tree moves or references return 409. " +
             "SQL/email readiness is not checked. " +
             "Unmatched routes return 404 and unsupported methods return 405 as application/problem+json " +
             "with type, title, status, code and correlationId; no request path or internal diagnostics.";

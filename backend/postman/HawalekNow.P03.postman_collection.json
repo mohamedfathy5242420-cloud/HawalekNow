@@ -1,0 +1,406 @@
+{
+  "info": {
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "name": "HawalekNow P03 reference data and locations",
+    "description": "P03 is in progress. Only implemented endpoints are included. Use a dedicated isolated review database with a test Admin and HTTPS certificate validation enabled. These are selected journey requests, not a blind full-collection runner. Mutation CSRF is refreshed for the current cookie jar. Credentials and captured ids are intentionally empty; never export a filled environment. Later P03 steps extend this same collection."
+  },
+  "event": [
+    {
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const method = pm.request.method.toUpperCase();",
+          "if (!['GET','HEAD','OPTIONS','TRACE'].includes(method)) {",
+          "  const base = pm.environment.get('baseUrl');",
+          "  if (!/^https:\\/\\/(localhost|127\\.0\\.0\\.1)(:\\d+)?$/.test(base || '')) throw new Error('Configure a trusted local HTTPS baseUrl.');",
+          "  pm.sendRequest({ url: base + '/api/v1/identity/csrf', method: 'GET' }, (error, response) => {",
+          "    if (error || response.code !== 200) throw new Error('CSRF bootstrap failed.');",
+          "    const csrf = response.json();",
+          "    pm.request.headers.upsert({ key: csrf.headerName, value: csrf.requestToken });",
+          "  });",
+          "}"
+        ]
+      },
+      "listen": "prerequest"
+    }
+  ],
+  "item": [
+    {
+      "item": [
+        {
+          "name": "CSRF bootstrap",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/csrf"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Test Admin login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"password\": \"{{adminPassword}}\",\r\n  \"identifier\": \"{{adminEmail}}\",\r\n  \"accountType\": \"Admin\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        }
+      ],
+      "name": "Session"
+    },
+    {
+      "item": [
+        {
+          "name": "Public activities",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/catalog/activities?language=en&page=1&pageSize=30"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Admin activities",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/activities?page=1&pageSize=30"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Create review activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/activities",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isActive\": true,\r\n  \"nameAr\": \"نشاط تجربة معزولة\",\r\n  \"nameEn\": \"Isolated review activity\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const row = pm.response.json(); pm.environment.set('activityId', row.id); pm.environment.set('activityRowVersion', row.rowVersion); }"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Update review activity",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/activities/{{activityId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isActive\": true,\r\n  \"nameAr\": \"نشاط تجربة محدث\",\r\n  \"rowVersion\": \"{{activityRowVersion}}\",\r\n  \"nameEn\": \"Updated isolated review activity\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const row = pm.response.json(); pm.environment.set('activityId', row.id); pm.environment.set('activityRowVersion', row.rowVersion); }"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Public root categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/catalog/categories?activityId={{activityId}}&language=ar&page=1&pageSize=30"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Admin root categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/categories?activityId={{activityId}}&page=1&pageSize=30"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Create review category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/categories",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isActive\": true,\r\n  \"activityId\": \"{{activityId}}\",\r\n  \"nameAr\": \"تصنيف تجربة\",\r\n  \"nameEn\": \"Review category\",\r\n  \"parentId\": null\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const row = pm.response.json(); pm.environment.set('categoryId', row.id); pm.environment.set('categoryRowVersion', row.rowVersion); }"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Update review category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/categories/{{categoryId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nameEn\": \"Updated review category\",\r\n  \"nameAr\": \"تصنيف محدث\",\r\n  \"rowVersion\": \"{{categoryRowVersion}}\",\r\n  \"parentId\": null,\r\n  \"activityId\": \"{{activityId}}\",\r\n  \"isActive\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const row = pm.response.json(); pm.environment.set('categoryId', row.id); pm.environment.set('categoryRowVersion', row.rowVersion); }"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Delete own review category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/categories/{{categoryId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{categoryRowVersion}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Delete own review activity",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/activities/{{activityId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{activityRowVersion}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        }
+      ],
+      "name": "Catalog"
+    }
+  ]
+}

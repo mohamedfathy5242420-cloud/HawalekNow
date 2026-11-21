@@ -10,7 +10,8 @@ public static class FoundationIdentityPorts
 {
     public static IServiceCollection AddFoundationIdentityPorts(this IServiceCollection services) =>
         services.AddScoped<IAccountRegistration, UnusedRegistration>().AddScoped<IEmailConfirmation, UnusedEmail>().AddScoped<IAccountSessions, UnusedSessions>()
-            .AddScoped<IIdentityAccountQueries, UnusedQueries>().AddScoped<IPasswordRecovery, UnusedPasswordRecovery>().AddScoped<IAccountSessionManagement, UnusedSessionManagement>().AddScoped<IAccountLifecycle, UnusedLifecycle>();
+            .AddScoped<IIdentityAccountQueries, UnusedQueries>().AddScoped<IPasswordRecovery, UnusedPasswordRecovery>().AddScoped<IAccountSessionManagement, UnusedSessionManagement>().AddScoped<IAccountLifecycle, UnusedLifecycle>()
+            .AddFoundationCatalogPorts();
 
     private sealed class UnusedLifecycle : IAccountLifecycle
     {

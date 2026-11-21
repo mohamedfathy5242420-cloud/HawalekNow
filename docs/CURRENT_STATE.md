@@ -2,10 +2,10 @@
 
 آخر تحديث: 2026-11-21
 
-حسم المستخدم المصدر وفقD019؛ بدأ تنفيذP03 من main المدمجة بعد تحققD018. P02 مغلقة ومتحققة؛ [تقريرها](../planning/phase-02/MERGE_RECEIPT.md) و[حالتها المغلقة](P02_CLOSED_STATE.md). P03-S01 قيد التنفيذ، ولا موافقة نهائية أوV4 مفترضة؛ المصدر المعتمد بنواقصه ولا ادعاء اكتمال مصر. [التصميم](../planning/phase-03/DESIGN.md) و[الخطوة](../planning/phase-03/steps/S01.md).
+حسم المستخدم المصدر وفقD019؛ بدأ تنفيذP03 من main المدمجة بعد تحققD018. P02 مغلقة ومتحققة؛ [تقريرها](../planning/phase-02/MERGE_RECEIPT.md) و[حالتها المغلقة](P02_CLOSED_STATE.md). P03-S02 قيد التنفيذ، ولا موافقة نهائية أوV4 مفترضة؛ المصدر المعتمد بنواقصه ولا ادعاء اكتمال مصر. [التصميم](../planning/phase-03/DESIGN.md) و[الخطوة](../planning/phase-03/steps/S02.md).
 
 - Phase: P03
-- Step: P03-S01
+- Step: P03-S02
 - Status: InProgress
 - ExecutionMode: Phase
 - UserApproval: Pending
@@ -15,8 +15,8 @@
 - BaseMain: 5e4250ff31f84c8806649c7ef1786574da7dd00a
 - P04Status: NotStarted
 - Scope: تنفيذ P03-S01 إلى S07 بالتتابع؛ لا دمج أو P04.
-- ActiveStepFile: planning/phase-03/steps/S01.md
-- NextStep: تحقق S01 ثم تسليم داخلي إلى S02.
+- ActiveStepFile: planning/phase-03/steps/S02.md
+- NextStep: تحقق S02 ثم تسليم داخلي إلى S03.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
 ## سجل تنفيذ P02 السابق — تاريخي
