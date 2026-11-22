@@ -347,15 +347,114 @@
       "command": "./backend/test-p02.ps1 -NoBuild -Filter ReferenceLockTimeoutTests|ReferenceSeedTests.Concurrent|ApiFoundationTests",
       "detail": "30 Integration passed;0 failed/skipped. Both actual SQL lock commands use40s for35s explicit lock and restore prior7s, default HTTP lock still30s command/null context setting; concurrent pinned seed succeeds; exact OpenAPI set and updated description pass. Final build after lock fix zero warnings/errors.",
       "status": "Passed"
+    },
+    {
+      "detail": "Actual final local run on6fe86f6; CI also passed the locked graph. SDK/MediatR unchanged.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel",
+      "name": "LockedRestore"
+    },
+    {
+      "detail": "Final local build0 warnings/errors; identical code-head CI build also0/0.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "name": "ReleaseBuild"
+    },
+    {
+      "detail": "Actual final full solution:47 Architecture+247 Integration+76 Unit=370 passed;0 failed/skipped. Normal xUnit parallelism and all P01/P02 tests retained. CI exact code head independently reports the same370 totals; prior367/1 failure retained above.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "name": "Tests"
+    },
+    {
+      "detail": "Final local process exited0 after all tests; same code CI format check also passed.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "name": "Format"
+    },
+    {
+      "detail": "Actual final InReview metadata accepted locally:913 links/anchors, all76 roadmap source rows, D018/D019, all7 Verified steps, V4/UserApproval Pending and P04 prohibited.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "./planning/verify-roadmap.ps1",
+      "name": "Roadmap"
+    },
+    {
+      "detail": "Final local InReview metadata accepted;25 ignored/36 allowed path cases; protected schedule excluded.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "./planning/verify-git-workflow.ps1",
+      "name": "GitRules"
+    },
+    {
+      "detail": "Final local delivery diff passed git diff --check; code-head CI git show whitespace check also passed.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "git -c safe.directory=D:/HwalekNow diff --check; git show --format= --check HEAD",
+      "name": "DiffCheck"
+    },
+    {
+      "detail": "Completed success; all3 jobs: Documentation/Git rules, Restore/build/tests/format, API+SQL images. Actual logs370 tests,0 failed/skipped and build0/0. Final delivery commit changes documentation only and its exact-head CI is checked in the PR delivery receipt.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "GitHub Actions pull_request run45004486033 on6fe86f60ca16987d9225747c065ec6ae2c99d732",
+      "name": "CI"
+    },
+    {
+      "detail": "31 real requests; JSON and all JavaScript parsed; local HTTPS CSRF exchange/rejection guard executed against a semantic mock; saved credentials empty. Not a full application collection run.",
+      "exitCode": 0,
+      "status": "Passed",
+      "command": "node tmp/validate-p03-postman.cjs",
+      "name": "Postman"
+    },
+    {
+      "command": "./planning/test-phase-gates.ps1; ./planning/test-p03-gates.ps1",
+      "status": "Passed",
+      "detail": "46 P01+27 P02 rejection cases passed in retained full gate run; final InReview P03 baseline accepted and23 rejections passed, including9 final CI/test-count/handoff guards.96 distinct rejection cases across these runs; no original case removed.",
+      "exitCode": 0,
+      "name": "FinalGateRejections"
     }
   ],
   "tests": {
-    "architecture": 47,
-    "integration": 226,
-    "unit": 46,
-    "passed": 319,
     "failed": 0,
-    "skipped": 0
+    "unit": 76,
+    "skipped": 0,
+    "architecture": 47,
+    "passed": 370,
+    "integration": 247
   },
-  "ci": null
+  "ci": {
+    "runId": 45004486033,
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "6fe86f60ca16987d9225747c065ec6ae2c99d732",
+    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45004486033",
+    "jobs": [
+      {
+        "name": "Restore, build, tests and format",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45004486033/job/137152915714"
+      },
+      {
+        "name": "API and SQL image builds",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45004486033/job/137152915872"
+      },
+      {
+        "name": "Documentation and Git rules",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45004486033/job/137152915910"
+      }
+    ]
+  },
+  "verifiedCodeHead": "6fe86f60ca16987d9225747c065ec6ae2c99d732",
+  "verifiedAtUtc": "2026-11-22T09:01:13.1850956Z"
 }

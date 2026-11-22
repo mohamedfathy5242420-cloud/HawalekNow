@@ -1,7 +1,7 @@
 # تصميم P03 — البيانات المرجعية والمواقع
 
-Updated: 2026-11-21
-Status: InProgress
+Updated: 2026-11-22
+Status: InReview
 ExecutionAuthorization: D018
 SeedDecision: D019
 UserApproval: Pending

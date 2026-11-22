@@ -1,12 +1,12 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-11-21
+آخر تحديث: 2026-11-22
 
-حسم المستخدم المصدر وفقD019؛ بدأ تنفيذP03 من main المدمجة بعد تحققD018. P02 مغلقة ومتحققة؛ [تقريرها](../planning/phase-02/MERGE_RECEIPT.md) و[حالتها المغلقة](P02_CLOSED_STATE.md). P03-S07 قيد التنفيذ، ولا موافقة نهائية أوV4 مفترضة؛ المصدر المعتمد بنواقصه ولا ادعاء اكتمال مصر. [التصميم](../planning/phase-03/DESIGN.md) و[الخطوة](../planning/phase-03/steps/S07.md).
+أُغلقت P02 ودمجت وفق D017، ونجحت فحوص ما بعد الدمج؛ [إيصالها](../planning/phase-02/MERGE_RECEIPT.md) و[حالتها المغلقة](P02_CLOSED_STATE.md) يحفظان التاريخ وحدود القبول. نُفذت P03-S01 إلى S07 تحت إذن D018، والمصدر مقبول بنطاقه ونواقصه وفق D019. جميع الخطوات Verified تقنيًا، والمرحلة InReview دون اعتماد مستخدم أو V4 مفترضين.
 
 - Phase: P03
 - Step: P03-S07
-- Status: InProgress
+- Status: InReview
 - ExecutionMode: Phase
 - UserApproval: Pending
 - ReviewStatus: Pending
@@ -14,10 +14,14 @@
 - ExecutionAuthorization: D018
 - BaseMain: 5e4250ff31f84c8806649c7ef1786574da7dd00a
 - P04Status: NotStarted
-- Scope: تنفيذ P03-S01 إلى S07 بالتتابع؛ لا دمج أو P04.
+- Scope: تسليم P03 كاملة للمراجعة؛ لا دمج أو بدء P04.
 - ActiveStepFile: planning/phase-03/steps/S07.md
-- NextStep: تحقق Cache ثم التحقق المجمع وتسليم P03 للمراجعة دون دمج.
+- NextStep: مراجعة المستخدم للمرحلة؛ الشرح مهمة منفصلة؛ الإغلاق يحتاج إذنًا لاحقًا.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
+
+التحقق النهائي على رأس التنفيذ 6fe86f60ca16987d9225747c065ec6ae2c99d732: **370 اختبارًا** (47 معمارية +247 Integration +76 Unit)، محليًا وعلى CI45004486033، دون failed/skipped. نجح locked restore وRelease Build بصفر تحذيرات وأخطاء وFormat والفاحصان وdiff. التشغيل الأول 367/1 كشف مهلة Seed، وأُصلحت مع حفظ الدليل. نتيجة آخر رأس للتسليم في Checks ووصف Draft PR #10.
+
+[مراجعة المرحلة وخريطة API](../planning/phase-03/PHASE_REVIEW.md)، [الأدلة](../planning/phase-03/verification.json)، [تسليم P04 بحالة Draft](../planning/phase-03/handoffs/S07-to-P04.md). ملف الجدول محفوظ خارج staging؛ لا ادعاء اكتمال بيانات مصر، ولا تغيير سياسات حسابات P02 أو Logging. تجربة المستخدم وجلسة الشرح لا تعدّان Passed من هذا التقرير.
 
 ## سجل تنفيذ P02 السابق — تاريخي
 
