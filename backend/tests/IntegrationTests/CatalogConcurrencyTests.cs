@@ -1,3 +1,4 @@
+using HawalekNow.Infrastructure.Shared.Caching;
 using HawalekNow.Application.Modules.Catalog;
 using HawalekNow.Application.Shared.Results;
 using HawalekNow.Domain.Modules.Catalog;
@@ -6,8 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HawalekNow.IntegrationTests;
 
-public sealed class CatalogConcurrencyTests(SqlDatabase database) : IClassFixture<SqlDatabase>
+public sealed class CatalogConcurrencyTests(SqlDatabase database) : IClassFixture<SqlDatabase>, IDisposable
 {
+    private readonly ReferenceOptionsCache cache = new(TimeProvider.System);
+    public void Dispose() => cache.Dispose();
+
     [Fact]
     public async Task Opposite_moves_that_are_individually_valid_cannot_create_a_cycle()
     {
@@ -19,9 +23,9 @@ public sealed class CatalogConcurrencyTests(SqlDatabase database) : IClassFixtur
         await using var gate = database.CreateContext(); await using var transaction = await gate.BeginAsync();
         await new CatalogTreeLock(gate).AcquireAsync(default);
         await using var firstContext = database.CreateContext(); await using var secondContext = database.CreateContext();
-        var firstMove = new CatalogAdministration(firstContext, new(firstContext)).SaveCategoryAsync(first.Id,
+        var firstMove = new CatalogAdministration(firstContext, new(firstContext), cache).SaveCategoryAsync(first.Id,
             new(activity.Id, second.Id, first.NameAr, first.NameEn, true, firstVersion), default);
-        var secondMove = new CatalogAdministration(secondContext, new(secondContext)).SaveCategoryAsync(second.Id,
+        var secondMove = new CatalogAdministration(secondContext, new(secondContext), cache).SaveCategoryAsync(second.Id,
             new(activity.Id, first.Id, second.NameAr, second.NameEn, true, secondVersion), default);
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(8));
         var waiters = 0;
@@ -48,14 +52,14 @@ public sealed class CatalogConcurrencyTests(SqlDatabase database) : IClassFixtur
     [Fact]
     public async Task Stale_version_and_duplicate_name_roll_back_without_losing_an_update()
     {
-        await using var context = database.CreateContext(); var service = new CatalogAdministration(context, new(context));
+        await using var context = database.CreateContext(); var service = new CatalogAdministration(context, new(context), cache);
         var activity = await service.SaveActivityAsync(null, new("نسخة " + Guid.NewGuid(), "Version " + Guid.NewGuid(), true), default);
         Assert.True(activity.IsSuccess);
         var category = await service.SaveCategoryAsync(null, new(activity.Value.Id, null, "أصل", "Original", true), default);
         Assert.True(category.IsSuccess);
         var changed = await service.SaveCategoryAsync(category.Value.Id, new(activity.Value.Id, null, "جديد", "Changed", true, category.Value.RowVersion), default);
         Assert.True(changed.IsSuccess);
-        await using var otherContext = database.CreateContext(); var other = new CatalogAdministration(otherContext, new(otherContext));
+        await using var otherContext = database.CreateContext(); var other = new CatalogAdministration(otherContext, new(otherContext), cache);
         var stale = await other.SaveCategoryAsync(category.Value.Id, new(activity.Value.Id, null, "ضائع", "Lost", false, category.Value.RowVersion), default);
         Assert.Equal(ErrorKind.Conflict, stale.Error?.Kind);
         var sibling = await other.SaveCategoryAsync(null, new(activity.Value.Id, null, "أخ", "Sibling", true), default); Assert.True(sibling.IsSuccess);

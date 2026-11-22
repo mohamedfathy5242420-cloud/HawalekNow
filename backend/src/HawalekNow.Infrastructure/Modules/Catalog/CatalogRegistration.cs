@@ -1,3 +1,4 @@
+using HawalekNow.Infrastructure.Shared.Caching;
 using HawalekNow.Application.Modules.Catalog;
 using HawalekNow.Application.Modules.Catalog.Contracts;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +11,7 @@ public static class CatalogRegistration
     {
         services.AddScoped<CatalogTreeLock>();
         services.AddScoped<ICatalogAdministration, CatalogAdministration>();
-        services.AddScoped<ICatalogQueries, CatalogQueries>();
+        services.AddScoped<CatalogQueries>(); services.AddScoped<ICatalogQueries, CachedCatalogQueries>(); services.AddReferenceOptionsCache();
         services.AddScoped<IInitialActivities, InitialActivities>();
         return services;
     }

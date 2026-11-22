@@ -7,4 +7,6 @@ public interface IInitialActivities
 {
     // The caller owns one shared UoW transaction. This operation never commits it.
     Task<InitialActivitiesOutcome> SeedInsideTransactionAsync(CancellationToken cancellationToken);
+    // The caller invokes this only after its shared transaction commits.
+    void InvalidateOptionsAfterCommit();
 }

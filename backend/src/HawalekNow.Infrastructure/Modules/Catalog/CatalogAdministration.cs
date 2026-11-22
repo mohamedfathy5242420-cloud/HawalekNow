@@ -1,3 +1,4 @@
+using HawalekNow.Application.Shared.Caching;
 using HawalekNow.Application.Modules.Catalog;
 using HawalekNow.Application.Shared.Results;
 using HawalekNow.Domain.Modules.Catalog;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HawalekNow.Infrastructure.Modules.Catalog;
 
-public sealed class CatalogAdministration(HawalekDbContext context, CatalogTreeLock treeLock) : ICatalogAdministration
+public sealed class CatalogAdministration(HawalekDbContext context, CatalogTreeLock treeLock, IReferenceOptionsCache cache) : ICatalogAdministration
 {
     public async Task<Result<ActivityAdminDto>> SaveActivityAsync(Guid? id, ActivityWrite value, CancellationToken cancellationToken)
     {
@@ -26,7 +27,7 @@ public sealed class CatalogAdministration(HawalekDbContext context, CatalogTreeL
                 if (!Matches(found.RowVersion, value.RowVersion)) return Failure<ActivityAdminDto>(ErrorKind.Conflict);
                 activity = found; activity.Rename(value.NameAr, value.NameEn); activity.SetActive(value.IsActive);
             }
-            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); cache.Invalidate(ReferenceDataFamily.Catalog);
             return Result<ActivityAdminDto>.Success(ToDto(activity));
         }
         catch (DbUpdateException) { context.ChangeTracker.Clear(); return Failure<ActivityAdminDto>(ErrorKind.Conflict); }
@@ -54,7 +55,7 @@ public sealed class CatalogAdministration(HawalekDbContext context, CatalogTreeL
             if (!await ParentAllowedAsync(category.Id, value.ActivityId, value.ParentId, cancellationToken)) return Failure<CategoryAdminDto>(ErrorKind.Conflict);
             category.SetParent(value.ParentId); category.Rename(value.NameAr, value.NameEn); category.SetActive(value.IsActive);
             if (id is null) context.Add(category);
-            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); cache.Invalidate(ReferenceDataFamily.Catalog);
             return Result<CategoryAdminDto>.Success(ToDto(category));
         }
         catch (DbUpdateException) { context.ChangeTracker.Clear(); return Failure<CategoryAdminDto>(ErrorKind.Conflict); }
@@ -70,7 +71,7 @@ public sealed class CatalogAdministration(HawalekDbContext context, CatalogTreeL
             if (activity is null) return Result.Failure(new(ErrorKind.NotFound));
             await context.Entry(activity).ReloadAsync(cancellationToken);
             if (!Matches(activity.RowVersion, rowVersion) || await context.Set<Category>().AnyAsync(item => item.ActivityId == id, cancellationToken)) return Result.Failure(new(ErrorKind.Conflict));
-            context.Remove(activity); await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); return Result.Success();
+            context.Remove(activity); await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); cache.Invalidate(ReferenceDataFamily.Catalog); return Result.Success();
         }
         catch (DbUpdateException) { context.ChangeTracker.Clear(); return Result.Failure(new(ErrorKind.Conflict)); }
         catch (SqlException error) when (error.Number is 1205 or 1222 or 51010) { context.ChangeTracker.Clear(); return Result.Failure(new(ErrorKind.Conflict)); }
@@ -85,7 +86,7 @@ public sealed class CatalogAdministration(HawalekDbContext context, CatalogTreeL
             if (category is null) return Result.Failure(new(ErrorKind.NotFound));
             await context.Entry(category).ReloadAsync(cancellationToken);
             if (!Matches(category.RowVersion, rowVersion) || await context.Set<Category>().AnyAsync(item => item.ParentId == id, cancellationToken)) return Result.Failure(new(ErrorKind.Conflict));
-            context.Remove(category); await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); return Result.Success();
+            context.Remove(category); await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); cache.Invalidate(ReferenceDataFamily.Catalog); return Result.Success();
         }
         catch (DbUpdateException) { context.ChangeTracker.Clear(); return Result.Failure(new(ErrorKind.Conflict)); }
         catch (SqlException error) when (error.Number is 1205 or 1222 or 51010) { context.ChangeTracker.Clear(); return Result.Failure(new(ErrorKind.Conflict)); }

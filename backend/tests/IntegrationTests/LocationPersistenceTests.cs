@@ -1,3 +1,4 @@
+using HawalekNow.Infrastructure.Shared.Caching;
 using HawalekNow.Application.Modules.Locations;
 using HawalekNow.Application.Shared.Results;
 using HawalekNow.Domain.Modules.Catalog;
@@ -7,8 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HawalekNow.IntegrationTests;
 
-public sealed class LocationPersistenceTests(SqlDatabase database) : IClassFixture<SqlDatabase>
+public sealed class LocationPersistenceTests(SqlDatabase database) : IClassFixture<SqlDatabase>, IDisposable
 {
+    private readonly ReferenceOptionsCache cache = new(TimeProvider.System);
+    public void Dispose() => cache.Dispose();
+
     [Fact]
     public async Task Composite_foreign_keys_reject_mismatched_and_orphan_parents()
     {
@@ -56,7 +60,7 @@ public sealed class LocationPersistenceTests(SqlDatabase database) : IClassFixtu
     [Fact]
     public async Task City_move_requires_no_children_and_stale_area_writes_preserve_the_prior_data()
     {
-        await using var context = database.CreateContext(); var service = new LocationAdministration(context, new(context));
+        await using var context = database.CreateContext(); var service = new LocationAdministration(context, new(context), cache);
         var first = await service.SaveAsync(LocationKind.Governorate, null, new("أولى", "First", true), default);
         var second = await service.SaveAsync(LocationKind.Governorate, null, new("ثانية", "Second", true), default); Assert.True(first.IsSuccess && second.IsSuccess);
         var city = await service.SaveAsync(LocationKind.City, null, new("مدينة", "City", true, first.Value.Id), default); Assert.True(city.IsSuccess);
@@ -86,8 +90,8 @@ public sealed class LocationPersistenceTests(SqlDatabase database) : IClassFixtu
         setup.AddRange(first, second, city); await setup.SaveChangesAsync();
         await using var gate = database.CreateContext(); await using var transaction = await gate.BeginAsync(); await new LocationStateLock(gate).AcquireAsync(false, default);
         await using var moveContext = database.CreateContext(); await using var createContext = database.CreateContext();
-        var move = new LocationAdministration(moveContext, new(moveContext)).SaveAsync(LocationKind.City, city.Id, new("مدينة", "City", true, second.Id, RowVersion: Convert.ToBase64String(city.RowVersion)), default);
-        var create = new LocationAdministration(createContext, new(createContext)).SaveAsync(LocationKind.Area, null, new("منطقة", "Area", true, first.Id, city.Id), default);
+        var move = new LocationAdministration(moveContext, new(moveContext), cache).SaveAsync(LocationKind.City, city.Id, new("مدينة", "City", true, second.Id, RowVersion: Convert.ToBase64String(city.RowVersion)), default);
+        var create = new LocationAdministration(createContext, new(createContext), cache).SaveAsync(LocationKind.Area, null, new("منطقة", "Area", true, first.Id, city.Id), default);
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(8)); var count = 0;
         while (count < 2)
         {

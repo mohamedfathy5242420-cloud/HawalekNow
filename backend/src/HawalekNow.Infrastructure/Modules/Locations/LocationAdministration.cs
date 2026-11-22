@@ -1,3 +1,4 @@
+using HawalekNow.Application.Shared.Caching;
 using HawalekNow.Application.Modules.Locations;
 using HawalekNow.Application.Shared.Results;
 using HawalekNow.Domain.Modules.Locations;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HawalekNow.Infrastructure.Modules.Locations;
 
-public sealed class LocationAdministration(HawalekDbContext context, LocationStateLock stateLock) : ILocationAdministration
+public sealed class LocationAdministration(HawalekDbContext context, LocationStateLock stateLock, IReferenceOptionsCache cache) : ILocationAdministration
 {
     public async Task<Result<LocationAdminDto>> SaveAsync(LocationKind kind, Guid? id, LocationWrite value, CancellationToken cancellationToken)
     {
@@ -58,7 +59,7 @@ public sealed class LocationAdministration(HawalekDbContext context, LocationSta
                     toDto = () => ToDto(area); break;
                 default: return Failure(ErrorKind.Validation);
             }
-            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); return Result<LocationAdminDto>.Success(toDto());
+            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); cache.Invalidate(ReferenceDataFamily.Locations); return Result<LocationAdminDto>.Success(toDto());
         }
         catch (DbUpdateException) { context.ChangeTracker.Clear(); return Failure(ErrorKind.Conflict); }
         catch (SqlException error) when (error.Number is 1205 or 1222 or 51011) { context.ChangeTracker.Clear(); return Failure(ErrorKind.Conflict); }
@@ -86,7 +87,7 @@ public sealed class LocationAdministration(HawalekDbContext context, LocationSta
                     if (area is null) return Result.Failure(new(ErrorKind.NotFound)); await context.Entry(area).ReloadAsync(cancellationToken);
                     if (!Matches(area.RowVersion, rowVersion)) return Result.Failure(new(ErrorKind.Conflict)); context.Remove(area); break;
             }
-            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); return Result.Success();
+            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); cache.Invalidate(ReferenceDataFamily.Locations); return Result.Success();
         }
         catch (DbUpdateException) { context.ChangeTracker.Clear(); return Result.Failure(new(ErrorKind.Conflict)); }
         catch (SqlException error) when (error.Number is 1205 or 1222 or 51011) { context.ChangeTracker.Clear(); return Result.Failure(new(ErrorKind.Conflict)); }

@@ -68,6 +68,8 @@ if ($status -eq 'InReview') {
     foreach ($name in @('LockedRestore', 'ReleaseBuild', 'Tests', 'Format', 'Roadmap', 'GitRules', 'DiffCheck', 'CI')) { P03-Require ($checks.ContainsKey($name) -and $checks[$name].status -eq 'Passed') "Missing final check $name" }
     P03-Require ($evidence.tests.failed -eq 0 -and $evidence.tests.skipped -eq 0 -and $evidence.tests.passed -gt 0 -and $evidence.tests.passed -eq ($evidence.tests.architecture + $evidence.tests.integration + $evidence.tests.unit)) 'Actual full solution results and consistent totals required.'
     P03-Require ($evidence.ci.event -eq 'pull_request' -and $evidence.ci.conclusion -eq 'success') 'Actual PR workflow success required.'
+    P03-Require ($evidence.ci.status -eq 'completed' -and $evidence.ci.headSha -match '^[0-9a-f]{40}$' -and $evidence.ci.runId -gt 0) 'CI must identify a completed run and exact verified head.'
+    P03-Require (@($evidence.ci.jobs).Count -eq 3 -and @($evidence.ci.jobs | Where-Object conclusion -ne 'success').Count -eq 0) 'All three workflow jobs must succeed.'
     P03-Expect (Read-P03 'planning/phase-03/handoffs/S07-to-P04.md') 'Status' 'Draft'
     P03-Expect (Read-P03 'planning/phase-03/PHASE_REVIEW.md') 'UserApproval' 'Pending'
 }

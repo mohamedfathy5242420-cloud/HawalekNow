@@ -1,3 +1,4 @@
+using HawalekNow.Infrastructure.Shared.Caching;
 using HawalekNow.Application.Modules.Locations;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,7 +8,7 @@ public static class LocationRegistration
 {
     public static IServiceCollection AddLocationsReferenceData(this IServiceCollection services)
     {
-        services.AddScoped<LocationStateLock>(); services.AddScoped<ILocationAdministration, LocationAdministration>(); services.AddScoped<ILocationQueries, LocationQueries>();
+        services.AddScoped<LocationStateLock>(); services.AddScoped<ILocationAdministration, LocationAdministration>(); services.AddScoped<LocationQueries>(); services.AddScoped<ILocationQueries, CachedLocationQueries>(); services.AddReferenceOptionsCache();
         services.AddSingleton<IReferenceSeedSource, EmbeddedReferenceSeedSource>(); services.AddScoped<IReferenceDataSeeder, ReferenceDataSeeder>();
         return services;
     }

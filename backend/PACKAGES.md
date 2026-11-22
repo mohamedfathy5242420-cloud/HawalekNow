@@ -92,3 +92,7 @@ Mvc.Testing تضيف تبعيات اختبار فقط، كلها **10.0.0 وMIT*
 ## إضافة P02-S09
 
 لا PackageReference أو SDK/MediatR أو lock graph جديدة. استُخدمت Hangfire Core وSQL Server المثبتة سابقًا مع IBackgroundJobClient.Schedule(DateTimeOffset) وQueue وAutomaticRetry، وEF Core10 mapping وtransactions وExecuteDelete/Update نفسها. روجعت [الجدولة الرسمية](https://docs.hangfire.io/en/latest/background-methods/calling-methods-with-delay) و[إعادة المحاولة](https://docs.hangfire.io/en/latest/background-processing/dealing-with-exceptions.html) و[دلالة at-least-once](https://www.hangfire.io/overview)؛ SQL guards وidempotence لازمتان عند تكرار المهمة. قيم المحاولات والـleases اختيارات تقنية موثقة وليست ضمان exactly-once أو جاهزية إنتاج. خيارات Mailpit المحلية المثبتة موثقة في [المصدر الرسمي](https://mailpit.axllent.org/docs/configuration/runtime-options/).
+
+## إضافة P03-S06/S07
+
+[حزم geography وتراخيصها](P03_DEPENDENCIES.md): مزودNTS10.0.14 وNTS2.6.0 وSqlServerBytes2.1.0. لا حزمة Cache جديدة؛ IMemoryCache منframework الموجودة. [اختباراتCache](REFERENCE_CACHE.md) أضافت مرجعInfrastructure داخلUnitTests فقط وتوارثت حزمها المثبتة؛ لا تغيير لاعتمادالإنتاج أوSDK أوMediatR.

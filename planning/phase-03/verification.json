@@ -305,6 +305,48 @@
       "status": "Passed",
       "detail": "Only required NTS provider10.0.14/NTS2.6.0/SqlServerBytes2.1.0 added; all existing resolved versions unchanged. nuspec license expressions MIT/BSD-3-Clause/BSD-3-Clause inspected.",
       "name": "S06LockedRestore"
+    },
+    {
+      "command": "GitHub pull_request run44923563717 onb6456bd2d9dfa97e6f479d6d701321f47574fc46",
+      "status": "Passed",
+      "detail": "All jobs completed success.",
+      "name": "S06CI",
+      "exitCode": 0
+    },
+    {
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "status": "Passed",
+      "detail": "Zero warnings/errors after all Cache code and test registration changes.",
+      "name": "S07Build",
+      "exitCode": 0
+    },
+    {
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter ReferenceOptionsCacheTests|ReferenceCacheHttpTests|ReferenceSeedTests|CatalogConcurrencyTests|LocationPersistenceTests|ArchitectureTests",
+      "status": "Passed",
+      "detail": "47 Architecture+18 Integration+5 Unit passed; zero failed/skipped. Focused scope only; full solution verification pending.",
+      "name": "S07Tests",
+      "exitCode": 0
+    },
+    {
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter ReferenceCacheHttpTests|ReferenceSeedTests|CatalogConcurrencyTests|LocationPersistenceTests",
+      "status": "Passed",
+      "detail": "Actual Program and SQL: both modules old SQL snapshot held until after HTTP Admin commit/new public read cannot refill; parent deactivation hides cached children; forced SQL UPDATE rollback and stale versions do not invalidate warm snapshot; seed commit invalidates and rolled back seed does not. Prior SQL races and seed CLI passed.",
+      "name": "S07Sql",
+      "exitCode": 0
+    },
+    {
+      "status": "Failed",
+      "detail": "Actual full run:47 Architecture+244 Integration+76 Unit=367 passed;1 Integration failed;0 skipped. Concurrent_seed_calls_use_the_same_stable_source_keys hit SqlCommand timeout while waiting in Catalog seed applock. Default command30s cut short explicit lock60s under full parallel workload. Fixed seed lock budget120s with per-lock command>=125s, restored previous command timeout in finally; ordinary HTTP defaults unchanged. Added real SQL command-timeout capture tests; rerun pending.",
+      "exitCode": 1,
+      "command": "./tmp/p03-final-backend.ps1",
+      "name": "S07FirstFullTests"
+    },
+    {
+      "exitCode": 0,
+      "name": "S07LockRegression",
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter ReferenceLockTimeoutTests|ReferenceSeedTests.Concurrent|ApiFoundationTests",
+      "detail": "30 Integration passed;0 failed/skipped. Both actual SQL lock commands use40s for35s explicit lock and restore prior7s, default HTTP lock still30s command/null context setting; concurrent pinned seed succeeds; exact OpenAPI set and updated description pass. Final build after lock fix zero warnings/errors.",
+      "status": "Passed"
     }
   ],
   "tests": {

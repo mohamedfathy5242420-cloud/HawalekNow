@@ -1,6 +1,8 @@
 using System.Data.Common;
 using System.Diagnostics;
 using HawalekNow.Application.Modules.Locations;
+using HawalekNow.Application.Modules.Catalog;
+using HawalekNow.Application.Shared.Caching;
 using HawalekNow.Domain.Modules.Catalog;
 using HawalekNow.Domain.Modules.Locations;
 using HawalekNow.Infrastructure.Modules.Catalog;
@@ -29,7 +31,9 @@ public sealed class ReferenceSeedTests
     public async Task Actual_pinned_source_imports_every_name_and_parent_and_replays_without_duplicate_rows_or_versions()
     {
         await using var database = new SqlDatabase(); await database.InitializeAsync(); await using var provider = Services(database);
+        await using (var before = provider.CreateAsyncScope()) Assert.Empty((await before.ServiceProvider.GetRequiredService<ICatalogQueries>().ActivitiesAsync("en", 1, 30, default)).Value.Items);
         var first = await SeedAsync(provider); Assert.Equal(new ReferenceSeedOutcome(4, 27, 365, 5716, ReferenceSeedRules.AcceptedCommit), first);
+        await using (var afterSeed = provider.CreateAsyncScope()) Assert.Equal(4, (await afterSeed.ServiceProvider.GetRequiredService<ICatalogQueries>().ActivitiesAsync("en", 1, 30, default)).Value.Items.Length);
         var source = provider.GetRequiredService<IReferenceSeedSource>().Read();
         await using var context = database.CreateContext();
         var receipts = await context.Set<LocationSeedKey>().AsNoTracking().ToDictionaryAsync(value => value.SourceKey);
@@ -78,7 +82,11 @@ public sealed class ReferenceSeedTests
         await using var database = new SqlDatabase(); await database.InitializeAsync(); var probe = new FailAreaInsert();
         await using (var provider = Services(database, probe))
         {
+            var cache = provider.GetRequiredService<IReferenceOptionsCache>();
+            var key = new ReferenceOptionsKey(ReferenceDataFamily.Catalog, "activities", "en", null, null, 1, 30);
+            await using (var before = provider.CreateAsyncScope()) Assert.Empty((await before.ServiceProvider.GetRequiredService<ICatalogQueries>().ActivitiesAsync("en", 1, 30, default)).Value.Items);
             await Assert.ThrowsAnyAsync<Exception>(() => SeedAsync(provider)); Assert.True(probe.Fired);
+            Assert.Empty((await cache.GetAsync(key, _ => throw new InvalidOperationException("Rolled back seed invalidated cache."), default)).Value.Items);
         }
         await using (var context = database.CreateContext())
         {

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using HawalekNow.Application.Shared.Caching;
 using HawalekNow.Application.Modules.Catalog.Contracts;
 using HawalekNow.Domain.Modules.Catalog;
 using HawalekNow.Infrastructure.Shared.Persistence;
@@ -16,8 +17,9 @@ public sealed class ActivitySeedKeyConfiguration : IEntityTypeConfiguration<Acti
         builder.Property(value => value.SourceVersion).HasMaxLength(80).IsRequired();
     }
 }
-public sealed class InitialActivities(HawalekDbContext context, CatalogTreeLock treeLock) : IInitialActivities
+public sealed class InitialActivities(HawalekDbContext context, CatalogTreeLock treeLock, IReferenceOptionsCache cache) : IInitialActivities
 {
+    public void InvalidateOptionsAfterCommit() => cache.Invalidate(ReferenceDataFamily.Catalog);
     private static readonly (string Key, string Ar, string En)[] Definitions =
     [
         ("activity.clothing-accessories", "ملابس وإكسسوارات", "Clothing and accessories"),
@@ -28,7 +30,7 @@ public sealed class InitialActivities(HawalekDbContext context, CatalogTreeLock 
     public async Task<InitialActivitiesOutcome> SeedInsideTransactionAsync(CancellationToken cancellationToken)
     {
         if (context.Database.CurrentTransaction is null) throw new InvalidOperationException("Reference seed requires the caller's unit of work transaction.");
-        await treeLock.AcquireAsync(cancellationToken, 60000);
+        await treeLock.AcquireAsync(cancellationToken, 120000);
         var mappings = await context.Set<ActivitySeedKey>().AsNoTracking().ToDictionaryAsync(value => value.SourceKey, value => value.ActivityId, cancellationToken);
         var added = 0;
         foreach (var (key, ar, en) in Definitions)

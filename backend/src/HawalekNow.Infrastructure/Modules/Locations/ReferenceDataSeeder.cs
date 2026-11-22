@@ -1,5 +1,6 @@
 using HawalekNow.Application.Modules.Catalog.Contracts;
 using HawalekNow.Application.Modules.Locations;
+using HawalekNow.Application.Shared.Caching;
 using HawalekNow.Domain.Modules.Locations;
 using HawalekNow.Infrastructure.Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -16,14 +17,14 @@ public sealed class LocationSeedKeyConfiguration : IEntityTypeConfiguration<Loca
         builder.Property(value => value.SourceCommit).HasMaxLength(40).IsRequired();
     }
 }
-public sealed class ReferenceDataSeeder(HawalekDbContext context, IInitialActivities activities, LocationStateLock stateLock, IReferenceSeedSource source) : IReferenceDataSeeder
+public sealed class ReferenceDataSeeder(HawalekDbContext context, IInitialActivities activities, LocationStateLock stateLock, IReferenceSeedSource source, IReferenceOptionsCache cache) : IReferenceDataSeeder
 {
     public async Task<ReferenceSeedOutcome> SeedAsync(CancellationToken cancellationToken = default)
     {
         var dataset = source.Read(); ReferenceSeedRules.Validate(dataset);
         await using var transaction = await context.BeginAsync(cancellationToken);
         // Every cross-module seed follows one lock order: Catalog, then Locations.
-        var catalog = await activities.SeedInsideTransactionAsync(cancellationToken); await stateLock.AcquireAsync(false, cancellationToken, 60000);
+        var catalog = await activities.SeedInsideTransactionAsync(cancellationToken); await stateLock.AcquireAsync(false, cancellationToken, 120000);
         var mappings = await context.Set<LocationSeedKey>().AsNoTracking().ToDictionaryAsync(value => value.SourceKey, cancellationToken);
         var governorates = 0; var cities = 0; var areas = 0;
         foreach (var place in dataset.Governorates)
@@ -51,6 +52,7 @@ public sealed class ReferenceDataSeeder(HawalekDbContext context, IInitialActivi
             var receipt = LocationSeedKey.Record(place.SourceKey, SeedPlaceKind.Area, item.Id, dataset.SourceCommit); context.Add(receipt); mappings.Add(place.SourceKey, receipt); areas++;
         }
         await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken);
+        activities.InvalidateOptionsAfterCommit(); cache.Invalidate(ReferenceDataFamily.Locations);
         return new(catalog.Added, governorates, cities, areas, dataset.SourceCommit);
     }
 }
