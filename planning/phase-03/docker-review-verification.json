@@ -93,13 +93,54 @@
     "architecture": 47,
     "integration": 247,
     "unit": 76,
-    "passed": 370.0,
-    "failed": 0.0,
-    "skipped": 0.0
+    "passed": 370,
+    "failed": 0,
+    "skipped": 0
   },
   "ci": {
-    "status": "Pending",
-    "scope": "Must run the existing three-job workflow at the actual pushed correction head"
+    "runId": 45406019154,
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "3bb51ee2df595eb0fc69b16e7f32d3d077d2faa3",
+    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45406019154",
+    "jobs": [
+      {
+        "name": "API and SQL image builds",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45406019154/job/138486842848"
+      },
+      {
+        "name": "Documentation and Git rules",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45406019154/job/138486843319"
+      },
+      {
+        "name": "Restore, build, tests and format",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45406019154/job/138486843543"
+      }
+    ],
+    "tests": {
+      "architecture": 47,
+      "integration": 247,
+      "unit": 76,
+      "passed": 370,
+      "failed": 0,
+      "skipped": 0
+    },
+    "docker": {
+      "allowedInputs": 157,
+      "forbiddenFixtures": 79,
+      "embeddedSeedResources": 3,
+      "publishedAttributionFiles": 2,
+      "publishedFilesScanned": 104,
+      "startupSmoke": "Passed"
+    },
+    "finalDocumentationHead": "See PR #10 checks and description for the subsequent evidence-receipt commit; do not infer its CI result from this code-head run."
   },
   "safety": {
     "sdkPackagesApiFunctionsSeedBytesAndLicenseChanged": false,
@@ -114,5 +155,7 @@
     "Initial fixture setup rejected its own malformed PowerShell seed-path list before Docker; fixed list construction, retained local failure receipt, then reran actual Docker.",
     "Initial helper name shadowed the native Docker executable in PowerShell; stopped only that test invocation, renamed the helper, owner-checked and removed its fixture, then reran actual Docker.",
     "Full solution tests initially rejected by automatic approval review due to the earlier read-only conversation. The user subsequently explicitly confirmed solution tests, Commit, Push and CI for this correction."
-  ]
+  ],
+  "verifiedCodeHead": "3bb51ee2df595eb0fc69b16e7f32d3d077d2faa3",
+  "verifiedAtUtc": "2026-11-24T13:47:57.0418903+00:00"
 }
