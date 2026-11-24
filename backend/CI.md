@@ -1,5 +1,7 @@
 # تحقق P01 وبناء وتشغيل API داخل Docker
 
+> تصحيح مراجعة P03 بتاريخ2026-11-24: نجاح البناء التاريخي لم يكن دليلًا كافيًا على ضيق سياق Docker أو استبعاد كل الإعدادات المحلية. أثبت اختبار Docker بعلامات وهمية مرور appsettings.Local.json وملفات زائدة بالقواعد القديمة. أُزيلت إعادة تضمين المجلدات، وأضيفت موارد Seed والنسب والترخيص بالاسم. وظيفة Docker الحالية تشغّل [اختبار السياق والصورة](../docker/API_BUILD_CONTEXT.md) قبل smoke؛ الشرح التاريخي أدناه محفوظ، والنتائج الجديدة في [مراجعة P03](../planning/phase-03/PHASE_REVIEW.md). الاختبار لا يبدأ API أوSQL أوMailpit، وsmoke التالية مستقلة بالخلفية المعطلة واتصال قاعدة غير مستخدم.
+
 الـ[Workflow](../.github/workflows/p01-baseline.yml) يعمل على pull_request وpush إلى main وworkflow_dispatch. ثلاث Jobs مستقلة على GitHub-hosted Ubuntu 24.04؛ لا self-hosted أو خدمات جهاز المستخدم أو أسرار شخصية. permissions=contents:read وcheckout لا يحتفظ بالمصادقة، ولا Registry أو Deploy أو تغيير حماية الفروع. لا pull_request_target.
 
 تم تنفيذ trigger الـPR فعليًا ونجح؛ push main لم ينفذ لأن الدمج غير مأذون، وworkflow_dispatch مُعرّف ولم يُشغّل. ظهور زر التشغيل اليدوي في واجهة GitHub يتطلب ملف Workflow في الفرع الافتراضي؛ المرجع يوضح أيضًا dispatch عبر API/CLI بعد تشغيل Workflow مرة واحدة على الأقل. انظر [توثيق الأحداث الرسمي](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_dispatch)؛ لا ندمج المرحلة لمجرد تفعيل الزر.

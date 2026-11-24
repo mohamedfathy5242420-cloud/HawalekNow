@@ -1,20 +1,46 @@
-# Allow only inputs needed to restore/publish production projects.
+# Docker rules, not Git rules: include files explicitly, never whole directory trees.
 **
 !global.json
-!backend/
-!backend/src/
-!backend/src/**/
-!backend/src/**/*.csproj
-!backend/src/**/packages.lock.json
-!backend/src/**/*.cs
-!backend/src/**/appsettings.json
-!backend/src/**/appsettings.Development.json
+!backend/src/HawalekNow.Domain/HawalekNow.Domain.csproj
+!backend/src/HawalekNow.Domain/packages.lock.json
+!backend/src/HawalekNow.Domain/**/*.cs
+!backend/src/HawalekNow.Application/HawalekNow.Application.csproj
+!backend/src/HawalekNow.Application/packages.lock.json
+!backend/src/HawalekNow.Application/**/*.cs
+!backend/src/HawalekNow.Infrastructure/HawalekNow.Infrastructure.csproj
+!backend/src/HawalekNow.Infrastructure/packages.lock.json
+!backend/src/HawalekNow.Infrastructure/**/*.cs
+!backend/src/HawalekNow.Api/HawalekNow.Api.csproj
+!backend/src/HawalekNow.Api/packages.lock.json
+!backend/src/HawalekNow.Api/**/*.cs
+!backend/src/HawalekNow.Api/appsettings.json
+!backend/src/HawalekNow.Api/appsettings.Development.json
+# Pinned offline seed resources and required redistribution attribution/license.
+!backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/all-governorate.json
+!backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/all-district.json
+!backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/all-shiyakha.json
+!backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/SOURCE.md
+!backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/LICENSE.txt
 # Exclude generated inputs even when their extension matches an allow rule.
-**/bin/**
-**/obj/**
+**/[Bb]in/**
+**/[Oo]bj/**
 **/.env*
 **/secrets.json
+**/appsettings.Local.json
 **/appsettings.*.Local.json
 **/*.pfx
+**/*.p12
 **/*.key
+**/*.pem
+**/*.p8
+**/*.ppk
+**/*.jks
+**/*.keystore
+**/*.pvk
+**/*.snk
+**/*.cer
+**/*.crt
+**/*.der
 **/.git/**
+**/.aws/**
+**/.azure/**

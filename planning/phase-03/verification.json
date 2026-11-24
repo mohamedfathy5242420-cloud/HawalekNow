@@ -1,5 +1,6 @@
 {
   "phase": "P03",
+  "dockerReviewCorrectionEvidence": "planning/phase-03/docker-review-verification.json",
   "authorization": "D018",
   "sourceDecision": "D019",
   "baseMain": "5e4250ff31f84c8806649c7ef1786574da7dd00a",

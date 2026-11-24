@@ -1,12 +1,17 @@
 # فهرس تغييرات P03
 
-Updated: 2026-11-22
+Updated: 2026-11-24
 Status: InReview
 
 المقارنة من main المدمجة 5e4250ff31f84c8806649c7ef1786574da7dd00a وتشمل الملفات الموجودة فعليًا في العمل الجاري. وجود ملف لا يعني نجاح التحقق أو اعتماد المرحلة؛ راجع الخطوات وverification.json. لا تعديلات Word أو جدول المستخدم أو كود P04.
 
 | الملف | المسؤولية |
 | --- | --- |
+| [.dockerignore](../../.dockerignore) | سياق بناء ضيق؛ منع الإعدادات المحلية وإتاحة موارد Seed المحددة |
+| [docker/test-api-build-context.ps1](../../docker/test-api-build-context.ps1) | اختبار Docker فعلي بسياق نظيف وعلامات وهمية وفحص صورة API |
+| [docker/verification/SeedArtifacts.cs](../../docker/verification/SeedArtifacts.cs) | فحص مستقل لموارد Assembly والنسب والترخيص وغياب العلامات |
+| [docker/API_BUILD_CONTEXT.md](../../docker/API_BUILD_CONTEXT.md) | إعادة الإنتاج والحدود والتنظيف وCI |
+| [planning/phase-03/docker-review-verification.json](docker-review-verification.json) | أدلة تصحيح مراجعة Docker دون محو السابق |
 | [.gitattributes](../../.gitattributes) | توثيق وحوكمة وأدلة |
 | [.github/workflows/p01-baseline.yml](../../.github/workflows/p01-baseline.yml) | توثيق وحوكمة وأدلة |
 | [backend/API_EXPLORATION.md](../../backend/API_EXPLORATION.md) | توثيق وحوكمة وأدلة |

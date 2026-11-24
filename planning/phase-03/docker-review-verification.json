@@ -1,0 +1,118 @@
+{
+  "phase": "P03",
+  "status": "InReview",
+  "reviewCorrection": "Exclude local settings from the Docker context and preserve published seed artifacts",
+  "date": "2026-11-24",
+  "reviewedBaseline": "11ffdecb0dded7ac71eb86c93f422024d0175289",
+  "productionSourcesTested": "11ffdecb0dded7ac71eb86c93f422024d0175289",
+  "userApproval": "Pending",
+  "v4": "Pending",
+  "p04Handoff": "Draft",
+  "before": {
+    "command": "./docker/test-api-build-context.ps1 -ContextOnly -RulesPath ./tmp/p03-docker-before.dockerignore",
+    "rulesOrigin": "Unmodified .dockerignore from the reviewed baseline",
+    "rulesSha256": "6407C2D025B79D80505860C4BEEB48EB1F277A7FA80B952646153D037647525B",
+    "status": "Failed",
+    "exitCode": 1,
+    "actualDockerCopy": true,
+    "allowedFilesPresent": 157,
+    "missingRequiredFiles": 0,
+    "forbiddenFixtureFilesVisible": 31,
+    "totalUnexpectedFiles": 69,
+    "observedLocalSettings": [
+      "backend/src/HawalekNow.Api/appsettings.Local.json",
+      "backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/appsettings.Local.json"
+    ],
+    "realSecretsUsedOrDisclosureClaimed": false
+  },
+  "after": {
+    "command": "./docker/test-api-build-context.ps1",
+    "status": "Passed",
+    "exitCode": 0,
+    "rulesSha256": "11DFEA636E9DB2B61E88A4C0102A60EE6796204BAF2CD3D9E80FD216FEDCFF2A",
+    "allowedFilesPresent": 157,
+    "forbiddenFixturesTested": 79,
+    "forbiddenFilesVisible": 0,
+    "missingRequiredFiles": 0,
+    "unexpectedFiles": 0,
+    "includesHiddenFileEnumerationOnLinux": true,
+    "verifiedImageId": "sha256:1b58ec4da5a32a8d66dd7d8bd620ad21b1d8c70178938dadfa44c8edf76e51c9",
+    "embeddedSeedStreamsVerifiedBySha256": 3,
+    "publishedSourceAndLicenseVerifiedBySha256": 2,
+    "publishedFilesScannedForForbiddenNamesAndUtf8Utf16Marker": 104,
+    "probeNetwork": "none",
+    "apiOrSeedStarted": false
+  },
+  "localChecks": [
+    {
+      "name": "LockedRestore",
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel",
+      "status": "Passed",
+      "exitCode": 0
+    },
+    {
+      "name": "ReleaseBuild",
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "status": "Passed",
+      "exitCode": 0,
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "name": "Format",
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "status": "Passed",
+      "exitCode": 0
+    },
+    {
+      "name": "Tests",
+      "command": "dotnet test backend/HawalekNow.slnx --configuration Release --no-build --no-restore --disable-build-servers -m:1 --logger trx",
+      "status": "Passed",
+      "exitCode": 0
+    },
+    {
+      "name": "Roadmap",
+      "command": "./planning/verify-roadmap.ps1",
+      "status": "Passed",
+      "exitCode": 0
+    },
+    {
+      "name": "GitRules",
+      "command": "./planning/verify-git-workflow.ps1",
+      "status": "Passed",
+      "exitCode": 0
+    },
+    {
+      "name": "DiffCheck",
+      "command": "git diff --check",
+      "status": "Passed",
+      "exitCode": 0
+    }
+  ],
+  "tests": {
+    "architecture": 47,
+    "integration": 247,
+    "unit": 76,
+    "passed": 370.0,
+    "failed": 0.0,
+    "skipped": 0.0
+  },
+  "ci": {
+    "status": "Pending",
+    "scope": "Must run the existing three-job workflow at the actual pushed correction head"
+  },
+  "safety": {
+    "sdkPackagesApiFunctionsSeedBytesAndLicenseChanged": false,
+    "existingSqlMailpitStartedStoppedOrRecreated": false,
+    "applicationDatabaseMigratedSeededOrModified": false,
+    "volumesOrPruneUsed": false,
+    "scheduleSha256": "26DC5102E591FA55D245C9294C3B2222B72DD6A57EA2E32AC29F999FDB5C2403",
+    "temporaryResources": "Clean tracked Git archive plus fake markers; owner-checked fixture directories and labeled unique images only",
+    "existingServiceIdsAndStartedAtUnchanged": true
+  },
+  "harnessDevelopmentHistory": [
+    "Initial fixture setup rejected its own malformed PowerShell seed-path list before Docker; fixed list construction, retained local failure receipt, then reran actual Docker.",
+    "Initial helper name shadowed the native Docker executable in PowerShell; stopped only that test invocation, renamed the helper, owner-checked and removed its fixture, then reran actual Docker.",
+    "Full solution tests initially rejected by automatic approval review due to the earlier read-only conversation. The user subsequently explicitly confirmed solution tests, Commit, Push and CI for this correction."
+  ]
+}
