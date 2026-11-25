@@ -25,6 +25,24 @@ function Reject-P03($label, $path, [scriptblock]$mutation) {
         $script:p03Rejections++
     } finally { [IO.File]::WriteAllText($destination, $original) }
 }
+$closedBaseline = (Get-Content (Join-Path $fixture 'docs/CURRENT_STATE.md') -Raw) -match '(?m)^- Status: Done\r?$'
+$closedFiles = @{}
+if ($closedBaseline) {
+    # Preserve the actual accepted state, then run all original cases against the
+    # captured pre-acceptance state. Neither history nor closure may bypass checks.
+    foreach ($path in @('docs/CURRENT_STATE.md', 'planning/ROADMAP.md', 'planning/phase-03/PHASE_REVIEW.md', 'planning/phase-03/handoffs/S07-to-P04.md') + @(1..7 | ForEach-Object { 'planning/phase-03/steps/S{0:d2}.md' -f $_ })) {
+        $closedFiles[$path] = [IO.File]::ReadAllText((Join-Path $fixture $path))
+    }
+    [IO.File]::Copy((Join-Path $fixture 'docs/P03_REVIEWED_STATE.md'), (Join-Path $fixture 'docs/CURRENT_STATE.md'), $true)
+    foreach ($path in @('planning/phase-03/PHASE_REVIEW.md', 'planning/phase-03/handoffs/S07-to-P04.md') + @(1..7 | ForEach-Object { 'planning/phase-03/steps/S{0:d2}.md' -f $_ })) {
+        $text = $closedFiles[$path]
+        $text = [regex]::Replace($text, '(?m)^Status: Done\r?$', 'Status: InReview')
+        foreach ($name in @('UserApproval', 'ReviewStatus', 'V4')) { $text = [regex]::Replace($text, "(?m)^${name}: Approved\r?`$", "${name}: Pending") }
+        [IO.File]::WriteAllText((Join-Path $fixture $path), $text)
+    }
+    $legacyMap = [regex]::Replace($closedFiles['planning/ROADMAP.md'], '(?ms)^### P03-S0[1-7] .*?(?=^### |\z)', { param($m) $m.Value.Replace('Status: Done؛', 'Status: InReview؛') })
+    [IO.File]::WriteAllText((Join-Path $fixture 'planning/ROADMAP.md'), $legacyMap)
+}
 Check-P03
 Reject-P03 'authorization absent' 'docs/DECISIONS.md' { param($t) $t.Replace('AuthorizedPhase: P03', 'AuthorizedPhase: P04') }
 Reject-P03 'source decision absent' 'docs/DECISIONS.md' { param($t) $t.Replace('## D019 ', '## D099 ') }
@@ -52,4 +70,26 @@ if ((Get-Content (Join-Path $fixture 'docs/CURRENT_STATE.md') -Raw) -match '(?m)
     Reject-P03 'P04 handoff incorrectly Ready' 'planning/phase-03/handoffs/S07-to-P04.md' { param($t) $t.Replace('Status: Draft','Status: Ready') }
 }
 Check-P03
+if ($closedBaseline) {
+    foreach ($path in $closedFiles.Keys) { [IO.File]::WriteAllText((Join-Path $fixture $path), $closedFiles[$path]) }
+    Check-P03
+    Reject-P03 'closure acceptance absent' 'docs/DECISIONS.md' { param($t) $t.Replace('## D020 ', '## D099 ') }
+    Reject-P03 'closure merge not authorized' 'docs/DECISIONS.md' { param($t) $t -replace '(?m)^MergeAuthorization: Approved\r?$', 'MergeAuthorization: NotAuthorized' }
+    Reject-P03 'closure different reviewed head' 'docs/CURRENT_STATE.md' { param($t) $t.Replace('- ReviewedHead: d6e9f7e4d65c891a4a932cccd02c88fe00c35057', '- ReviewedHead: 0000000000000000000000000000000000000000') }
+    Reject-P03 'closure approval missing' 'docs/CURRENT_STATE.md' { param($t) $t.Replace('- UserApproval: Approved', '- UserApproval: Pending') }
+    Reject-P03 'manual Postman falsely passed' 'docs/CURRENT_STATE.md' { param($t) $t.Replace('- UserPostmanReview: Deferred', '- UserPostmanReview: Passed') }
+    Reject-P03 'teaching falsely passed' 'planning/phase-03/PHASE_REVIEW.md' { param($t) $t.Replace('EducationalWalkthrough: Deferred', 'EducationalWalkthrough: Passed') }
+    Reject-P03 'closure step not approved' 'planning/phase-03/steps/S02.md' { param($t) $t.Replace('UserApproval: Approved', 'UserApproval: Pending') }
+    Reject-P03 'closure skipped tests' 'planning/phase-03/verification.json' { param($t) $e=$t|ConvertFrom-Json; $e.tests.skipped=1; $e|ConvertTo-Json -Depth 30 }
+    Reject-P03 'fresh closure tests failed' 'planning/phase-03/verification.json' { param($t) $e=$t|ConvertFrom-Json; $e.closure.tests.failed=1; $e|ConvertTo-Json -Depth 30 }
+    Reject-P03 'Docker admitted forbidden input' 'planning/phase-03/verification.json' { param($t) $e=$t|ConvertFrom-Json; $e.closure.docker.forbidden=@('appsettings.Local.json'); $e|ConvertTo-Json -Depth 30 }
+    Reject-P03 'handoff acceptance missing' 'planning/phase-03/handoffs/S07-to-P04.md' { param($t) $t.Replace('UserApproval: Approved', 'UserApproval: Pending') }
+    foreach ($checkName in @('ClosureLockedRestore', 'ClosureReleaseBuild', 'ClosureTests', 'ClosureFormat', 'ClosureDocker')) {
+        $script:removedClosureCheck = $checkName
+        Reject-P03 "missing $checkName" 'planning/phase-03/verification.json' { param($t) $e=$t|ConvertFrom-Json; $e.checks=@($e.checks|Where-Object name -ne $script:removedClosureCheck); $e|ConvertTo-Json -Depth 30 }
+    }
+    Reject-P03 'premature Ready before merge gate' 'planning/phase-03/handoffs/S07-to-P04.md' { param($t) $t.Replace('Status: Draft', 'Status: Ready') }
+    Reject-P03 'unverified post merge claimed' 'planning/phase-03/handoffs/S07-to-P04.md' { param($t) $t.Replace('TransitionGate: Pending', 'TransitionGate: Passed') }
+    Check-P03
+}
 Write-Output "PASS: actual P03 baseline accepted; $script:p03Rejections invalid predecessor/source/approval/phase claims rejected."

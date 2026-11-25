@@ -1,6 +1,25 @@
 # سجل قرارات HawalekNow
 
-آخر تحديث: 2026-11-21
+آخر تحديث: 2026-11-25
+
+## D020 قبول P03 وإذن إغلاقها وبدء P04 بعد البوابة
+
+Status: Approved
+ApprovalDate: 2026-11-25
+ReviewedHead: d6e9f7e4d65c891a4a932cccd02c88fe00c35057
+AcceptanceBasis: CodeTestsCIAndDockerCorrection
+ClosureAuthorization: Approved
+MergeAuthorization: Approved
+P04Execution: ConditionalOnP03Closure
+P04MergeAuthorization: NotAuthorized
+P05Execution: NotAuthorized
+UserScalarReview: Deferred
+UserPostmanReview: Deferred
+EducationalWalkthrough: Deferred
+
+اعتمد المستخدم P03 تقنيًا بناءً على مراجعة الكود والاختبارات وCI وتصحيح Docker، وأذن صراحة بـCommit وPush وإغلاق المرحلة وتحويل PR #10 إلى Ready ثم Squash Merge بعد نجاح فحوص الإغلاق وCI على رأس الإغلاق وفحص الحماية دون تجاوزها. الرأس المحلي والبعيد يطابقان الرأس المراجع، وCI45407402244 ناجحة بالوظائف الثلاث. تحفظ D018/D019 وسجلات Pending والأخفاقات السابقة كتاريخ؛ هذا القرار الأحدث يحل محل منع إغلاق P03 فقط. التجربة الشخصية وجلسة الشرح غير المكتملتين Deferred وليستا Passed؛ V4 Approved يعني قبولًا تقنيًا بهذا القرار دون ادعاء تنفيذ التجربة.
+
+بدء P04-S01 إلى S07 مأذون بعد الدمج الفعلي وتحديث main بأمان ونجاح فحوص ما بعد الدمج وCI على main وتسليم P04 Ready. التنفيذ بالترتيب بعد التحقق التقني المناسب لكل خطوة. تسلم P04 كاملة InReview في Draft PR واحدة، واعتماد المستخدم وV4 Pending وتسليم P05 Draft؛ لا دمج P04 أو بدء P05. يثبت إذن التنفيذ عند نجاح البوابة بالمعرف التالي المتاح. تحفظ ملفات Word وSeed والجدول خارج التعديل وstaging والفروع والبيانات والVolumes؛ لا force push أو prune أو تغيير موارد مشاريع أخرى. عند فشل فحص مانع يتوقف الانتقال ولا تعتبر نتيجة تعذر العزل نجاحًا.
 
 ## D019 اعتماد مصدر Seed الجغرافية وحدود تغطيته
 

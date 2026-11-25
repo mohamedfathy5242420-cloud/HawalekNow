@@ -283,7 +283,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S01 نموذج الأنشطة والتصنيفات
 
-- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S01.md).
+- Status: Done؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Approved؛ V4: Approved؛ [سجل التنفيذ](phase-03/steps/S01.md)؛ AcceptanceDecision: D020؛ ApprovalDate: 2026-11-25؛ التجربة الشخصية والشرح Deferred
 
 - الاعتمادات السابقة: [P02-S09](#p02-s09) + Phase Review وHandoff للمرحلة السابقة.
 - المخرج المطلوب: شجرة غير محدودة العمق واسم عربي وإنجليزي وحالات تفعيل.
@@ -293,7 +293,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S02 إدارة التصنيفات للـAdmin
 
-- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S02.md).
+- Status: Done؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Approved؛ V4: Approved؛ [سجل التنفيذ](phase-03/steps/S02.md)؛ AcceptanceDecision: D020؛ ApprovalDate: 2026-11-25؛ التجربة الشخصية والشرح Deferred
 
 - الاعتمادات السابقة: [P03-S01](#p03-s01).
 - المخرج المطلوب: CRUD آمن ومنع الدورات والحذف المؤثر.
@@ -303,7 +303,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S03 المحافظات والمدن والمناطق
 
-- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S03.md).
+- Status: Done؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Approved؛ V4: Approved؛ [سجل التنفيذ](phase-03/steps/S03.md)؛ AcceptanceDecision: D020؛ ApprovalDate: 2026-11-25؛ التجربة الشخصية والشرح Deferred
 
 - الاعتمادات السابقة: [P03-S02](#p03-s02).
 - المخرج المطلوب: Hierarchy ثنائي اللغة وEndpoints للاختيار.
@@ -313,7 +313,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S04 Seed البيانات الأولية
 
-- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S04.md).
+- Status: Done؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Approved؛ V4: Approved؛ [سجل التنفيذ](phase-03/steps/S04.md)؛ AcceptanceDecision: D020؛ ApprovalDate: 2026-11-25؛ التجربة الشخصية والشرح Deferred
 
 - الاعتمادات السابقة: [P03-S03](#p03-s03).
 - المخرج المطلوب: الأنشطة الأربعة وبيانات مواقع قابلة لإعادة التشغيل.
@@ -323,7 +323,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S05 المرادفات
 
-- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S05.md).
+- Status: Done؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Approved؛ V4: Approved؛ [سجل التنفيذ](phase-03/steps/S05.md)؛ AcceptanceDecision: D020؛ ApprovalDate: 2026-11-25؛ التجربة الشخصية والشرح Deferred
 
 - الاعتمادات السابقة: [P03-S04](#p03-s04).
 - المخرج المطلوب: إدارة Synonym Groups عربية وإنجليزية للبحث.
@@ -333,7 +333,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S06 نقاط geography
 
-- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S06.md).
+- Status: Done؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Approved؛ V4: Approved؛ [سجل التنفيذ](phase-03/steps/S06.md)؛ AcceptanceDecision: D020؛ ApprovalDate: 2026-11-25؛ التجربة الشخصية والشرح Deferred
 
 - الاعتمادات السابقة: [P03-S05](#p03-s05).
 - المخرج المطلوب: Point SRID 4326 والتحقق من Latitude وLongitude.
@@ -343,7 +343,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P03-S07 Caching البيانات المرجعية
 
-- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-03/steps/S07.md).
+- Status: Done؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Approved؛ V4: Approved؛ [سجل التنفيذ](phase-03/steps/S07.md)؛ AcceptanceDecision: D020؛ ApprovalDate: 2026-11-25؛ التجربة الشخصية والشرح Deferred
 
 - الاعتمادات السابقة: [P03-S06](#p03-s06).
 - المخرج المطلوب: IMemoryCache مع إبطال عند تعديل Admin.

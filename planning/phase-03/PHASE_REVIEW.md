@@ -1,13 +1,24 @@
 # مراجعة P03 — البيانات المرجعية والمواقع
 
-Updated: 2026-11-24
-Status: InReview
+Updated: 2026-11-25
+Status: Done
 ExecutionAuthorization: D018
 SeedDecision: D019
-UserApproval: Pending
-ReviewStatus: Pending
-V4: Pending
+UserApproval: Approved
+ReviewStatus: Approved
+V4: Approved
 P04Status: NotStarted
+AcceptanceDecision: D020
+ApprovalDate: 2026-11-25
+ReviewedHead: d6e9f7e4d65c891a4a932cccd02c88fe00c35057
+AcceptanceBasis: CodeTestsCIAndDockerCorrection
+UserScalarReview: Deferred
+UserPostmanReview: Deferred
+EducationalWalkthrough: Deferred
+
+الحالة الحالية Done/Approved وفق D020؛ التجربة الشخصية والشرح Deferred. الدمج وبوابة P04 قيد التحقق كما في [سجل الإغلاق](CLOSURE.md).
+
+## سجل التنفيذ والمراجعة قبل القبول — تاريخي
 
 P02 أغلقت ودمجت في PR9 عند 5e4250ff31f84c8806649c7ef1786574da7dd00a، ثم نجحت فحوص ما بعد الدمج؛ [إيصالها](../phase-02/MERGE_RECEIPT.md) يحفظ الأدلة وتأجيل التجربة الشخصية والشرح دون اعتبارهما Passed. تنفيذ P03 مأذون وفق D018؛ اعتماد المصدر D019 لا يعد اعتمادًا لمخرجات المرحلة.
 
@@ -73,3 +84,8 @@ CI المسجلة في الأدلة تخص رأس التنفيذ 6fe86f6. نتي
 [تفصيل الاختبار والملفات المسموحة والمحظورة](../../docker/API_BUILD_CONTEXT.md). أضيف إلى وظيفةDocker الموجودة فيCI قبلsmoke المستقلة. بقاء الحالة InReview وUserApproval/V4 Pending وتسليمP04 Draft محفوظ؛ ملفاتSeed وترخيصها وبصماتها وSDK والحزم ووظائفP03 لم تتغير. السجل السابق وأدلته لم يُمسحا.
 
 إيصال CI للتصحيح: [run45406019154](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45406019154) completed/success على3bb51ee2df595eb0fc69b16e7f32d3d077d2faa3، والوظائف الثلاث success. السجلات تثبت370 اختبارًا (47+247+76) بلا فشل/تخطٍّ وBuild0/0، وDocker157/79 وثلاثة مواردSeed وملفي النسب والترخيص و104 ملفات نشر وsmoke ناجحة. نتيجة رأس إيصال الأدلة التوثيقي اللاحق تُراجع مستقلة فيChecks ووصفPR10؛ لا تُستنتج من نجاح هذا الرأس.
+
+
+## قبول وإغلاق D020 — 2026-11-25
+
+الحالة الملزمة هي Done/Approved وفق قبول المستخدم التقني. V4 Approved قبولٌ بهذا القرار، والتجربة الشخصية والشرح Deferred وليسا Passed. عبارات InReview/Pending ومنع الدمج في وصف التنفيذ السابق تاريخية، محفوظة دون تغيير الأدلة أو الأخفاقات. الدمج وبدء P04 مشروطان بفحوص الإغلاق وCI على رأسه والحماية والتحقق الفعلي بعد الدمج؛ [سجل الإغلاق](CLOSURE.md).

@@ -1,6 +1,6 @@
 # HawalekNow — حوالك ناو
 
-P01 Done ومراجعتها Approved بقرار المستخدم D013 بتاريخ 2026-11-10، المشروط بنجاح فحوص الإغلاق قبل دمج PR #8 وبعده. [سجل الإغلاق](planning/phase-01/CLOSURE.md) و[مراجعة المرحلة](planning/phase-01/PHASE_REVIEW.md) و[الحالة الحالية](docs/CURRENT_STATE.md). تسليم P02 Ready وP02 NotStarted دون تنفيذ. تجربة المستخدم الشخصية Scalar/Postman والشرح الكامل Deferred عن بوابة الإغلاق بقراره، وليست Passed؛ [تعليمات التجربة](backend/API_EXPLORATION.md) محفوظة.
+P03 Done وApproved بقرار المستخدم D020 بتاريخ 2026-11-25، بعد قبول الكود والاختبارات وCI وتصحيح Docker. [سجل الإغلاق](planning/phase-03/CLOSURE.md) و[المراجعة](planning/phase-03/PHASE_REVIEW.md) و[الحالة الحالية](docs/CURRENT_STATE.md). الدمج وبدء P04 مشروطان بفحوص الإغلاق وCI على رأسه والتحقق بعد الدمج وCI main؛ تسليم P04 يبقى Draft حتى اكتمال البوابة. التجربة الشخصية والشرح Deferred وليسا Passed.
 
 منصة لاكتشاف المنتجات والتجار القريبين في مصر ومقارنة السعر والتوافر لكل فرع ثم التواصل مباشرة مع التاجر. البيع يتم خارج المنصة؛ لا سلة أو دفع أو شحن داخلها.
 
@@ -43,4 +43,4 @@ dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore
 git diff --check
 ```
 
-[Backend](backend/README.md) يشرح الطبقات والتشغيل، و[Modules](backend/MODULES.md) يوضح الملكية، و[الحزم والتراخيص](backend/PACKAGES.md) تسجل النسخ والتوافق. الحل الحالي يضم 126 اختبارًا، والوحدات بلا وظائف تجارية. خدمات Docker وFTS والاستمرار في S06 لها أدلة تاريخية؛ حالتها الحالية في مراجعة P01. Git على هذا الجهاز يحتاج -c safe.directory=D:/HwalekNow لاختلاف الملكية؛ الفاحص يحسب المسار الفعلي ليعمل على Linux وWindows.
+[Backend](backend/README.md) يشرح الطبقات والتشغيل، و[Modules](backend/MODULES.md) يوضح الملكية، و[الحزم والتراخيص](backend/PACKAGES.md) تسجل النسخ والتوافق. الحل عند إغلاق P03 يضم 370 اختبارًا ناجحًا (47 Architecture و247 Integration و76 Unit)؛ الهوية والأمان والبيانات المرجعية والمواقع وSeed وCache منفذة وفق مراجعات مراحلها. خدمات Docker وFTS والاستمرار في S06 لها أدلة تاريخية؛ حالتها الحالية في مراجعة P01. Git على هذا الجهاز يحتاج -c safe.directory=D:/HwalekNow لاختلاف الملكية؛ الفاحص يحسب المسار الفعلي ليعمل على Linux وWindows.

@@ -418,6 +418,69 @@
       "detail": "46 P01+27 P02 rejection cases passed in retained full gate run; final InReview P03 baseline accepted and23 rejections passed, including9 final CI/test-count/handoff guards.96 distinct rejection cases across these runs; no original case removed.",
       "exitCode": 0,
       "name": "FinalGateRejections"
+    },
+    {
+      "name": "ClosureLockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel",
+      "detail": "Fresh closure run 2026-11-25; logs under tmp/p03-close-20261125/premerge."
+    },
+    {
+      "name": "ClosureReleaseBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Fresh closure run 2026-11-25; logs under tmp/p03-close-20261125/premerge."
+    },
+    {
+      "name": "ClosureTests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "Fresh closure run 2026-11-25; logs under tmp/p03-close-20261125/premerge."
+    },
+    {
+      "name": "ClosureFormat",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "Fresh closure run 2026-11-25; logs under tmp/p03-close-20261125/premerge."
+    },
+    {
+      "name": "ClosureDocker",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./docker/test-api-build-context.ps1",
+      "detail": "Actual Docker COPY:157 required;79 forbidden rejected;0 extras/missing;3 embedded seed hashes,2 attribution hashes,104 published files scanned."
+    },
+    {
+      "name": "ClosureRoadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "76 source rows;952 local links;closed P03/D020 gate accepted."
+    },
+    {
+      "name": "ClosureGitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "25 ignored and36 allowed samples;389 tracked files not ignored."
+    },
+    {
+      "name": "ClosureDiffCheck",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "detail": "Exit0;no whitespace errors."
+    },
+    {
+      "name": "ClosurePhaseGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/test-phase-gates.ps1; ./planning/test-p03-gates.ps1",
+      "detail": "46 historical +27 P02 +41 final P03 invalid states rejected;valid baselines accepted. Earlier full suite covered38 P03 cases;final focused rerun covers the three additions."
     }
   ],
   "tests": {
@@ -457,5 +520,66 @@
     ]
   },
   "verifiedCodeHead": "6fe86f60ca16987d9225747c065ec6ae2c99d732",
-  "verifiedAtUtc": "2026-11-22T09:01:13.1850956Z"
+  "verifiedAtUtc": "2026-11-22T09:01:13.1850956Z",
+  "closure": {
+    "acceptance": "D020",
+    "date": "2026-11-25",
+    "reviewedHead": "d6e9f7e4d65c891a4a932cccd02c88fe00c35057",
+    "userPersonalReview": "Deferred",
+    "educationalWalkthrough": "Deferred",
+    "tests": {
+      "failed": 0,
+      "unit": 76,
+      "skipped": 0,
+      "architecture": 47,
+      "passed": 370,
+      "integration": 247
+    },
+    "docker": {
+      "run": "f5c7a75bfb734d80bd9603f2a14cb3dd",
+      "sourceHead": "d6e9f7e4d65c891a4a932cccd02c88fe00c35057",
+      "rulesSha256": "11DFEA636E9DB2B61E88A4C0102A60EE6796204BAF2CD3D9E80FD216FEDCFF2A",
+      "status": "Passed",
+      "context": "Passed",
+      "forbidden": [],
+      "missing": [],
+      "unexpected": [],
+      "allowedCount": 157,
+      "forbiddenCount": 79,
+      "image": "hawaleknow/api-context-test:f5c7a75bfb734d80bd9603f2a14cb3dd",
+      "artifacts": "Passed",
+      "imageId": "sha256:4eeab8aa77ef395707d5cd3c497de5a74226042f11483d3b1d350f354541a1df"
+    },
+    "reviewedHeadCI": {
+      "runId": 45407402244,
+      "headSha": "d6e9f7e4d65c891a4a932cccd02c88fe00c35057",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45407402244",
+      "jobs": [
+        {
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45407402244/job/138491707639"
+        },
+        {
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45407402244/job/138491707846"
+        },
+        {
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45407402244/job/138491708097"
+        }
+      ]
+    },
+    "closureHeadCI": "Pending until closure commit is pushed",
+    "merge": "Pending",
+    "postMergeVerification": "Pending"
+  }
 }

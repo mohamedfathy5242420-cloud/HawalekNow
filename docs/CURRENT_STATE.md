@@ -1,23 +1,34 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-11-24
+آخر تحديث: 2026-11-25
 
-أُغلقت P02 ودمجت وفق D017، ونجحت فحوص ما بعد الدمج؛ [إيصالها](../planning/phase-02/MERGE_RECEIPT.md) و[حالتها المغلقة](P02_CLOSED_STATE.md) يحفظان التاريخ وحدود القبول. نُفذت P03-S01 إلى S07 تحت إذن D018، والمصدر مقبول بنطاقه ونواقصه وفق D019. جميع الخطوات Verified تقنيًا، والمرحلة InReview دون اعتماد مستخدم أو V4 مفترضين.
+اعتمدت P03 تقنيًا وفق D020 وأغلقت حالتها؛ الدمج والتحقق بعده لم يحدثا بعد. تسليم P04 يبقى Draft حتى نجاح بوابته الفعلية. [سجل الإغلاق](../planning/phase-03/CLOSURE.md) و[الحالة قبل القبول](P03_REVIEWED_STATE.md) يحفظان التاريخ. سجل ما قبل القبول أدناه سجل تاريخي لرؤوسها ووقتها؛ لا تعيد منع الإذن الحالي.
 
 - Phase: P03
 - Step: P03-S07
-- Status: InReview
+- Status: Done
 - ExecutionMode: Phase
-- UserApproval: Pending
-- ReviewStatus: Pending
-- V4: Pending
+- UserApproval: Approved
+- ReviewStatus: Approved
+- V4: Approved
 - ExecutionAuthorization: D018
 - BaseMain: 5e4250ff31f84c8806649c7ef1786574da7dd00a
 - P04Status: NotStarted
-- Scope: تسليم P03 كاملة للمراجعة؛ لا دمج أو بدء P04.
+- Scope: إغلاق P03 وفق D020؛ تنفيذ P04 مشروط بنجاح الدمج وفحوص ما بعده وCI main.
 - ActiveStepFile: planning/phase-03/steps/S07.md
-- NextStep: مراجعة المستخدم للمرحلة؛ الشرح مهمة منفصلة؛ الإغلاق يحتاج إذنًا لاحقًا.
+- NextStep: فحوص الإغلاق وCI لرأسه ثم Ready/Squash والتحقق بعد الدمج؛ لا P04 قبل اكتمال البوابة.
+- AcceptanceDecision: D020
+- ApprovalDate: 2026-11-25
+- ReviewedHead: d6e9f7e4d65c891a4a932cccd02c88fe00c35057
+- AcceptanceBasis: CodeTestsCIAndDockerCorrection
+- UserScalarReview: Deferred
+- UserPostmanReview: Deferred
+- EducationalWalkthrough: Deferred
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
+
+## سجل P03 قبل القبول — تاريخي
+
+أُغلقت P02 ودمجت وفق D017، ونجحت فحوص ما بعد الدمج؛ [إيصالها](../planning/phase-02/MERGE_RECEIPT.md) و[حالتها المغلقة](P02_CLOSED_STATE.md) يحفظان التاريخ وحدود القبول. نُفذت P03-S01 إلى S07 تحت إذن D018، والمصدر مقبول بنطاقه ونواقصه وفق D019. جميع الخطوات Verified تقنيًا، والمرحلة InReview دون اعتماد مستخدم أو V4 مفترضين.
 
 نُفذ تصحيح مراجعةDocker على نفسDraft PR10 بإذن المستخدم: اختبارDocker أثبت مرورappsettings.Local.json بعلامة وهمية قبل التصحيح، ثم أثبت منع79 حالة محظورة وإتاحة157 ملف بناء بعده. نجح بناء الصورة وفحص مواردSeed الثلاثة والنسب والترخيص؛ [الأدلة الجديدة](../planning/phase-03/docker-review-verification.json) تسجل370 اختبارًا محليًا وعلى [CI45406019154](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45406019154) الناجحة على رأس الإصلاح3bb51ee؛ رأس إيصال الأدلة اللاحق يُتحقق منه منفصلًا فيChecks ووصفPR10. لا اعتماد أوإغلاقP03، ولا تغيير للبيانات أوتشغيل/إيقافSQL/Mailpit أوP04. السجل والأعداد السابقة أدناه تاريخية لرؤوسها المحددة.
 
