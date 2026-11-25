@@ -1,0 +1,46 @@
+{
+  "phase": "P04",
+  "authorization": "D021",
+  "baseMain": "63b189618a9c856151920da7669a4e2c9af86461",
+  "predecessor": {
+    "pr": 10,
+    "merged": true,
+    "mergeSha": "63b189618a9c856151920da7669a4e2c9af86461",
+    "postMergeVerification": "Passed",
+    "ciRun": 45600216946,
+    "acceptance": "D020"
+  },
+  "checks": [
+    {
+      "name": "S01Build",
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "status": "Passed",
+      "exitCode": 0,
+      "detail": "0 warnings/errors."
+    },
+    {
+      "name": "S01Tests",
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~MerchantAccount|FullyQualifiedName~ArchitectureTests'",
+      "status": "Passed",
+      "exitCode": 0,
+      "detail": "47 Architecture+3 Integration+35 Unit=85 passed;0 failed/skipped."
+    },
+    {
+      "name": "S01Sql",
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~MerchantAccount|FullyQualifiedName~ArchitectureTests'",
+      "status": "Passed",
+      "exitCode": 0,
+      "detail": "Actual SQL lifecycle,stale decision rejected,rollback after Save;no pending model changes."
+    },
+    {
+      "name": "S01PhaseGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/test-phase-gates.ps1",
+      "detail": "46 historical+27 P02+43 P03+20 P04 invalid states rejected;valid baselines accepted."
+    }
+  ],
+  "userApproval": "Pending",
+  "v4": "Pending",
+  "p05Handoff": "Draft"
+}

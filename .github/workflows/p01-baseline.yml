@@ -1,4 +1,4 @@
-name: Backend baseline and P03 reference data
+name: Backend baseline and P04 merchant workflows
 
 on:
   pull_request:

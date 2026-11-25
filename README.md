@@ -1,6 +1,6 @@
 # HawalekNow — حوالك ناو
 
-P03 Done وApproved بقرار المستخدم D020 بتاريخ 2026-11-25، بعد قبول الكود والاختبارات وCI وتصحيح Docker. [سجل الإغلاق](planning/phase-03/CLOSURE.md) و[المراجعة](planning/phase-03/PHASE_REVIEW.md) و[الحالة الحالية](docs/CURRENT_STATE.md). الدمج وبدء P04 مشروطان بفحوص الإغلاق وCI على رأسه والتحقق بعد الدمج وCI main؛ تسليم P04 يبقى Draft حتى اكتمال البوابة. التجربة الشخصية والشرح Deferred وليسا Passed.
+أغلقت P03 ودمجت وفق D020، ونجحت فحوص ما بعد الدمج وCI main؛ [الإيصال](planning/phase-03/MERGE_RECEIPT.md). بدأ تنفيذ P04 وفق D021 من main المتحقق منها. [الحالة الحالية](docs/CURRENT_STATE.md) و[التصميم](planning/phase-04/DESIGN.md) و[مراجعة المرحلة](planning/phase-04/PHASE_REVIEW.md). تسلم P04 كاملة InReview في Draft PR واحدة مع UserApproval/V4 Pending وتسليم P05 Draft؛ لا دمج P04 أوبدء P05. التجربة الشخصية والشرح السابقان Deferred وليسا Passed.
 
 منصة لاكتشاف المنتجات والتجار القريبين في مصر ومقارنة السعر والتوافر لكل فرع ثم التواصل مباشرة مع التاجر. البيع يتم خارج المنصة؛ لا سلة أو دفع أو شحن داخلها.
 

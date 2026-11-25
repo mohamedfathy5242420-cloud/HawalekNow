@@ -356,6 +356,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P04-S01 استكمال MerchantAccount
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S01.md).
+
 - الاعتمادات السابقة: [P03-S07](#p03-s07) + Phase Review وHandoff للمرحلة السابقة.
 - المخرج المطلوب: حالات Pending وChangesRequested وApproved وRejected وSuspended.
 - بوابة التحقق: V2 state machine وV3 persistence.
