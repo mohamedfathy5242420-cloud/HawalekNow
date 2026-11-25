@@ -8,6 +8,9 @@ public sealed class MerchantAccount
     public Guid UserId { get; private set; }
     public MerchantApprovalStatus Status { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
+    public string? ReviewReason { get; private set; }
+    public Guid? ReviewedBy { get; private set; }
+    public DateTimeOffset? ReviewedAt { get; private set; }
     public bool CanPrepareAccount => Status is MerchantApprovalStatus.Pending or MerchantApprovalStatus.ChangesRequested or MerchantApprovalStatus.Approved;
     public bool CanPublish => Status == MerchantApprovalStatus.Approved;
 
@@ -48,5 +51,15 @@ public sealed class MerchantAccount
         if (Status != MerchantApprovalStatus.Suspended) return false;
         Status = MerchantApprovalStatus.Approved;
         return true;
+    }
+
+    public void RecordReview(Guid reviewerId, string? reason, DateTimeOffset reviewedAt)
+    {
+        if (reviewerId == Guid.Empty || reviewedAt == default) throw new ArgumentException("A reviewer and time are required.");
+        if (Status == MerchantApprovalStatus.Pending) throw new InvalidOperationException("A pending account has no new review decision.");
+        reason = string.IsNullOrWhiteSpace(reason) ? null : reason.Trim();
+        if (reason?.Length > 1000 || reason?.Contains('\0') == true || (Status != MerchantApprovalStatus.Approved && reason is null))
+            throw new ArgumentException("A valid review reason is required.");
+        ReviewedBy = reviewerId; ReviewedAt = reviewedAt.ToUniversalTime(); ReviewReason = reason;
     }
 }

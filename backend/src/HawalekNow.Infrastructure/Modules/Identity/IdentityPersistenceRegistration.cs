@@ -1,4 +1,5 @@
 using HawalekNow.Application.Modules.Identity;
+using HawalekNow.Application.Modules.Identity.Contracts;
 using HawalekNow.Domain.Modules.Identity;
 using HawalekNow.Application.Shared.Messaging;
 using HawalekNow.Infrastructure.Shared.Persistence;
@@ -43,6 +44,7 @@ public static class IdentityPersistenceRegistration
         services.AddScoped<IOutboxHandler, DeletionScheduleHandler>();
         services.AddScoped<IIdentityAccountQueries, IdentityAccountQueries>();
         services.AddScoped<IdentityStateLock>();
+        services.AddScoped<IAccountAccess, AccountAccess>();
         services.AddScoped<EmailConfirmationService>();
         services.AddScoped<IEmailConfirmation>(provider => provider.GetRequiredService<EmailConfirmationService>());
         services.AddScoped<IIdentityEmailTransport, MailpitEmailTransport>();

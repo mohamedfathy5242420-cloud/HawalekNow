@@ -88,3 +88,10 @@ Api/Shared/Diagnostics/RemoveHostMetadata يحذف RequestId/RequestPath/Connect
 ## المشترك التقني المؤسس في S07
 
 OwnerStep: P01-S07؛ D001/D006 وQ003-05. Api/Shared/Routing يطبق بادئة api/v1 على Controllers ويرفض المسارات المطلقة؛ Api/Shared/Health يملك Controller فحص حياة التطبيق باستخدام HealthCheckService، دون اعتماد على Domain أو Infrastructure أو فحص SQL/البريد. Api/Shared/OpenApi يضبط وصف العقود الفعلية وCorrelation والاستجابة الآمنة في المستند. Program هو المستهلك الفعلي ويسجل الخدمات والبوابة Development فقط؛ الاختبارات تشغل Program عبر WebApplicationFactory. Logger لكل Host مملوك له مع preserveStaticLogger: true، ولا تغيير لمخطط Logging أو الفلتر. لا تعديل لقواعد المعمارية أو إضافة في الطبقات الأخرى أو ملكية الوحدات؛ probes والـControllers الوهمية في الاختبارات فقط وخارج مستند الإنتاج. [شرح الحدود والعقود](API_EXPLORATION.md).
+
+
+## تأسيس P04-S01/S02
+
+Merchants تملك انتقالات اعتماد التاجر وقرارات الإدارة وإعادة الإرسال وحقول آخر مراجعة، دون امتلاك تأكيد البريد والجلسات. IAccountAccess فيApplication.Identity.Contracts يعرض حقائق Identity الضرورية فقط، وينفذه AccountAccess داخل Identity؛ FindForMutationAsync يستخدم قفل حالة Identity القائم ويتطلب Transaction يملكها المستدعي. MerchantReviewService يملك المعاملة الخارجية والحالة وAudit، ولا يستدعي معاملات مستقلة عبرMediatR.
+
+AuditEntry فيDomain.Shared.Auditing مفهوم تقني محدود الحقول، وتكوينه فيInfrastructure.Shared.Auditing عبرDbContext الحالية. المستهلك الفعلي MerchantReviewService؛ تكتب الحالة والسجل معًا قبلCommit. actor/target معرفات مستقلة دون حذف متتابع لحفظ التاريخ، ولا تصويرEntities أوOTP أوTokens أوPasswordHash، ولا تغيير لسياسةLogging. [دليل التشغيل والعقود](MERCHANT_OPERATIONS.md). تعاد تغطية Audit العامة وinterceptors فيP08-S04 وفقQ003-03.

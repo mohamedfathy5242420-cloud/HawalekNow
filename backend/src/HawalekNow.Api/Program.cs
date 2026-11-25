@@ -70,6 +70,7 @@ builder.Services.AddIdentityAuthentication();
 builder.Services.AddAccountPolicies();
 builder.Services.AddBrowserSecurity().AddIdentityRateLimits();
 builder.Services.AddReferenceDataRateLimits();
+builder.Services.AddMerchantRateLimits();
 builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme).Configure<SessionTokens, TimeProvider>(
     (options, tokens, clock) => options.TokenValidationParameters = tokens.Validation(clock));
 builder.Services.AddPersistence(builder.Configuration).AddIdentityPersistence().AddMerchantAccounts().AddBackgroundProcessing();

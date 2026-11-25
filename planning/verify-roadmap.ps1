@@ -52,7 +52,7 @@ if(Test-Path (Join-Path $Root 'backend/API_ERRORS.md')){$files += 'backend/API_E
 foreach($candidate in @('backend/API_EXPLORATION.md','planning/phase-01/steps/S07.md','planning/phase-01/handoffs/S07-to-S08.md','planning/phase-01/steps/S08.md','planning/phase-01/PHASE_REVIEW.md','planning/phase-01/handoffs/S08-to-P02.md','backend/CI.md','planning/phase-01/CLOSURE.md')){
   if(Test-Path (Join-Path $Root $candidate)){$files += $candidate}
 }
-foreach($candidate in @('README.md','backend/README.md','docker/README.md','planning/phase-01/steps/S01.md','planning/phase-01/handoffs/S01-to-S02.md','planning/phase-01/steps/S02.md','planning/phase-01/handoffs/S02-to-S03.md','planning/phase-01/steps/S03.md','planning/phase-01/handoffs/S03-to-S04.md','backend/MODULES.md','backend/PACKAGES.md','planning/phase-01/steps/S04.md','planning/phase-01/handoffs/S04-to-S05.md','planning/phase-01/steps/S05.md','planning/phase-01/handoffs/S05-to-S06.md','planning/phase-01/steps/S06.md','planning/phase-01/handoffs/S06-to-S07.md')){
+foreach($candidate in @('README.md','backend/README.md','docker/README.md','planning/phase-01/steps/S01.md','planning/phase-01/handoffs/S01-to-S02.md','planning/phase-01/steps/S02.md','planning/phase-01/handoffs/S02-to-S03.md','planning/phase-01/steps/S03.md','planning/phase-01/handoffs/S03-to-S04.md','backend/MODULES.md','backend/MERCHANT_OPERATIONS.md','backend/PACKAGES.md','planning/phase-01/steps/S04.md','planning/phase-01/handoffs/S04-to-S05.md','planning/phase-01/steps/S05.md','planning/phase-01/handoffs/S05-to-S06.md','planning/phase-01/steps/S06.md','planning/phase-01/handoffs/S06-to-S07.md')){
   if(Test-Path (Join-Path $Root $candidate)){$files += $candidate}
 }
 $moduleRoot=Join-Path $Root 'backend/src'

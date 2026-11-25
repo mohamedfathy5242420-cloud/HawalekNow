@@ -12,6 +12,8 @@ public sealed class MerchantAccountConfiguration : IEntityTypeConfiguration<Merc
         builder.HasKey(account => account.Id);
         builder.HasIndex(account => account.UserId).IsUnique();
         builder.Property(account => account.RowVersion).IsRowVersion();
+        builder.Property(account => account.ReviewReason).HasMaxLength(1000);
+        builder.HasIndex(account => new { account.Status, account.Id });
         builder.Ignore(account => account.CanPrepareAccount);
         builder.Ignore(account => account.CanPublish);
         // UserId is an opaque owner id; no cross-module entity/navigation dependency.

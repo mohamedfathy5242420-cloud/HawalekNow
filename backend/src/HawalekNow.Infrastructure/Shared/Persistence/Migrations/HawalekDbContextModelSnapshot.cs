@@ -486,6 +486,16 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ReviewReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTimeOffset?>("ReviewedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("ReviewedBy")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -502,6 +512,8 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
 
                     b.HasIndex("UserId")
                         .IsUnique();
+
+                    b.HasIndex("Status", "Id");
 
                     b.ToTable("Accounts", "merchants", t =>
                         {
@@ -573,6 +585,52 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         {
                             t.HasCheckConstraint("CK_SynonymTerms_Text", "LEN([Original]) > 0 AND LEN([NormalizedKey]) > 0");
                         });
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Shared.Auditing.AuditEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CurrentState")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Operation")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("PreviousState")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid>("TargetId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TargetKind")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActorId", "OccurredAt");
+
+                    b.HasIndex("TargetKind", "TargetId", "OccurredAt");
+
+                    b.ToTable("AuditEntries", "operations");
                 });
 
             modelBuilder.Entity("HawalekNow.Infrastructure.Modules.Identity.ApplicationUser", b =>

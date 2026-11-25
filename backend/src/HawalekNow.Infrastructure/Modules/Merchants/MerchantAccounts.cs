@@ -1,4 +1,5 @@
 using HawalekNow.Application.Modules.Merchants.Contracts;
+using HawalekNow.Application.Modules.Merchants;
 using HawalekNow.Domain.Modules.Merchants;
 using HawalekNow.Infrastructure.Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ public sealed class MerchantAccounts(HawalekDbContext context) : IMerchantAccoun
 
 public static class MerchantRegistration
 {
-    public static IServiceCollection AddMerchantAccounts(this IServiceCollection services) =>
-        services.AddScoped<IMerchantAccounts, MerchantAccounts>();
+    public static IServiceCollection AddMerchantAccounts(this IServiceCollection services) => services
+        .AddScoped<IMerchantAccounts, MerchantAccounts>()
+        .AddScoped<IMerchantReviewService, MerchantReviewService>();
 }

@@ -366,6 +366,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P04-S02 مراجعة واعتماد التاجر
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S02.md).
+
 - الاعتمادات السابقة: [P04-S01](#p04-s01).
 - المخرج المطلوب: Admin approve وrequest changes وreject مع السبب.
 - بوابة التحقق: V2 policies وV3 API وAudit.
