@@ -22,6 +22,156 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Catalog.Activity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameArKey")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEnKey")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NameArKey")
+                        .IsUnique();
+
+                    b.HasIndex("NameEnKey")
+                        .IsUnique();
+
+                    b.ToTable("Activities", "catalog", t =>
+                        {
+                            t.HasCheckConstraint("CK_Activities_Names", "LEN([NameAr]) > 0 AND LEN([NameEn]) > 0 AND LEN([NameArKey]) > 0 AND LEN([NameEnKey]) > 0");
+                        });
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Catalog.ActivitySeedKey", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SourceKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<string>("SourceVersion")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceKey")
+                        .IsUnique();
+
+                    b.ToTable("SeedKeys", "catalog");
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Catalog.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameArKey")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEnKey")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityId", "NameArKey")
+                        .IsUnique()
+                        .HasFilter("[ParentId] IS NULL");
+
+                    b.HasIndex("ActivityId", "NameEnKey")
+                        .IsUnique()
+                        .HasFilter("[ParentId] IS NULL");
+
+                    b.HasIndex("ParentId", "ActivityId");
+
+                    b.HasIndex("ActivityId", "ParentId", "NameArKey")
+                        .IsUnique()
+                        .HasFilter("[ParentId] IS NOT NULL");
+
+                    b.HasIndex("ActivityId", "ParentId", "NameEnKey")
+                        .IsUnique()
+                        .HasFilter("[ParentId] IS NOT NULL");
+
+                    b.ToTable("Categories", "catalog", t =>
+                        {
+                            t.HasCheckConstraint("CK_Categories_Names", "LEN([NameAr]) > 0 AND LEN([NameEn]) > 0 AND LEN([NameArKey]) > 0 AND LEN([NameEnKey]) > 0");
+
+                            t.HasCheckConstraint("CK_Categories_Parent", "[ParentId] IS NULL OR [ParentId] <> [Id]");
+                        });
+                });
+
             modelBuilder.Entity("HawalekNow.Domain.Modules.Identity.AccountDeletion", b =>
                 {
                     b.Property<Guid>("Id")
@@ -182,6 +332,154 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.ToTable("OtpChallenges", "identity");
                 });
 
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Locations.Area", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GovernorateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId", "GovernorateId");
+
+                    b.HasIndex("GovernorateId", "CityId", "Id");
+
+                    b.ToTable("Areas", "locations", t =>
+                        {
+                            t.HasCheckConstraint("CK_Areas_Names", "LEN([NameAr]) > 0 AND LEN([NameEn]) > 0");
+                        });
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Locations.City", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GovernorateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GovernorateId", "Id");
+
+                    b.ToTable("Cities", "locations", t =>
+                        {
+                            t.HasCheckConstraint("CK_Cities_Names", "LEN([NameAr]) > 0 AND LEN([NameEn]) > 0");
+                        });
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Locations.Governorate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("nvarchar(160)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Governorates", "locations", t =>
+                        {
+                            t.HasCheckConstraint("CK_Governorates_Names", "LEN([NameAr]) > 0 AND LEN([NameEn]) > 0");
+                        });
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Locations.LocationSeedKey", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ReferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SourceCommit")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("SourceKey")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceKey")
+                        .IsUnique();
+
+                    b.ToTable("SeedKeys", "locations", t =>
+                        {
+                            t.HasCheckConstraint("CK_LocationSeedKeys_Kind", "[Kind] IN (1,2,3)");
+                        });
+                });
+
             modelBuilder.Entity("HawalekNow.Domain.Modules.Merchants.MerchantAccount", b =>
                 {
                     b.Property<Guid>("Id")
@@ -208,6 +506,72 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.ToTable("Accounts", "merchants", t =>
                         {
                             t.HasCheckConstraint("CK_MerchantAccounts_Status", "[Status] IN (1,2,3,4,5)");
+                        });
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Search.SynonymGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SynonymGroups", "search", t =>
+                        {
+                            t.HasCheckConstraint("CK_SynonymGroups_Names", "LEN([NameAr]) > 0 AND LEN([NameEn]) > 0");
+                        });
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Search.SynonymTerm", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("NormalizedKey")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<string>("Original")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("NormalizedKey")
+                        .IsUnique();
+
+                    b.ToTable("SynonymTerms", "search", t =>
+                        {
+                            t.HasCheckConstraint("CK_SynonymTerms_Text", "LEN([Original]) > 0 AND LEN([NormalizedKey]) > 0");
                         });
                 });
 
@@ -507,6 +871,21 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.ToTable("UserTokens", "identity");
                 });
 
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Catalog.Category", b =>
+                {
+                    b.HasOne("HawalekNow.Domain.Modules.Catalog.Activity", null)
+                        .WithMany()
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.HasOne("HawalekNow.Domain.Modules.Catalog.Category", null)
+                        .WithMany()
+                        .HasForeignKey("ParentId", "ActivityId")
+                        .HasPrincipalKey("Id", "ActivityId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+                });
+
             modelBuilder.Entity("HawalekNow.Domain.Modules.Identity.AccountDeletion", b =>
                 {
                     b.HasOne("HawalekNow.Infrastructure.Modules.Identity.ApplicationUser", null)
@@ -530,6 +909,34 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.HasOne("HawalekNow.Infrastructure.Modules.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Locations.Area", b =>
+                {
+                    b.HasOne("HawalekNow.Domain.Modules.Locations.City", null)
+                        .WithMany()
+                        .HasForeignKey("CityId", "GovernorateId")
+                        .HasPrincipalKey("Id", "GovernorateId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Locations.City", b =>
+                {
+                    b.HasOne("HawalekNow.Domain.Modules.Locations.Governorate", null)
+                        .WithMany()
+                        .HasForeignKey("GovernorateId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Search.SynonymTerm", b =>
+                {
+                    b.HasOne("HawalekNow.Domain.Modules.Search.SynonymGroup", null)
+                        .WithMany()
+                        .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -1,5 +1,7 @@
 # تحقق P01 وبناء وتشغيل API داخل Docker
 
+> تصحيح مراجعة P03 بتاريخ2026-11-24: نجاح البناء التاريخي لم يكن دليلًا كافيًا على ضيق سياق Docker أو استبعاد كل الإعدادات المحلية. أثبت اختبار Docker بعلامات وهمية مرور appsettings.Local.json وملفات زائدة بالقواعد القديمة. أُزيلت إعادة تضمين المجلدات، وأضيفت موارد Seed والنسب والترخيص بالاسم. وظيفة Docker الحالية تشغّل [اختبار السياق والصورة](../docker/API_BUILD_CONTEXT.md) قبل smoke؛ الشرح التاريخي أدناه محفوظ، والنتائج الجديدة في [مراجعة P03](../planning/phase-03/PHASE_REVIEW.md). الاختبار لا يبدأ API أوSQL أوMailpit، وsmoke التالية مستقلة بالخلفية المعطلة واتصال قاعدة غير مستخدم.
+
 الـ[Workflow](../.github/workflows/p01-baseline.yml) يعمل على pull_request وpush إلى main وworkflow_dispatch. ثلاث Jobs مستقلة على GitHub-hosted Ubuntu 24.04؛ لا self-hosted أو خدمات جهاز المستخدم أو أسرار شخصية. permissions=contents:read وcheckout لا يحتفظ بالمصادقة، ولا Registry أو Deploy أو تغيير حماية الفروع. لا pull_request_target.
 
 تم تنفيذ trigger الـPR فعليًا ونجح؛ push main لم ينفذ لأن الدمج غير مأذون، وworkflow_dispatch مُعرّف ولم يُشغّل. ظهور زر التشغيل اليدوي في واجهة GitHub يتطلب ملف Workflow في الفرع الافتراضي؛ المرجع يوضح أيضًا dispatch عبر API/CLI بعد تشغيل Workflow مرة واحدة على الأقل. انظر [توثيق الأحداث الرسمي](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_dispatch)؛ لا ندمج المرحلة لمجرد تفعيل الزر.
@@ -64,6 +66,8 @@ docker rm --force hawaleknow-api-review
 
 لا prune أو down -v أو حذف Volumes أو تغيير خدمات قائمة. أوامر SQL/Mailpit وbootstrap والأسرار المحلية في [Docker README](../docker/README.md)؛ تلك الموارد متوقفة وقت مراجعة P01 الحالية ولم تُعد تشغيلها. الأدلة التاريخية للاستمرار تبقى في S06، والفحص الحالي للقراءة فقط لا يعيد اختبارها. [PHASE_REVIEW](../planning/phase-01/PHASE_REVIEW.md) يسجل النتائج الحالية وCI run والقيود والمراجعات البشرية Pending.
 ## تنفيذ P02 الحالي
+
+تحديث P03: Workflow نفسها أصبحت باسم Backend baseline and P03 reference data، وتستمر في تشغيل الحل كاملًا بالتوازي المعتاد على SQL وMailpit معزولتين، بما في ذلك اختبارات Catalog وLocations وMigrations والمعاملات وHTTP. لا فلتر يستبعد اختبارات P01/P02 أو عزل Logger، ولا تغيير للإصدارات المثبتة أو متطلبات حماية main. بيانات Seed وgeography وCache تضاف واختباراتها إلى الحل في خطواتها؛ لا يدعي هذا التحديث اكتمالها قبل تنفيذها. بوابات التوثيق تحفظ46 حالة P01 و27 حالة P02 وتضيف14 حالة P03 حتى الآن، مع توثيق أي فشل وإصلاحه في verification.json.
 
 Workflow backend يشغّل SQL Server وMailpit معزولين لكل Run، بأسماء وlabel مرتبطة بـrun_id وports loopback عشوائية. كلمة مرور SQL مولدة وتُحجب من السجلات، ولا ترفع artifacts تحمل إعدادات أو رسائل. HAWALEKNOW_TEST_SQL يشير إلى master في خادم الاختبار؛ كل fixture تنشئ قاعدة جديدة وتطبق EF migrations وتزيل قاعدتها فقط. HAWALEKNOW_TEST_SMTP_PORT وHAWALEKNOW_TEST_MAILPIT_URL يوجهان SMTP والقراءة إلى Mailpit التشغيل دون relay خارجي. اختبار lost ACK يستخدم TCP proxy محليًا إلى Mailpit الفعلية.
 

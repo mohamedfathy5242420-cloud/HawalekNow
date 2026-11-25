@@ -21,6 +21,14 @@ Updated: 2026-10-11
 
 عمليات Admin الخاصة بالموافقات والتصنيفات والمرادفات والبلاغات والمحتوى والإحصاءات موجودة في الوحدة صاحبة البيانات. Admin صلاحية داخل Identity وليست Module. Audit يسجل فعل الإدارة؛ لا يملك العملية التجارية. الخدمات التشغيلية مثل Outbox وHangfire وLogging والتخزين ليست وحدات تجارية جديدة؛ تتأسس في توقيتها المحدد في Q003-01 إلى Q003-06.
 
+## تأسيس P03 الجاري
+
+تحديث S04–S07: Catalog تملك الأنشطة ومفاتيحاستيرادها، وLocations تملك المصدرالمثبت وSeed ومفاتيحها؛ التواصل عبرIInitialActivities فيApplication.Catalog.Contracts داخلUoW واحدة. Search تملكSynonymGroup/Term وإدارتها فقط. GeoPoint مفهومتقني مستقل فيDomain.Shared.Geography والتحويلNTS/EF فيInfrastructure.Shared.Geography؛ مستهلكهالمنتظرP04-S04 ولاكيانإنتاجي أضيفلههنا. Cache الاختيارالعامةلهاعقدSnapshot محدودفيApplication.Shared وتنفيذIMemoryCache فيInfrastructure.Shared؛ Decorators الوحدةتعيدDTOs الخاصةبها، والإدارةتبطل بعدCommit. [سياسة الذاكرة](REFERENCE_CACHE.md) و[حزم geography](P03_DEPENDENCIES.md). لا تغييرملكيةالأعمال أوطبقاتالإنتاج أوحساباتP02.
+
+تحديث S03: Locations تملك Governorate وCity وArea وعقود الإدارة والاختيار، وschema locations. FK مركبة للمدينة والمحافظة تحمي المنطقة من زوج غير متطابق؛ لا مرجع إلى Entities في Catalog أوMerchants. إدارة Catalog وLocations تستخدم محدد المعدل التقني ReferenceDataRateLimits في Api.Shared.Security، دون نقل ملكية البيانات إلىShared أوتغيير سياسات Identity. لا Seed أوgeography أومرادفات أوCache منفذة في هذا التحديث؛ لكل منها خطوتها التالية.
+
+P03-S01 أضاف Activity وCategory وقواعد الأسماء في Domain.Catalog وتكويناتها في Infrastructure.Catalog؛ schema catalog ومفاتيح الأنشطة والأشقاء والانتماء للنشاط. [تصميم P03](../planning/phase-03/DESIGN.md) يحدد بقية كيانات Locations وSearch وخدماتها؛ لا نقل ملكية أو مدخل عام لجداول الوحدات. لا منتجات أو متاجر أو فروع ضمن P03. عبارات عدم وجود أنواع في سجل P01 أدناه تاريخية، وحدود الاعتماد نفسها ملزمة.
+
 ## الطبقات والمجلدات وNamespaces
 
 داخل كل مشروع إنتاج توجد `Modules/<Module>/README.md` لتثبيت المجلد وNamespace `HawalekNow.<Layer>.Modules.<Module>`. اختيار `<Layer>` من Domain وApplication وInfrastructure وApi فقط. الـREADME يحجز Namespace ويحدد دور الطبقة؛ لا أنواع compiled في الوحدات حاليًا، ولا Marker أو Base classes لإعطاء مظهر تنفيذ غير موجود.

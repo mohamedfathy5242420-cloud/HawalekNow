@@ -1,6 +1,55 @@
 # سجل قرارات HawalekNow
 
-آخر تحديث: 2026-11-21
+آخر تحديث: 2026-11-25
+
+## D020 قبول P03 وإذن إغلاقها وبدء P04 بعد البوابة
+
+Status: Approved
+ApprovalDate: 2026-11-25
+ReviewedHead: d6e9f7e4d65c891a4a932cccd02c88fe00c35057
+AcceptanceBasis: CodeTestsCIAndDockerCorrection
+ClosureAuthorization: Approved
+MergeAuthorization: Approved
+P04Execution: ConditionalOnP03Closure
+P04MergeAuthorization: NotAuthorized
+P05Execution: NotAuthorized
+UserScalarReview: Deferred
+UserPostmanReview: Deferred
+EducationalWalkthrough: Deferred
+
+اعتمد المستخدم P03 تقنيًا بناءً على مراجعة الكود والاختبارات وCI وتصحيح Docker، وأذن صراحة بـCommit وPush وإغلاق المرحلة وتحويل PR #10 إلى Ready ثم Squash Merge بعد نجاح فحوص الإغلاق وCI على رأس الإغلاق وفحص الحماية دون تجاوزها. الرأس المحلي والبعيد يطابقان الرأس المراجع، وCI45407402244 ناجحة بالوظائف الثلاث. تحفظ D018/D019 وسجلات Pending والأخفاقات السابقة كتاريخ؛ هذا القرار الأحدث يحل محل منع إغلاق P03 فقط. التجربة الشخصية وجلسة الشرح غير المكتملتين Deferred وليستا Passed؛ V4 Approved يعني قبولًا تقنيًا بهذا القرار دون ادعاء تنفيذ التجربة.
+
+بدء P04-S01 إلى S07 مأذون بعد الدمج الفعلي وتحديث main بأمان ونجاح فحوص ما بعد الدمج وCI على main وتسليم P04 Ready. التنفيذ بالترتيب بعد التحقق التقني المناسب لكل خطوة. تسلم P04 كاملة InReview في Draft PR واحدة، واعتماد المستخدم وV4 Pending وتسليم P05 Draft؛ لا دمج P04 أو بدء P05. يثبت إذن التنفيذ عند نجاح البوابة بالمعرف التالي المتاح. تحفظ ملفات Word وSeed والجدول خارج التعديل وstaging والفروع والبيانات والVolumes؛ لا force push أو prune أو تغيير موارد مشاريع أخرى. عند فشل فحص مانع يتوقف الانتقال ولا تعتبر نتيجة تعذر العزل نجاحًا.
+
+## D019 اعتماد مصدر Seed الجغرافية وحدود تغطيته
+
+Status: Approved
+ApprovalDate: 2026-11-21
+OwnerPhase: P03
+Source: https://github.com/open-admin-data/egypt-administrative-divisions
+SourceCommit: 76b47b22872288c0d8b0c757975980e6986945e8
+Coverage: 27 governorates;365 districts;5716 shiyakhas
+Completeness: NotClaimed
+
+اختار المستخدم صراحة «اعتماد النسخة بنطاقها ونواقصها الموثقة». تعتمد النسخة المفحوصة كنطاق Seed أولي، مع حفظ الأسماء والمعرّفات الأصلية دون اختراع تكملة أو إعادة تسمية الأقسام المختلفة التي تتشارك اسمًا إنجليزيًا. في النسخة 14 قسمًا/مركزًا بلا مناطق و18 مجموعة أسماء إنجليزية متكررة داخل المحافظة. لا ينسب لهذا القبول إثبات اكتمال بيانات مصر الحالية أو صحة كل إحداثية؛ النواقص موثقة في مراجعة المصدر. تعتمد مستويات المحافظة ثم القسم/المركز ثم الشياخة كتقسيم مرجعي أولي، وتوضح عقود الاختيار أن مستوى City يشمل القسم/المركز في المصدر.
+
+القبول يحسم سؤال المصدر السابق فقط؛ لا يعتمد مخرجات P03 أو V4 ولا يجيز دمجها أو بدء P04. تستمر D018 وحدود التنفيذ الأصلية. ترخيص النسخة CC BY 4.0؛ يلزم حفظ النسب والترخيص ونسخة المصدر وبصماتها عند إدراج Seed.
+
+## D018 إذن تنفيذ P03 بعد اكتمال بوابة P02
+
+Status: Approved
+ApprovalDate: 2026-11-21
+ExecutionMode: Phase
+AuthorizedPhase: P03
+PhaseUserApproval: Pending
+MergeAuthorization: NotAuthorized
+P04Execution: NotAuthorized
+BaseMain: 5e4250ff31f84c8806649c7ef1786574da7dd00a
+PredecessorAcceptance: D017
+
+طلب المستخدم الأصلي أذن بتنفيذ P03-S01 إلى S07 بعد إغلاق ودمج P02 والتحقق بعدها. تحققت البوابة: PR #9 merged=true على SHA أعلاه، وCI main44892733967 ناجحة بكل Jobs، وإعادة محلية بعد الدمج لـlocked Restore وRelease Build و270 اختبارًا وFormat والفاحصين و46+27 حالة بوابة وdiff نجحت. [تقرير الإغلاق الفعلي](../planning/phase-02/MERGE_RECEIPT.md) يسجل الروابط والحدود دون تغيير تاريخ السجلات السابقة.
+
+الفرع codex/p03-implement-reference-data-and-locations بدأ من main المذكورة. هذا إذن تنفيذ وليس اعتماد مخرجات؛ P03 وV4 تبقيان Pending حتى المراجعة، وتسليم P04 يكون Draft، دون دمج P03 أو بدء P04. التنفيذ المتتابع والعقود والأمن والمعاملات وحدود النطاق في طلب المستخدم ملزمة. قبل بدء الكود يوجد سؤال مؤثر غير محسوم عن مصدر Seed الجغرافية ونطاق التغطية، موثق في [مراجعة المصدر](P03_SOURCE_REVIEW.md)؛ لا يفترض اعتماد المصدر أو أسماء بديلة قبل جواب المستخدم. لم تبدأ ملفات خطوات P03 أوكودها بعد.
 
 ## D017 قبول P02 وإذن إغلاقها وبدء P03 بعد البوابة
 

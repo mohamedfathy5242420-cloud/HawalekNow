@@ -1,17 +1,41 @@
+using HawalekNow.Infrastructure.Modules.Search;
 using HawalekNow.Api.Shared.Diagnostics;
 using HawalekNow.Api.Modules.Identity;
+using HawalekNow.Api.Modules.Catalog;
 using HawalekNow.Api.Shared.Security;
 using HawalekNow.Api.Shared.Errors;
 using HawalekNow.Api.Shared.OpenApi;
 using HawalekNow.Api.Shared.Routing;
 using HawalekNow.Application.Shared;
+using HawalekNow.Application.Modules.Locations;
 using HawalekNow.Infrastructure.Modules.Identity;
 using HawalekNow.Infrastructure.Modules.Merchants;
+using HawalekNow.Infrastructure.Modules.Catalog;
+using HawalekNow.Infrastructure.Modules.Locations;
 using HawalekNow.Infrastructure.Shared.Persistence;
 using HawalekNow.Infrastructure.Shared.Messaging;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
+
+if (args.Contains("--seed-reference-data", StringComparer.Ordinal))
+{
+    try
+    {
+        if (args.Contains("--seed-admin", StringComparer.Ordinal)) throw new InvalidOperationException("Choose one explicit bootstrap command.");
+        var bootstrap = Host.CreateApplicationBuilder(args.Where(argument => argument != "--seed-reference-data").ToArray());
+        bootstrap.Logging.ClearProviders();
+        bootstrap.Services.AddPersistence(bootstrap.Configuration).AddCatalogReferenceData().AddLocationsReferenceData();
+        using var bootstrapHost = bootstrap.Build(); await using var scope = bootstrapHost.Services.CreateAsyncScope();
+        var result = await scope.ServiceProvider.GetRequiredService<IReferenceDataSeeder>().SeedAsync();
+        Console.WriteLine($"Reference seed completed. Added activities={result.ActivitiesAdded}; governorates={result.GovernoratesAdded}; cities={result.CitiesAdded}; areas={result.AreasAdded}. Existing Admin data preserved; nationwide completeness not claimed.");
+    }
+    catch (Exception)
+    {
+        Console.Error.WriteLine("Reference seed failed. Check the reviewed database configuration and pinned dataset."); Environment.ExitCode = 1;
+    }
+    return;
+}
 
 if (args.Contains("--seed-admin", StringComparer.Ordinal))
 {
@@ -45,9 +69,13 @@ builder.Services.AddApplication();
 builder.Services.AddIdentityAuthentication();
 builder.Services.AddAccountPolicies();
 builder.Services.AddBrowserSecurity().AddIdentityRateLimits();
+builder.Services.AddReferenceDataRateLimits();
 builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme).Configure<SessionTokens, TimeProvider>(
     (options, tokens, clock) => options.TokenValidationParameters = tokens.Validation(clock));
 builder.Services.AddPersistence(builder.Configuration).AddIdentityPersistence().AddMerchantAccounts().AddBackgroundProcessing();
+builder.Services.AddCatalogReferenceData();
+builder.Services.AddLocationsReferenceData();
+builder.Services.AddSearchReferenceData();
 builder.Services.AddApiErrorHandling().AddMvcOptions(options => options.Conventions.Add(new ApiV1RouteConvention()));
 builder.Services.AddHealthChecks();
 builder.Services.AddOpenApi("v1", options => options.AddDocumentTransformer<ApiDocumentTransformer>());

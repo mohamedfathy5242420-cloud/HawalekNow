@@ -1,44 +1,54 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-11-21
+آخر تحديث: 2026-11-25
 
-اعتمد المستخدم P02 وفق D017 بتاريخ 2026-11-21. نجحت إعادة اختبارات الإغلاق:270 passed دون failed/skipped بعد أن أصبحت SQL Healthy. [سجل الإغلاق](../planning/phase-02/CLOSURE.md) يحفظ الفحوص؛ [المحاولة الأولى](../planning/phase-02/CLOSURE_ATTEMPT.md) محفوظة تاريخيًا. Commit الإغلاق وCI والدمج وفحوص ما بعده لم تثبت بعد؛ لا بدء P03 قبل اكتمالها. [الحالة قبل القبول](P02_REVIEWED_STATE.md) محفوظة دون إعادة كتابة التاريخ.
+اعتمدت P03 تقنيًا وفق D020 وأغلقت حالتها؛ الدمج والتحقق بعده لم يحدثا بعد. تسليم P04 يبقى Draft حتى نجاح بوابته الفعلية. [سجل الإغلاق](../planning/phase-03/CLOSURE.md) و[الحالة قبل القبول](P03_REVIEWED_STATE.md) يحفظان التاريخ. سجل ما قبل القبول أدناه سجل تاريخي لرؤوسها ووقتها؛ لا تعيد منع الإذن الحالي.
 
-- Phase: P02
-- Step: P02-S09
+- Phase: P03
+- Step: P03-S07
 - Status: Done
 - ExecutionMode: Phase
 - UserApproval: Approved
 - ReviewStatus: Approved
 - V4: Approved
-- AcceptanceBasis: CodeTestsCI
-- AcceptanceDecision: D017
-- ApprovalDate: 2026-11-21
-- EducationalWalkthrough: Deferred
-- ReviewedHead: d08e057e11516b25dca7fb22403a39a12b5b976b
-- UserPostmanReview: Deferred
+- ExecutionAuthorization: D018
+- BaseMain: 5e4250ff31f84c8806649c7ef1786574da7dd00a
+- P04Status: NotStarted
+- Scope: إغلاق P03 وفق D020؛ تنفيذ P04 مشروط بنجاح الدمج وفحوص ما بعده وCI main.
+- ActiveStepFile: planning/phase-03/steps/S07.md
+- NextStep: فحوص الإغلاق وCI لرأسه ثم Ready/Squash والتحقق بعد الدمج؛ لا P04 قبل اكتمال البوابة.
+- AcceptanceDecision: D020
+- ApprovalDate: 2026-11-25
+- ReviewedHead: d6e9f7e4d65c891a4a932cccd02c88fe00c35057
+- AcceptanceBasis: CodeTestsCIAndDockerCorrection
 - UserScalarReview: Deferred
-- ExecutionAuthorization: D015
-- BaseMain: b7a502051ac52f06b57c541e24f4bdde270a3392
-- P03Status: NotStarted
-- Scope: إغلاق P02 وفق D017؛ تنفيذ P03 مشروط بنجاح الدمج والتحقق بعده.
-- ActiveStepFile: planning/phase-02/steps/S09.md
-- NextStep: Commit الإغلاق ثم CI على رأسه وReady/Squash لـPR #9 وفحوص main؛ بعدها فقط P03.
+- UserPostmanReview: Deferred
+- EducationalWalkthrough: Deferred
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
+
+## سجل P03 قبل القبول — تاريخي
+
+أُغلقت P02 ودمجت وفق D017، ونجحت فحوص ما بعد الدمج؛ [إيصالها](../planning/phase-02/MERGE_RECEIPT.md) و[حالتها المغلقة](P02_CLOSED_STATE.md) يحفظان التاريخ وحدود القبول. نُفذت P03-S01 إلى S07 تحت إذن D018، والمصدر مقبول بنطاقه ونواقصه وفق D019. جميع الخطوات Verified تقنيًا، والمرحلة InReview دون اعتماد مستخدم أو V4 مفترضين.
+
+نُفذ تصحيح مراجعةDocker على نفسDraft PR10 بإذن المستخدم: اختبارDocker أثبت مرورappsettings.Local.json بعلامة وهمية قبل التصحيح، ثم أثبت منع79 حالة محظورة وإتاحة157 ملف بناء بعده. نجح بناء الصورة وفحص مواردSeed الثلاثة والنسب والترخيص؛ [الأدلة الجديدة](../planning/phase-03/docker-review-verification.json) تسجل370 اختبارًا محليًا وعلى [CI45406019154](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45406019154) الناجحة على رأس الإصلاح3bb51ee؛ رأس إيصال الأدلة اللاحق يُتحقق منه منفصلًا فيChecks ووصفPR10. لا اعتماد أوإغلاقP03، ولا تغيير للبيانات أوتشغيل/إيقافSQL/Mailpit أوP04. السجل والأعداد السابقة أدناه تاريخية لرؤوسها المحددة.
+
+التحقق النهائي على رأس التنفيذ 6fe86f60ca16987d9225747c065ec6ae2c99d732: **370 اختبارًا** (47 معمارية +247 Integration +76 Unit)، محليًا وعلى CI45004486033، دون failed/skipped. نجح locked restore وRelease Build بصفر تحذيرات وأخطاء وFormat والفاحصان وdiff. التشغيل الأول 367/1 كشف مهلة Seed، وأُصلحت مع حفظ الدليل. نتيجة آخر رأس للتسليم في Checks ووصف Draft PR #10.
+
+[مراجعة المرحلة وخريطة API](../planning/phase-03/PHASE_REVIEW.md)، [الأدلة](../planning/phase-03/verification.json)، [تسليم P04 بحالة Draft](../planning/phase-03/handoffs/S07-to-P04.md). ملف الجدول محفوظ خارج staging؛ لا ادعاء اكتمال بيانات مصر، ولا تغيير سياسات حسابات P02 أو Logging. تجربة المستخدم وجلسة الشرح لا تعدّان Passed من هذا التقرير.
 
 ## سجل تنفيذ P02 السابق — تاريخي
 
 تحققت البوابة: P01 Done وApproved وفق D013، وPR #8 merged=true في 2026-11-10T11:01:00Z، وتسليم P02 Ready. بدأ الفرع codex/p02-implement-identity-and-account-security من main المحدثة. [سجل P01 المغلق](../planning/phase-01/CLOSED_STATE.md) يحفظ الحالة السابقة، و[تصميم P02](../planning/phase-02/DESIGN.md) و[S01](../planning/phase-02/steps/S01.md) يسجلان التنفيذ الجاري. جواب المستخدم D014 يثبت التفرد داخل نوع الحساب والحجز الدائم للمعرّفات بعد الحذف. S01 InReview وVerified تقنيًا: DbContext واحد وIdentity وMerchantAccount وUoW وMigration فعلية مطبقة على HawalekNow_Development؛ 133 اختبارًا ناجحًا (47+77+9) بلا failed/skipped، منها SQL للتفرد والتزامن وUserManager وrollback بين الوحدتين. locked-mode Restore وRelease build وFormat verification وفاحصا التوثيق وdiff نجحت، مع 46 حالة بوابة سابقة و14 حالة P02 مرفوضة. لا اعتماد بشري مفترض؛ [تسليم S02](../planning/phase-02/handoffs/S01-to-S02.md) InternalReady. Docker بدأ بعد غياب Engine وفحصت الموارد؛ SQL المملوك للمشروع Healthy، وMailpit القديمة فشلت بسبب حجز منفذ 1025 دون إيقاف أو حذف أي مورد. صححت تحذيرات Pkcs بpin للنسخة المصححة دون تعطيل audit. CI عُدّل لتوفير SQL معزولة وسر عشوائي خاص بالتشغيل؛ لم يشغّل على PR لـP02 بعد. الملف TARGET_SCHEDULE.md محفوظ خارج staging ببصمته الأصلية. LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete.
 
-تحديث S02: [Admin bootstrap](../planning/phase-02/steps/S02.md) Verified تقنيًا و[تسليم S03](../planning/phase-02/handoffs/S02-to-S03.md) InternalReady. 139 اختبارًا (47+83+9) بلا failed/skipped، تشمل Program الحقيقي والتنافس وعدم تعديل أي بيانات حساب عند التكرار والإعدادات الخاطئة. Format verification ناجحة؛ لا حزم أو Migration جديدة في S02. [دليل التشغيل](../backend/IDENTITY_OPERATIONS.md) يحصر إعدادات الأسرار المحلية والأمر المقصود؛ لا Admin حقيقي أنشئ في قاعدة التطبيق ضمن الاختبارات.
+تحديث S02: [Admin bootstrap](../planning/phase-02/steps/S07.md) Verified تقنيًا و[تسليم S03](../planning/phase-02/handoffs/S02-to-S03.md) InternalReady. 139 اختبارًا (47+83+9) بلا failed/skipped، تشمل Program الحقيقي والتنافس وعدم تعديل أي بيانات حساب عند التكرار والإعدادات الخاطئة. Format verification ناجحة؛ لا حزم أو Migration جديدة في S02. [دليل التشغيل](../backend/IDENTITY_OPERATIONS.md) يحصر إعدادات الأسرار المحلية والأمر المقصود؛ لا Admin حقيقي أنشئ في قاعدة التطبيق ضمن الاختبارات.
 
 تحديث S03: التسجيل Verified تقنيًا، و[تسليم S04](../planning/phase-02/handoffs/S03-to-S04.md) InternalReady. آخر الحل 164 اختبارًا (47+94+23) بلا failed/skipped؛ التنافس وrollback عبر Program وHTTP وحفظ صف سابق أثناء Migration مثبتة على SQL. فشل assertion Collation وإصلاحه محفوظان في S03؛ لا تخفيف للفحص. Migration S03 طُبّقت على HawalekNow_Development بلا حذف بيانات أو إعادة إنشاء قاعدة؛ Format وBuild والفاحص وdiff ناجحة. لا حزم جديدة أو OTP أو جلسات بعد؛ ذلك في خطواتها التالية.
 
-تحديث S04: [تأكيد البريد وOutbox](../planning/phase-02/steps/S04.md) Verified تقنيًا و[تسليم S05](../planning/phase-02/handoffs/S04-to-S05.md) InternalReady. الحل الحالي 174 passed (47+101+26)، صفر failed/skipped، وRelease Build صفر warnings/errors. SQL وHTTP وSMTP Mailpit وHangfire SQL Worker فعلية؛ concurrency/single-use/rollback/restart وlease recovery وفقد ACK مثبتة. قبول البريد ثم فقد الرد سبب نسختين عند retry، فلا exactly-once. Migration additive مطبقة على HawalekNow_Development، ومفاتيح OTP/Outbox خارج Git؛ Mailpit اختبار loopback معزولة دون لمس القديمة أو Volumes أو مشاريع أخرى. [Draft PR #9](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/9) مفتوحة؛ [CI 42826018563](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42826018563) نجحت على 31ae179 وتغطي S01–S03 فقط، ولا تغطي S04 الجديدة. D016 يثبت منع الحذف الذاتي للـAdmin؛ اعتماد المرحلة وV4 Pending. LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete.
+تحديث S04: [تأكيد البريد وOutbox](../planning/phase-02/steps/S07.md) Verified تقنيًا و[تسليم S05](../planning/phase-02/handoffs/S04-to-S05.md) InternalReady. الحل الحالي 174 passed (47+101+26)، صفر failed/skipped، وRelease Build صفر warnings/errors. SQL وHTTP وSMTP Mailpit وHangfire SQL Worker فعلية؛ concurrency/single-use/rollback/restart وlease recovery وفقد ACK مثبتة. قبول البريد ثم فقد الرد سبب نسختين عند retry، فلا exactly-once. Migration additive مطبقة على HawalekNow_Development، ومفاتيح OTP/Outbox خارج Git؛ Mailpit اختبار loopback معزولة دون لمس القديمة أو Volumes أو مشاريع أخرى. [Draft PR #9](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/9) مفتوحة؛ [CI 42826018563](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42826018563) نجحت على 31ae179 وتغطي S01–S03 فقط، ولا تغطي S04 الجديدة. D016 يثبت منع الحذف الذاتي للـAdmin؛ اعتماد المرحلة وV4 Pending. LoggingPolicy: PipelineOnly; HostLogsBlocked; OperationalDiagnosticsIncomplete.
 
-تحديث S05: [الدخول والجلسات](../planning/phase-02/steps/S05.md) Verified تقنيًا و[تسليم S06](../planning/phase-02/handoffs/S05-to-S06.md) InternalReady. 193 passed (47+118+28)، صفر failed/skipped، وlocked Restore وFormat verification ناجحتان. JWT وrefresh داخل HttpOnly Secure cookies فقط، بدوران ذري وإلغاء العائلة عند reuse والتحقق من SQL على كل طلب محمي. Kestrel/TLS حقيقية مع جذر اختبار خاص دون تعطيل Secure أو bypass؛ اختبار Merchant Username/Email وSQL lockout/config/restart ناجح. مخالفات حدود API وSchannel وإغلاق Worker وفشلها التاريخي وإصلاحها في S05؛ 47 اختبار معمارية بقيت كما هي. [CI S04 42849693832](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42849693832) نجحت بجميع Jobs على 1a8564b؛ لا تغطي S05 قبل رفعها. لا CSRF أو HTTP rate limits أو صلاحيات السياسات بعد؛ تكتمل بالتتابع قبل تسليم المرحلة. UserApproval وV4 Pending، ولا دمج أو P03.
+تحديث S05: [الدخول والجلسات](../planning/phase-02/steps/S07.md) Verified تقنيًا و[تسليم S06](../planning/phase-02/handoffs/S05-to-S06.md) InternalReady. 193 passed (47+118+28)، صفر failed/skipped، وlocked Restore وFormat verification ناجحتان. JWT وrefresh داخل HttpOnly Secure cookies فقط، بدوران ذري وإلغاء العائلة عند reuse والتحقق من SQL على كل طلب محمي. Kestrel/TLS حقيقية مع جذر اختبار خاص دون تعطيل Secure أو bypass؛ اختبار Merchant Username/Email وSQL lockout/config/restart ناجح. مخالفات حدود API وSchannel وإغلاق Worker وفشلها التاريخي وإصلاحها في S05؛ 47 اختبار معمارية بقيت كما هي. [CI S04 42849693832](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42849693832) نجحت بجميع Jobs على 1a8564b؛ لا تغطي S05 قبل رفعها. لا CSRF أو HTTP rate limits أو صلاحيات السياسات بعد؛ تكتمل بالتتابع قبل تسليم المرحلة. UserApproval وV4 Pending، ولا دمج أو P03.
 
-تحديث S06: [CSRF وحدود HTTP](../planning/phase-02/steps/S06.md) Verified تقنيًا و[تسليم S07](../planning/phase-02/handoffs/S06-to-S07.md) InternalReady. 210 passed (47+135+28)، صفر failed/skipped؛ locked Restore وFormat verification ناجحتان. كل mutations تتطلب HTTPS وCSRF framework، بما فيها anonymous registration/login/OTP، وScalar/OpenAPI تعرض header المطلوبة و400/403/429. quotas فعلية حسب peer؛ headers المزيفة لا تغير IP، وعدادات الحساب SQL باقية. key-ring persistence ورفض Production settings الناقصة مثبتان؛ لا مفاتيح اختبار باقية في مجلدها المملوك أو سر في Git. فشل التهيئة/config/HTTP والتصحيحات موثقة دون تخفيف الاختبارات. [CI S05 42912520689](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42912520689) على9d97f8297b082cb9e0857d98ed1795e1b0da0c71 ناجحة بكل Jobs؛ S06 تنتظر CI على رأسها الجديد. لا صلاحيات S07 أو reset/delete بعد؛ التنفيذ متتابع، والاعتماد البشري وV4 Pending.
+تحديث S06: [CSRF وحدود HTTP](../planning/phase-02/steps/S07.md) Verified تقنيًا و[تسليم S07](../planning/phase-02/handoffs/S06-to-S07.md) InternalReady. 210 passed (47+135+28)، صفر failed/skipped؛ locked Restore وFormat verification ناجحتان. كل mutations تتطلب HTTPS وCSRF framework، بما فيها anonymous registration/login/OTP، وScalar/OpenAPI تعرض header المطلوبة و400/403/429. quotas فعلية حسب peer؛ headers المزيفة لا تغير IP، وعدادات الحساب SQL باقية. key-ring persistence ورفض Production settings الناقصة مثبتان؛ لا مفاتيح اختبار باقية في مجلدها المملوك أو سر في Git. فشل التهيئة/config/HTTP والتصحيحات موثقة دون تخفيف الاختبارات. [CI S05 42912520689](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42912520689) على9d97f8297b082cb9e0857d98ed1795e1b0da0c71 ناجحة بكل Jobs؛ S06 تنتظر CI على رأسها الجديد. لا صلاحيات S07 أو reset/delete بعد؛ التنفيذ متتابع، والاعتماد البشري وV4 Pending.
 
 تحديث S07: [الصلاحيات والملكية](../planning/phase-02/steps/S07.md) Verified تقنيًا و[تسليم S08](../planning/phase-02/handoffs/S07-to-S08.md) InternalReady. 231 passed (47+156+28)، صفر failed/skipped؛ 14 صف matrix عبر Program/SQL، وowner filters وتغير الصلاحيات بنفسcookie ورفض claims/UserId/roles من العميل. Pending المؤكد يدخل setup دون نشر؛ Approved يدخل النشر؛ Suspended/Deleted وجلسة ملغاة401. Migration additive لحالة الوصول الافتراضيةActive وقيدSQL مطبقة على HawalekNow_Development بعد اختبار حفظ الصفوف؛ لا موافقات أو تعليق/حذف API مبكر. inactive OTP intents تُسقط دون إرسال؛ locked Restore وFormat verification ناجحتان. CI S06 على951f02c ناجحة في [42918478621](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/42918478621)، وS07 تنتظر CI لرأسها الجديد. الاعتماد البشري وV4 Pending، ولا دمج أو P03.
 
@@ -74,13 +84,13 @@ Docker: موارد HawalekNow السابقة متوقفة (SQL exit 137 وMailpi
 
 الفقرات التالية تاريخ إغلاق الخطوات السابقة؛ عبارات NotStarted ومنع بدء S07 تخص إذن الإغلاق السابق، والحالة الجارية في أعلى الملف.
 
-S06 Done وV4 Approved وReviewStatus Approved بتاريخ 2026-10-22 عند الرأس 6244fa36e1a802be07cb69b072093453e1ef5cc9؛ [S06](../planning/phase-01/steps/S06.md) و[تسليم S07 Ready](../planning/phase-01/handoffs/S06-to-S07.md). P01-S07 NotStarted بلا ملف تنفيذ. الإذن إغلاق ودمج PR #7 فقط؛ حالة PR وSHA الدمج ونتائج الفحوص بعده من Git/GitHub وتقرير الختام الفعلي. D009 ونتائج الاستمرار التاريخية محفوظة؛ فحص الخدمات الحالي قراءة فقط نجح (Healthy وloopback وSQL/FTS والرسالة الموجودة). لا تخزين تطبيق أو Production، ولا تغيير SDK/الحزم/Logging. جدول المستخدم محفوظ دون تعديل أو staging.
+S06 Done وV4 Approved وReviewStatus Approved بتاريخ 2026-10-22 عند الرأس 6244fa36e1a802be07cb69b072093453e1ef5cc9؛ [S06](../planning/phase-01/steps/S07.md) و[تسليم S07 Ready](../planning/phase-01/handoffs/S06-to-S07.md). P01-S07 NotStarted بلا ملف تنفيذ. الإذن إغلاق ودمج PR #7 فقط؛ حالة PR وSHA الدمج ونتائج الفحوص بعده من Git/GitHub وتقرير الختام الفعلي. D009 ونتائج الاستمرار التاريخية محفوظة؛ فحص الخدمات الحالي قراءة فقط نجح (Healthy وloopback وSQL/FTS والرسالة الموجودة). لا تخزين تطبيق أو Production، ولا تغيير SDK/الحزم/Logging. جدول المستخدم محفوظ دون تعديل أو staging.
 
 ## سجل حالة إغلاق S05 قبل إذن S06 (تاريخي)
 
 الفقرات التالية محفوظة كسجل سابق؛ عبارات NotStarted وDeferred ومنع بدء S06 فيها تخص إذن إغلاق S05 السابق. حالة التنفيذ الملزمة الآن في أعلى الملف وS06.
 
-اقرأ [S05](../planning/phase-01/steps/S05.md) و[حدود الوحدات](../backend/MODULES.md) و[الحزم](../backend/PACKAGES.md) و[تسليم S06](../planning/phase-01/handoffs/S05-to-S06.md) والقرارات والنطاق والخريطة وGit. S05 Done وUserApproval Approved وReviewStatus Approved بتاريخ 2026-10-21 عند الرأس 9b0150669b718a0012e7413fc5bcb4e78f2e1ba9؛ تسليم S06 Ready. إذن المستخدم الحالي يشمل إغلاق S05 وReady for Review وSquash Merge لـPR #6 فقط، ولا يشمل S06 أو تشغيل Docker.
+اقرأ [S05](../planning/phase-01/steps/S07.md) و[حدود الوحدات](../backend/MODULES.md) و[الحزم](../backend/PACKAGES.md) و[تسليم S06](../planning/phase-01/handoffs/S05-to-S06.md) والقرارات والنطاق والخريطة وGit. S05 Done وUserApproval Approved وReviewStatus Approved بتاريخ 2026-10-21 عند الرأس 9b0150669b718a0012e7413fc5bcb4e78f2e1ba9؛ تسليم S06 Ready. إذن المستخدم الحالي يشمل إغلاق S05 وReady for Review وSquash Merge لـPR #6 فقط، ولا يشمل S06 أو تشغيل Docker.
 
 ## ما اكتمل
 

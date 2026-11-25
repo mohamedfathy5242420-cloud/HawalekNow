@@ -1,4 +1,4 @@
-name: Backend baseline and P02 identity
+name: Backend baseline and P03 reference data
 
 on:
   pull_request:
@@ -142,8 +142,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Build the application image
-        run: docker build --pull --tag hawaleknow/api:p01-ci --file backend/Dockerfile .
+      - name: Verify Docker exclusions, build API and inspect embedded seed artifacts
+        shell: pwsh
+        run: ./docker/test-api-build-context.ps1 -Image hawaleknow/api:p01-ci -KeepImage
       - name: Verify application startup and environment gates in Docker
         shell: pwsh
         run: ./docker/smoke-api.ps1 -Image hawaleknow/api:p01-ci

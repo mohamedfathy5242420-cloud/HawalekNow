@@ -13,7 +13,8 @@ function Expect([string]$Text, [string]$Name, [string]$Value, [string]$Prefix = 
 }
 $state = Read-Record 'docs/CURRENT_STATE.md'
 $decisions = Read-Record 'docs/DECISIONS.md'
-$p02Active = (Field $state 'Phase' '- ') -eq 'P02'
+$p03Active = (Field $state 'Phase' '- ') -eq 'P03'
+$p02Active = (Field $state 'Phase' '- ') -in @('P02', 'P03')
 if ($p02Active) {
     $p02Authorization = [regex]::Match($decisions, '(?ms)^## D015 .*?(?=^## |\z)').Value
     foreach ($pair in @(@('Status', 'Approved'), @('AuthorizedPhase', 'P02'), @('ExecutionMode', 'Phase'), @('MergeAuthorization', 'NotAuthorized'), @('P03Execution', 'NotAuthorized'))) { Expect $p02Authorization $pair[0] $pair[1] }
@@ -166,6 +167,9 @@ if ($closed) {
         foreach ($value in @('UserApproval: Approved', 'ReviewStatus: Approved', 'V4: Approved', 'ApprovalDate: 2026-11-10', 'ReviewedHead: 4b4d5a574dd459eda0e091311eab908439cb2fd0')) { Require ($block.Contains($value)) "Missing closed roadmap field: $id $value" }
     }
 }
-if ($p02Active) { & (Join-Path $PSScriptRoot 'verify-p02.ps1') -Root $Root }
+if ($p03Active) {
+    & (Join-Path $PSScriptRoot 'verify-p02.ps1') -Root $Root -StatePath 'docs/P02_CLOSED_STATE.md' -AllowAuthorizedP03
+    & (Join-Path $PSScriptRoot 'verify-p03.ps1') -Root $Root
+} elseif ($p02Active) { & (Join-Path $PSScriptRoot 'verify-p02.ps1') -Root $Root }
 Write-Output "PASS: D012/D013 predecessor gate; P01 state=$status; approval=$approval; personal educational reviews=$manual; all predecessor technical/CI evidence required; P02 authorized=$p02Active."
 Write-Output 'LIMIT: recorded evidence consistency only; this script does not execute .NET/Docker or query GitHub. CI and runtime evidence must be collected separately.'
