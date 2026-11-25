@@ -1,6 +1,6 @@
 # Merchant workflows and operations
 
-P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01 is technically verified. S02 passed its focused build and139 unit/SQL/HTTP/authorization/architecture checks; final format/documentation checks and exact-head CI are recorded separately when complete. The phase remains under execution authorization D021, with UserApproval/V4 Pending.
+P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01 is technically verified. S02 initially passed139 focused checks, then its first full CI failed45 foundation fixture/path-inventory checks. After correcting those test fixtures, the full local solution passes433 tests (47 Architecture+265 Integration+121 Unit),0 failed/skipped, with build0 warnings/errors and full format verification. Exact-head CI on the correction remains required before S03. The phase remains under D021, with UserApproval/V4 Pending.
 
 ## Accounts and existing security
 
@@ -49,3 +49,15 @@ git -c safe.directory=D:/HwalekNow diff --check
 ```
 
 The focused command does not replace the full solution and exact-head CI checks required for final P04 delivery. See [step records](../planning/phase-04/steps/S02.md) and [actual verification evidence](../planning/phase-04/verification.json). The user's personal trial and detailed teaching session have not been performed by this guide.
+
+## Selected Postman review journey
+
+Import the [P04 collection](postman/HawalekNow.P04.postman_collection.json) and [empty local environment](postman/HawalekNow.P04.Local.postman_environment.json). Configure confirmed test accounts using the existing Identity setup in an isolated review database. Keep certificate validation enabled and the real cookie jar; never export filled credentials. The collection obtains fresh principal-bound CSRF before mutations. Run selected requests; the competing review decisions are alternative journeys.
+
+1. Login as the test Merchant and read Own review to capture its profile Id and current rowVersion.
+2. Switch to the test Admin. Choose Request Changes with a reason. Its response captures the new rowVersion. Inspect Audit.
+3. Switch back to the Merchant, read the reason, and resubmit using the latest version. In S02 this exercises review state; store preparation arrives in S03.
+4. Switch to Admin and approve. Read Audit to see the three distinct actions and trusted actors. Reusing an old rowVersion must return409.
+5. For a separate rejected-account journey, reject a Pending merchant with a reason. The Merchant may read its own reason and manage Identity, but cannot self-resubmit. For suspension, Admin suspends an Approved account; its existing merchant cookie must fail live authentication until Admin reinstates it. Admin login remains available in the collection to switch away from that cookie.
+
+These are instructions and request artifacts, not evidence of the user's personal trial. V4 and the detailed teaching session remain Pending/Deferred respectively.

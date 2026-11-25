@@ -65,7 +65,7 @@
       "status": "Passed",
       "exitCode": 0,
       "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
-      "detail": "Full solution format verification exit0."
+      "detail": "Repeated full solution verification after the fixture fix:exit0. Initial sandbox attempt could not connect to the Roslyn pipe; authorized run succeeded. Not counted as a pass before authorization."
     },
     {
       "name": "S02Roadmap",
@@ -87,6 +87,34 @@
       "exitCode": 0,
       "command": "git -c safe.directory=D:/HwalekNow diff --check",
       "detail": "Exit0."
+    },
+    {
+      "name": "S02FullSolutionTests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "After the CI fixture/inventory fix:47 Architecture+265 actual Integration+121 Unit=433 passed;0 failed/skipped. Previous failed CI and focused139 are retained."
+    },
+    {
+      "name": "S02FixedBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "0 warnings/errors after the fixture fix."
+    },
+    {
+      "name": "S02FixedRoadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "76 authoritative source steps and955 local links accepted;S02 InProgress after failed CI,awaiting correction CI."
+    },
+    {
+      "name": "S02FixedGitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "25 forbidden+36 allowed samples;421 tracked files not ignored."
     }
   ],
   "userApproval": "Pending",
@@ -131,6 +159,47 @@
         "failed": 0,
         "skipped": 0
       }
+    },
+    {
+      "runId": 45610300309,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "failure",
+      "headSha": "122277c72b228ed779a8f2ee9e32f1e846504273",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45610300309",
+      "jobs": [
+        {
+          "id": 139191766824,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45610300309/job/139191766824"
+        },
+        {
+          "id": 139191767160,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45610300309/job/139191767160"
+        },
+        {
+          "id": 139191767428,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45610300309/job/139191767428"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "unit": 121,
+        "integrationPassed": 220,
+        "integrationFailed": 45,
+        "passed": 388,
+        "failed": 45,
+        "skipped": 0
+      },
+      "diagnosis": "44 isolated foundation-host DI failures from missing test-only IMerchantReviewService registration;1 exact OpenAPI path inventory mismatch. Real merchant SQL/HTTP tests passed;full solution failed."
     }
   ]
 }

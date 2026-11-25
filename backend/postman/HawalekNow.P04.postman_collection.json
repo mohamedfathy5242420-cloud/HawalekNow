@@ -1,0 +1,398 @@
+{
+  "info": {
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "P04 is in progress. Only implemented requests are present. Select a journey, never run all decisions blindly. Use an isolated review database and confirmed test Merchant/Admin accounts from P02 setup. Shared real cookie jar, HTTPS with certificate validation, fresh principal-bound CSRF. Capture the merchant id/version using Own review before switching to Admin; decisions return the next version. Reasons are mandatory except approve. Personal trial is Deferred. Later P04 steps extend this collection.",
+    "name": "HawalekNow P04 merchants and stores"
+  },
+  "event": [
+    {
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const method = pm.request.method.toUpperCase();",
+          "if (!['GET','HEAD','OPTIONS','TRACE'].includes(method)) {",
+          "  const base = pm.environment.get('baseUrl');",
+          "  if (!/^https:\\/\\/(localhost|127\\.0\\.0\\.1)(:\\d+)?$/.test(base || '')) throw new Error('Configure a trusted local HTTPS baseUrl.');",
+          "  pm.sendRequest({ url: base + '/api/v1/identity/csrf', method: 'GET' }, (error, response) => {",
+          "    if (error || response.code !== 200) throw new Error('CSRF bootstrap failed.');",
+          "    const csrf = response.json();",
+          "    pm.request.headers.upsert({ key: csrf.headerName, value: csrf.requestToken });",
+          "  });",
+          "}"
+        ]
+      },
+      "listen": "prerequest"
+    }
+  ],
+  "item": [
+    {
+      "name": "Session - switch deliberately",
+      "item": [
+        {
+          "name": "Test Merchant login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/login",
+            "body": {
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"password\": \"{{merchantPassword}}\",\r\n  \"accountType\": \"Merchant\",\r\n  \"identifier\": \"{{merchantEmail}}\"\r\n}",
+              "mode": "raw"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Own merchant review - capture id and latest version",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/review"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const r = pm.response.json(); pm.environment.set(\"merchantProfileId\", r.id); pm.environment.set(\"merchantRowVersion\", r.rowVersion); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Test Admin login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/identity/login",
+            "body": {
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"password\": \"{{adminPassword}}\",\r\n  \"accountType\": \"Admin\",\r\n  \"identifier\": \"{{adminEmail}}\"\r\n}",
+              "mode": "raw"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(204));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin review - choose a valid transition",
+      "item": [
+        {
+          "name": "List pending reviews - explicit bounded page",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/merchants?status=Pending&page=1&pageSize=25"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "approve - refresh rowVersion before decision",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/merchants/{{merchantProfileId}}/approve",
+            "body": {
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"reason\": null,\r\n  \"rowVersion\": \"{{merchantRowVersion}}\"\r\n}",
+              "mode": "raw"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const r = pm.response.json(); pm.environment.set(\"merchantProfileId\", r.id); pm.environment.set(\"merchantRowVersion\", r.rowVersion); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "request-changes - refresh rowVersion before decision",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/merchants/{{merchantProfileId}}/request-changes",
+            "body": {
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"reason\": \"{{reviewReason}}\",\r\n  \"rowVersion\": \"{{merchantRowVersion}}\"\r\n}",
+              "mode": "raw"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const r = pm.response.json(); pm.environment.set(\"merchantProfileId\", r.id); pm.environment.set(\"merchantRowVersion\", r.rowVersion); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "reject - refresh rowVersion before decision",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/merchants/{{merchantProfileId}}/reject",
+            "body": {
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"reason\": \"{{reviewReason}}\",\r\n  \"rowVersion\": \"{{merchantRowVersion}}\"\r\n}",
+              "mode": "raw"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const r = pm.response.json(); pm.environment.set(\"merchantProfileId\", r.id); pm.environment.set(\"merchantRowVersion\", r.rowVersion); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "suspend - refresh rowVersion before decision",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/merchants/{{merchantProfileId}}/suspend",
+            "body": {
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"reason\": \"{{reviewReason}}\",\r\n  \"rowVersion\": \"{{merchantRowVersion}}\"\r\n}",
+              "mode": "raw"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const r = pm.response.json(); pm.environment.set(\"merchantProfileId\", r.id); pm.environment.set(\"merchantRowVersion\", r.rowVersion); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "reinstate - refresh rowVersion before decision",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/merchants/{{merchantProfileId}}/reinstate",
+            "body": {
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"reason\": \"{{reviewReason}}\",\r\n  \"rowVersion\": \"{{merchantRowVersion}}\"\r\n}",
+              "mode": "raw"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const r = pm.response.json(); pm.environment.set(\"merchantProfileId\", r.id); pm.environment.set(\"merchantRowVersion\", r.rowVersion); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Merchant audit",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/merchants/{{merchantProfileId}}/audit?page=1&pageSize=25"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Owner resubmission",
+      "item": [
+        {
+          "name": "Resubmit after ChangesRequested - current Merchant session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/review/resubmit",
+            "body": {
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"rowVersion\": \"{{merchantRowVersion}}\"\r\n}",
+              "mode": "raw"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "pm.test('Correlation header', () => pm.expect(pm.response.headers.get('X-Correlation-ID')).to.match(/^[A-Za-z0-9_-]{1,64}$/));",
+                  "if (pm.response.code === 200) { const r = pm.response.json(); pm.environment.set(\"merchantProfileId\", r.id); pm.environment.set(\"merchantRowVersion\", r.rowVersion); }"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
