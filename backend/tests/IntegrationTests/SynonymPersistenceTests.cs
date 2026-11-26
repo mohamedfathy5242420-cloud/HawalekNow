@@ -46,7 +46,7 @@ public sealed class SynonymPersistenceTests(SqlDatabase database) : IClassFixtur
     {
         Guid id; string version; var key = Guid.NewGuid().ToString();
         await using (var setup = database.CreateContext()) { var result = (await new SynonymAdministration(setup).SaveAsync(null, new("أصل", "Before", true, [key]), default)).Value; id = result.Id; version = result.RowVersion; }
-        var probe = new FailTerms(); var options = new DbContextOptionsBuilder<HawalekDbContext>().UseSqlServer(database.ConnectionString).AddInterceptors(probe).Options;
+        var probe = new FailTerms(); var options = new DbContextOptionsBuilder<HawalekDbContext>().UseSqlServer(database.ConnectionString, sql => sql.UseNetTopologySuite()).AddInterceptors(probe).Options;
         await using (var context = new HawalekDbContext(options)) Assert.Equal(ErrorKind.Conflict, (await new SynonymAdministration(context).SaveAsync(id, new("تغيير", "After", false, [key, "extra"], version), default)).Error?.Kind);
         Assert.True(probe.Fired); await using var verify = database.CreateContext(); var after = await verify.Set<SynonymGroup>().SingleAsync(value => value.Id == id); Assert.Equal("Before", after.NameEn); Assert.True(after.IsActive); Assert.Equal(version, Convert.ToBase64String(after.RowVersion)); Assert.Equal(key, (await verify.Set<SynonymTerm>().SingleAsync(value => value.GroupId == id)).Original);
     }

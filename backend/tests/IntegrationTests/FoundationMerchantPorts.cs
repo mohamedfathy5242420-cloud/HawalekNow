@@ -9,7 +9,16 @@ namespace HawalekNow.IntegrationTests;
 public static class FoundationMerchantPorts
 {
     public static IServiceCollection AddFoundationMerchantPorts(this IServiceCollection services) =>
-        services.AddScoped<IMerchantReviewService, UnusedReview>().AddScoped<IStoreService, UnusedStore>();
+        services.AddScoped<IMerchantReviewService, UnusedReview>().AddScoped<IStoreService, UnusedStore>().AddScoped<IBranchService, UnusedBranches>();
+
+    private sealed class UnusedBranches : IBranchService
+    {
+        public Task<Result<BranchDto>> CreateAsync(Guid actorId, Guid storeId, BranchWrite value, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<BranchDto>> UpdateAsync(Guid actorId, Guid storeId, Guid id, BranchUpdateWrite value, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<MerchantPage<BranchDto>>> OwnListAsync(Guid actorId, Guid storeId, int page, int pageSize, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<MerchantPage<PublicBranchDto>>> PublicListAsync(Guid storeId, int page, int pageSize, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<PublicBranchDto>> PublicAsync(Guid id, CancellationToken cancellationToken) => throw Unused();
+    }
 
     private sealed class UnusedStore : IStoreService
     {

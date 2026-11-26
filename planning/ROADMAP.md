@@ -378,7 +378,7 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P04-S03 إنشاء المتجر
 
-- Status: InProgress؛ ExecutionStatus: InProgress؛ VerificationStatus: Pending؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S03.md).
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S03.md).
 
 - الاعتمادات السابقة: [P04-S02](#p04-s02).
 - المخرج المطلوب: متجر واحد للحساب ونشاط رئيسي واتصال ولوجو اختياري.
@@ -389,6 +389,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p04-s04"></a>
 
 ### P04-S04 الفروع ونقاط الاستلام
+
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S04.md).
 
 - الاعتمادات السابقة: [P04-S03](#p04-s03).
 - المخرج المطلوب: أماكن متعددة وبيانات اتصال fallback وموقع geography.

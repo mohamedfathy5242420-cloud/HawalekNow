@@ -53,7 +53,7 @@ public sealed class MerchantReviewPersistenceTests(SqlDatabase database) : IClas
         var merchant = await MerchantTestAccounts.CreateAsync(factory, AccountType.Merchant);
         var version = await MerchantTestAccounts.VersionAsync(database, merchant.ProfileId);
         var failure = new FailAfterAuditSaved();
-        var options = new DbContextOptionsBuilder<HawalekDbContext>().UseSqlServer(database.ConnectionString).AddInterceptors(failure).Options;
+        var options = new DbContextOptionsBuilder<HawalekDbContext>().UseSqlServer(database.ConnectionString, sql => sql.UseNetTopologySuite()).AddInterceptors(failure).Options;
         await using (var context = new HawalekDbContext(options))
             await Assert.ThrowsAsync<IOException>(() => Service(context).ReviewAsync(admin.Id, merchant.ProfileId, MerchantReviewAction.Reject, new(version, "Manual rejection."), default));
         Assert.True(failure.SawBothRowsInsideTransaction);

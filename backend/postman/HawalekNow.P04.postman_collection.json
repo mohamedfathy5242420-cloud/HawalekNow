@@ -1,7 +1,7 @@
 {
   "info": {
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "P04 is in progress. Only implemented requests are present. Select a journey, never run all decisions blindly. Use an isolated review database and confirmed test Merchant/Admin accounts from P02 setup. Shared real cookie jar, HTTPS with certificate validation, fresh principal-bound CSRF. Capture the merchant id/version using Own review before switching to Admin; decisions return the next version. Reasons are mandatory except approve. Personal trial is Deferred. Later P04 steps extend this collection. S03 store requests require a confirmed Merchant, one active Catalog activity and at least one contact. Upload a file manually; store activity cannot be changed by details edits. Public requests are expected200 only after approval and when the optional logo exists. These instructions do not claim a personal trial.",
+    "description": "P04 is in progress. Only implemented requests are present. Select a journey, never run all decisions blindly. Use an isolated review database and confirmed test Merchant/Admin accounts from P02 setup. Shared real cookie jar, HTTPS with certificate validation, fresh principal-bound CSRF. Capture the merchant id/version using Own review before switching to Admin; decisions return the next version. Reasons are mandatory except approve. Personal trial is Deferred. Later P04 steps extend this collection. S03 store requests require a confirmed Merchant, one active Catalog activity and at least one contact. Upload a file manually; store activity cannot be changed by details edits. Public requests are expected200 only after approval and when the optional logo exists. These instructions do not claim a personal trial. S04 requests select a matching active governorate/city/area from P03. Confirm that the address is a fixed public business/pickup point, not a private home. Coordinates are explicit latitude/longitude. Optional contacts fall back independently to the store; branch approval is not a separate step. Mandatory hours arrive in S05 before final P04 delivery.",
     "name": "HawalekNow P04 merchants and stores"
   },
   "event": [
@@ -629,6 +629,151 @@
               }
             ],
             "url": "{{baseUrl}}/api/v1/stores/{{storeId}}/logo"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Branches and fixed public pickup points",
+      "item": [
+        {
+          "name": "Create own public/fixed pickup place - no separate Admin review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/stores/{{storeId}}/branches",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"kind\": \"PickupPoint\",\r\n  \"name\": \"نقطة الاستلام\",\r\n  \"address\": \"عنوان تجاري عام ثابت\",\r\n  \"governorateId\": \"{{governorateId}}\",\r\n  \"cityId\": \"{{cityId}}\",\r\n  \"areaId\": \"{{areaId}}\",\r\n  \"latitude\": 30.0444,\r\n  \"longitude\": 31.2357,\r\n  \"publicFixedAddressConfirmed\": true,\r\n  \"phone\": null,\r\n  \"whatsApp\": \"+201112345678\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const b=pm.response.json();pm.environment.set(\"branchId\",b.id);pm.environment.set(\"branchRowVersion\",b.rowVersion);}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "List own places with raw/effective contact channels",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/stores/{{storeId}}/branches?page=1&pageSize=25"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Update own place - refresh version first",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/stores/{{storeId}}/branches/{{branchId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"details\": {\r\n    \"kind\": \"PickupPoint\",\r\n    \"name\": \"نقطة الاستلام\",\r\n    \"address\": \"عنوان تجاري عام ثابت\",\r\n    \"governorateId\": \"{{governorateId}}\",\r\n    \"cityId\": \"{{cityId}}\",\r\n    \"areaId\": \"{{areaId}}\",\r\n    \"latitude\": 30.0444,\r\n    \"longitude\": 31.2357,\r\n    \"publicFixedAddressConfirmed\": true,\r\n    \"phone\": null,\r\n    \"whatsApp\": \"+201112345678\"\r\n  },\r\n  \"rowVersion\": \"{{branchRowVersion}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const b=pm.response.json();pm.environment.set(\"branchId\",b.id);pm.environment.set(\"branchRowVersion\",b.rowVersion);}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Public places after merchant approval",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/stores/{{storeId}}/branches?page=1&pageSize=25"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Public place details after merchant approval",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/branches/{{branchId}}"
           },
           "event": [
             {

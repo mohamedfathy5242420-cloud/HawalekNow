@@ -77,7 +77,7 @@ public sealed class StorePersistenceTests(SqlDatabase database) : IClassFixture<
         await using (var initial = database.CreateContext()) store = (await StoreTestData.Service(database, initial, files).ChangeLogoAsync(owner.Id, store.Id, store.RowVersion, new MemoryStream(StorageTestImages.Png()), default)).Value;
         string oldKey; await using (var read = database.CreateContext()) oldKey = (await read.Set<Store>().SingleAsync(value => value.Id == store.Id)).LogoKey!;
         var failure = new FailAfterLogoSaved();
-        var options = new DbContextOptionsBuilder<HawalekDbContext>().UseSqlServer(database.ConnectionString).AddInterceptors(failure).Options;
+        var options = new DbContextOptionsBuilder<HawalekDbContext>().UseSqlServer(database.ConnectionString, sql => sql.UseNetTopologySuite()).AddInterceptors(failure).Options;
         await using (var context = new HawalekDbContext(options))
         {
             var result = await StoreTestData.Service(database, context, files).ChangeLogoAsync(owner.Id, store.Id, store.RowVersion, new MemoryStream(StorageTestImages.Png(2, 2)), default);
@@ -95,7 +95,7 @@ public sealed class StorePersistenceTests(SqlDatabase database) : IClassFixture<
     public async Task Lost_commit_acknowledgement_never_deletes_a_file_that_SQL_already_references()
     {
         var owner = await MerchantTestAccounts.CreateAsync(factory, AccountType.Merchant); var store = await StoreTestData.CreateAsync(database, owner, files);
-        var options = new DbContextOptionsBuilder<HawalekDbContext>().UseSqlServer(database.ConnectionString).AddInterceptors(new FailAfterCommit()).Options;
+        var options = new DbContextOptionsBuilder<HawalekDbContext>().UseSqlServer(database.ConnectionString, sql => sql.UseNetTopologySuite()).AddInterceptors(new FailAfterCommit()).Options;
         await using (var context = new HawalekDbContext(options))
         {
             var result = await StoreTestData.Service(database, context, files).ChangeLogoAsync(owner.Id, store.Id, store.RowVersion, new MemoryStream(StorageTestImages.Png()), default);

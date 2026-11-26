@@ -1,6 +1,6 @@
 # Merchant workflows and operations
 
-P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01/S02 are technically verified: correction head5173c605ab558bc79dcc4fce5fa36024f5f2d25e passed all three jobs in CI45614038330 with433 tests and build0/0. The first S02 CI failure remains in the evidence. S03 is in progress; later steps are not implemented. UserApproval/V4 remain Pending under D021.
+P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01–S04 are technically verified locally. CI45846221851 proves493 tests and real storage restart/permission checks on the S03 head31e8e3b3f86442c5e0eb4e909aced5b0d77e65c9; S04 has142 relevant checks, a clean build and33 repeated branch/geography checks. S05–S07 are not implemented. Full final-head CI is still required. UserApproval/V4 remain Pending under D021.
 
 ## Accounts and existing security
 
@@ -64,7 +64,7 @@ These are instructions and request artifacts, not evidence of the user's persona
 
 ## S03 store and optional logo
 
-S03 is implemented in the worktree and verification is in progress. It is not yet an InternalReady handoff. The initial storage decoder rejection and test build/HTTP-fixture failures are retained in the [step record](../planning/phase-04/steps/S03.md) and evidence. See the [dependency review](P04_DEPENDENCIES.md) for the pinned decoder, actual advisory check, native notices and unchanged existing package versions.
+S03 is technically verified on31e8e3b3f86442c5e0eb4e909aced5b0d77e65c9: CI45846221851 passes493 tests and all three jobs, and local Windows/container process-restart and unrelated-UID checks passed. Its S04 handoff is InternalReady. The initial decoder/test/Windows failures remain in the [step record](../planning/phase-04/steps/S03.md) and evidence. See the [dependency review](P04_DEPENDENCIES.md) for the pinned decoder, advisory checks, native notices and unchanged existing package versions.
 
 | Method and path, relative to `/api/v1` | Access | Contract |
 | --- | --- | --- |
@@ -107,4 +107,40 @@ After committing production sources and building an exact-head image with the ca
 
 The last command builds a standalone verifier against the committed Infrastructure project. It writes/reads from two separate host processes, then two separate non-root containers using a newly labeled project volume, and checks that UID65534 cannot read the known existing image or write its directory. It does not start API Program or connect to SQL. Its JSON receipt records source head, image, outcomes and the retained volume name. The volume is preserved. These commands are instructions until their actual receipts are recorded; the earlier P03 smoke alone does not prove storage persistence or permissions.
 
-For the selected Postman store journey, use a confirmed Merchant session, select an active Catalog activity, create the store and optionally choose a local PNG/JPEG in the multipart request. Refresh the store version after each edit/upload. An Admin approves the merchant separately; public store/logo requests then become available. The collection includes only implemented S02/S03 routes. The personal trial remains Deferred and V4 Pending.
+For the selected Postman store journey, use a confirmed Merchant session, select an active Catalog activity, create the store and optionally choose a local PNG/JPEG in the multipart request. Refresh the store version after each edit/upload. An Admin approves the merchant separately; public store/logo requests then become available. The collection includes only implemented merchant-phase routes. The personal trial remains Deferred and V4 Pending.
+
+## S04 branches and pickup points
+
+S04 is technically verified locally:142 broad checks, a clean build0/0 and33 followup Branch/Geography checks pass with0 failed/skipped; full format verification passed. Final exact-head full CI is recorded separately. A store can have multiple places of named kind `Branch` or `PickupPoint`. The single name/address fields are merchant text. Governorate/City/Area are existing bilingual administrative references. `publicFixedAddressConfirmed:true` explicitly confirms a fixed publicly accessible business/pickup address; the server does not infer whether an address is a private home or integrate Google Maps.
+
+| Method and path, relative to `/api/v1` | Access | Contract |
+| --- | --- | --- |
+| POST `merchants/stores/{storeId}/branches` | VerifiedMerchantSetup and owner | BranchWrite below |
+| GET `merchants/stores/{storeId}/branches?page=1&pageSize=25` | Same owner policy | Bounded private list, own and effective contact channels, rowVersion |
+| PUT `merchants/stores/{storeId}/branches/{id}` | Same owner policy | `{ "rowVersion": "...", "details": { ... } }`; store ownership is immutable |
+| GET `stores/{storeId}/branches?page=1&pageSize=25` | Parent public-store gate | Bounded places with effective contacts and coordinates; no rowVersion |
+| GET `branches/{id}` | Parent public-store gate | Public place details |
+
+```json
+{
+  "kind": "PickupPoint",
+  "name": "نقطة الاستلام",
+  "address": "عنوان تجاري عام ثابت",
+  "governorateId": "<selected governorate id>",
+  "cityId": "<selected city id>",
+  "areaId": "<selected area id>",
+  "latitude": 30.0444,
+  "longitude": 31.2357,
+  "publicFixedAddressConfirmed": true,
+  "phone": null,
+  "whatsApp": "+201112345678"
+}
+```
+
+Names are1–200 and addresses1–600 trimmed UTF-16 code units without controls. Both coordinates must be supplied, finite and within latitude±90/longitude±180. Phone and WhatsApp are independently optional overrides; each missing channel falls back to that channel on the current store. A WhatsApp override does not suppress the fallback Phone. Store contact requirements remain in force. Owner mutations keep live Identity/setup checks, HTTPS, CSRF, quotas and optimistic concurrency. Confirmed Pending/ChangesRequested may prepare places privately. After merchant approval, newly created places become public through their parent gate without a separate branch approval.
+
+The Locations-owned `IAdministrativeDirectory` checks a full active path under its shared transaction-owned hierarchy lock. The global migration adds a composite FK `(AreaId,CityId,GovernorateId)` to the Locations-owned unique index `(Id,CityId,GovernorateId)`. The existing Area→City/Governorate relationships complete the chain. This prevents mismatched triples and deletion/reparenting of an area in use, including direct SQL or concurrent writers. Unused areas can still be reparented: the supporting index is not an EF immutable alternate key. Existing reference deactivation stops new selections; it does not silently remove a place already attached to those references. Unchanged administrative IDs may be retained during a contact/name edit.
+
+`GeoPoint` is stored as SQL Server `geography`, SRID4326, with X=Longitude/Y=Latitude. SQL checks require a nonempty Point with SRID4326. Domain/Application DTOs do not expose NTS types. Production and every test context use the existing SQL/NTS provider configuration. The actual SQL tests check `.Lat`, `.Long`, `.STSrid`, shape rejection, FK violations/races, rowVersion and state+Audit rollback after Save. No distance/search endpoint or map integration is claimed.
+
+`20261126152640_P04BranchesAndAdministrativeReferences` adds the place table, geography/contact/rowVersion fields and the supporting administrative index/FK. Owned places cascade only when the existing final Identity purge removes their parent store; soft account deletion hides them immediately while retaining data and independent Audit. It has not been applied to the application database. Weekly hours and open/next calculations are still S05 work, required before final P04 delivery; S04 alone is not the complete merchant phase.

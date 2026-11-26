@@ -17,7 +17,7 @@ public sealed class SqlDatabase : IAsyncLifetime
     public string? InitialMigration { get; init; }
 
     public HawalekDbContext CreateContext() => new(new DbContextOptionsBuilder<HawalekDbContext>()
-        .UseSqlServer(ConnectionString, sql => sql.MigrationsHistoryTable("__EFMigrationsHistory", "operations")).Options);
+        .UseSqlServer(ConnectionString, sql => sql.UseNetTopologySuite().MigrationsHistoryTable("__EFMigrationsHistory", "operations")).Options);
 
     public async Task InitializeAsync()
     {

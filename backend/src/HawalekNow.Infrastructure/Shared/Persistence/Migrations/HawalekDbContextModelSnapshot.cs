@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 
 #nullable disable
 
@@ -369,6 +370,9 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
 
                     b.HasIndex("GovernorateId", "CityId", "Id");
 
+                    b.HasIndex("Id", "CityId", "GovernorateId")
+                        .IsUnique();
+
                     b.ToTable("Areas", "locations", t =>
                         {
                             t.HasCheckConstraint("CK_Areas_Names", "LEN([NameAr]) > 0 AND LEN([NameEn]) > 0");
@@ -518,6 +522,76 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.ToTable("Accounts", "merchants", t =>
                         {
                             t.HasCheckConstraint("CK_MerchantAccounts_Status", "[Status] IN (1,2,3,4,5)");
+                        });
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Merchants.MerchantBranch", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(600)
+                        .HasColumnType("nvarchar(600)");
+
+                    b.Property<Guid>("AreaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GovernorateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(16)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(16)");
+
+                    b.Property<Point>("Position")
+                        .IsRequired()
+                        .HasColumnType("geography");
+
+                    b.Property<bool>("PublicFixedAddressConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WhatsApp")
+                        .HasMaxLength(16)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(16)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoreId", "Id");
+
+                    b.HasIndex("AreaId", "CityId", "GovernorateId");
+
+                    b.ToTable("Branches", "merchants", t =>
+                        {
+                            t.HasCheckConstraint("CK_Branches_Kind", "[Kind] IN (1,2)");
+
+                            t.HasCheckConstraint("CK_Branches_Position", "[Position].STSrid = 4326 AND [Position].STGeometryType() = 'Point' AND [Position].STIsEmpty() = 0");
+
+                            t.HasCheckConstraint("CK_Branches_PublicAddress", "[PublicFixedAddressConfirmed] = 1 AND LEN(LTRIM(RTRIM([Name]))) > 0 AND LEN(LTRIM(RTRIM([Address]))) > 0");
                         });
                 });
 
@@ -1056,6 +1130,15 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("GovernorateId")
                         .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Merchants.MerchantBranch", b =>
+                {
+                    b.HasOne("HawalekNow.Domain.Modules.Merchants.Store", null)
+                        .WithMany()
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
