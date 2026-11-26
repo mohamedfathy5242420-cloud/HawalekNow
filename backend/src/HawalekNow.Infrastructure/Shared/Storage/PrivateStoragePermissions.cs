@@ -37,8 +37,14 @@ public static class PrivateStoragePermissions
     private static void SetWindows(string path, bool directory)
     {
         var owner = WindowsIdentity.GetCurrent().User ?? throw new StorageIntegrityException();
-        FileSystemSecurity acl = directory ? new DirectorySecurity() : new FileSecurity();
-        acl.SetOwner(owner); acl.SetAccessRuleProtection(true, false);
+        FileSystemSecurity acl = directory
+            ? new DirectoryInfo(path).GetAccessControl(AccessControlSections.Owner | AccessControlSections.Access)
+            : new FileInfo(path).GetAccessControl(AccessControlSections.Owner | AccessControlSections.Access);
+        // A file created by this process must already belong to its user. Do not request WRITE_OWNER
+        // merely to set the same owner again: writable project folders may intentionally lack that right.
+        if (!owner.Equals(acl.GetOwner(typeof(SecurityIdentifier)))) throw new StorageIntegrityException();
+        acl.SetAccessRuleProtection(true, false);
+        foreach (var rule in acl.GetAccessRules(true, false, typeof(SecurityIdentifier)).Cast<FileSystemAccessRule>().ToArray()) acl.RemoveAccessRuleSpecific(rule);
         acl.AddAccessRule(new FileSystemAccessRule(owner, FileSystemRights.FullControl,
             directory ? InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit : InheritanceFlags.None,
             PropagationFlags.None, AccessControlType.Allow));

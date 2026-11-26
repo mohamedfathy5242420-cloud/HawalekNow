@@ -248,6 +248,55 @@
       "exitCode": 1,
       "command": "./tmp/commit-p04-s03.ps1",
       "detail": "Staged diff check rejected upstream CRLF/trailing/EOF whitespace in verbatim vendor notices;commit/push did not run. Exact-byte hash comparison succeeded. Added -whitespace only on the two hash-pinned non-executable vendor documents;application/Seed rules unchanged;rerun required."
+    },
+    {
+      "name": "S03FirstCI",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub REST run45843772918/jobs/completed logs at5a842ecb720bb171b3b7fded11a1df52b6b1b8e8",
+      "detail": "All3jobs success;492/0/0;build0/0;Docker185/82/0extra;116published files;Linux real host/container restart and unrelatedUID denial passed."
+    },
+    {
+      "name": "S03DockerInitial",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./docker/test-api-build-context.ps1 -Image hawaleknow/api:p04-s03-5a842ec -KeepImage",
+      "detail": "Actual archived5a842ec;185allowed/82forbidden/0missing/0extra;3exactSeedresources and116clean published files;native notices hash-checked."
+    },
+    {
+      "name": "S03DockerSmokeInitial",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./docker/smoke-api.ps1 -Image hawaleknow/api:p04-s03-5a842ec",
+      "detail": "Non-root/read-only API liveness,correlation,safe404,Production-docs gate;no SQL/mail readiness or storage claim."
+    },
+    {
+      "name": "S03WindowsRuntimeInitial",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./docker/test-store-files.ps1 -Image hawaleknow/api:p04-s03-5a842ec",
+      "detail": "Windows host write failed setting ACL on project-owned tmp directory. Root already belonged to current user;setting the same owner requested unavailableWRITE_OWNER. No container storage probe/volume creation occurred in this failed run. Full CI/Linux pass is retained separately."
+    },
+    {
+      "name": "S03WindowsDaclProbe",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet publish isolated StoreFiles verifier;dotnet StoreFiles.dll write/read in separate processes at the original failing host-images path",
+      "detail": "After checking existing ownership and changing only DACL:actual write/read restart at the same Windows path passed,private permissions preserved. Regression tests and new-head Docker/CI still required."
+    },
+    {
+      "name": "S03WindowsFixBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "0warnings/errors after the DACL-only fix."
+    },
+    {
+      "name": "S03WindowsFixTests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~Store|FullyQualifiedName~LocalFileStorage|FullyQualifiedName~ArchitectureTests'",
+      "detail": "47 Architecture+45 Integration+16 Unit=108passed/0failed/0skipped. Includes an actual Windows DACL denyingWRITE_OWNER and two-instance readback;store SQL/HTTP/recovery tests passed. Exact new-head full CI and Docker pending."
     }
   ],
   "userApproval": "Pending",
@@ -383,6 +432,57 @@
         "publishedFiles": 104,
         "seedResources": 3,
         "smoke": "Passed:non-root/read-only,liveness,correlation,safe404,production-docs gate;no SQL/mail readiness or persistence claim"
+      }
+    },
+    {
+      "runId": 45843772918,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "5a842ecb720bb171b3b7fded11a1df52b6b1b8e8",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45843772918",
+      "jobs": [
+        {
+          "id": 139991991975,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45843772918/job/139991991975"
+        },
+        {
+          "id": 139991992522,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45843772918/job/139991992522"
+        },
+        {
+          "id": 139991992614,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45843772918/job/139991992614"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 307,
+        "unit": 138,
+        "passed": 492,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      },
+      "docker": {
+        "allowedInputs": 185,
+        "forbiddenFixtures": 82,
+        "publishedFiles": 116,
+        "seedResources": 3,
+        "restart": "Passed:Linux host+two containers,UID65534denied,owned volume retained",
+        "smoke": "Passed:no SQL/mail readiness claim"
       }
     }
   ]

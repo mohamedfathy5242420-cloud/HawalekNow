@@ -23,7 +23,7 @@ if (-not $ReportPath) { $ReportPath = Join-Path $owned 'verification.json' }
 $volume = 'hawaleknow_p04_store_files_' + $run
 $label = 'io.hawaleknow.storage-test'
 $key = [guid]::NewGuid().ToString('N')
-$receipt = [ordered]@{ status = 'Failed'; sourceHead = $head; image = $Image; volume = $volume; owner = $run; restart = 'NotRun'; permissions = 'NotRun'; hostRestart = 'NotRun'; volumePreserved = $true }
+$receipt = [ordered]@{ status = 'Failed'; sourceHead = $head; image = $Image; volume = $volume; owner = $run; restart = 'NotRun'; permissions = 'NotRun'; hostRestart = 'NotRun'; volumeCreated = $false; volumePreserved = $true }
 try {
     # The helper references the same committed Infrastructure project. It never loads API Program.
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'verification/StoreFiles.cs') -Destination (Join-Path $owned 'Program.cs')
@@ -42,6 +42,7 @@ try {
     Invoke-StorageDocker @('volume', 'create', '--label', ($label + '=' + $run), $volume) | Out-Null
     $owner = (& docker volume inspect --format ('{{index .Labels "' + $label + '"}}') $volume).Trim()
     if ($owner -ne $run) { throw 'Refusing to initialize an unowned storage volume.' }
+    $receipt.volumeCreated = $true
     $mount = 'type=volume,source=' + $volume + ',target=/storage'
     # Only the newly labeled project volume is initialized. Its contents are preserved after verification.
     Invoke-StorageDocker @('run', '--rm', '--network', 'none', '--read-only', '--user', '0', '--cap-drop', 'ALL', '--cap-add', 'CHOWN', '--cap-add', 'FOWNER',

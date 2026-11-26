@@ -189,6 +189,31 @@ public sealed class LocalFileStorageTests
         finally { PrivateStoragePermissions.Apply(path, false); }
     }
 
+    [Fact]
+    public async Task Securing_an_already_owned_directory_does_not_require_WRITE_OWNER()
+    {
+        var root = Root(); Directory.CreateDirectory(root);
+        if (OperatingSystem.IsWindows()) DenyChangingOwner(root);
+        var key = Key(); var storage = new LocalFileStorage(root, TimeProvider.System);
+        await storage.WriteImageAsync(key, new MemoryStream(StorageTestImages.Png()), default);
+        Assert.NotNull(await new LocalFileStorage(root, TimeProvider.System).ReadImageAsync(key, default));
+        PrivateStoragePermissions.Require(root, true);
+    }
+
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+    private static void DenyChangingOwner(string path)
+    {
+        var directory = new DirectoryInfo(path); var acl = System.IO.FileSystemAclExtensions.GetAccessControl(directory);
+        var owner = System.Security.Principal.WindowsIdentity.GetCurrent().User!;
+        acl.SetAccessRuleProtection(true, false);
+        acl.SetAccessRule(new System.Security.AccessControl.FileSystemAccessRule(owner, System.Security.AccessControl.FileSystemRights.FullControl,
+            System.Security.AccessControl.InheritanceFlags.ContainerInherit | System.Security.AccessControl.InheritanceFlags.ObjectInherit,
+            System.Security.AccessControl.PropagationFlags.None, System.Security.AccessControl.AccessControlType.Allow));
+        acl.AddAccessRule(new System.Security.AccessControl.FileSystemAccessRule(owner, System.Security.AccessControl.FileSystemRights.TakeOwnership,
+            System.Security.AccessControl.AccessControlType.Deny));
+        System.IO.FileSystemAclExtensions.SetAccessControl(directory, acl);
+    }
+
     [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     private static void BroadenWindows(string path)
     {
