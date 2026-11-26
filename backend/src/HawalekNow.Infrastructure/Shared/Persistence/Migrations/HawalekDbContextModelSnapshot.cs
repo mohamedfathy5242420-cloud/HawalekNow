@@ -545,6 +545,11 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.Property<Guid>("GovernorateId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Hours")
+                        .IsRequired()
+                        .HasMaxLength(8192)
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Kind")
                         .HasColumnType("int");
 
@@ -587,6 +592,8 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
 
                     b.ToTable("Branches", "merchants", t =>
                         {
+                            t.HasCheckConstraint("CK_Branches_Hours", "ISJSON([Hours]) = 1");
+
                             t.HasCheckConstraint("CK_Branches_Kind", "[Kind] IN (1,2)");
 
                             t.HasCheckConstraint("CK_Branches_Position", "[Position].STSrid = 4326 AND [Position].STGeometryType() = 'Point' AND [Position].STIsEmpty() = 0");

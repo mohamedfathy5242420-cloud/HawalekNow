@@ -6,12 +6,13 @@ using MediatR;
 namespace HawalekNow.Application.Modules.Merchants;
 
 public sealed record BranchWrite(string Kind, string Name, string Address, Guid GovernorateId, Guid CityId, Guid AreaId,
-    double? Latitude, double? Longitude, bool PublicFixedAddressConfirmed, string? Phone = null, string? WhatsApp = null);
+    double? Latitude, double? Longitude, bool PublicFixedAddressConfirmed, string? Phone = null, string? WhatsApp = null, IReadOnlyList<WorkingDayWrite>? Hours = null);
 public sealed record BranchUpdateWrite(string RowVersion, BranchWrite Details);
 public sealed record BranchDto(Guid Id, Guid StoreId, string Kind, string Name, string Address, Guid GovernorateId, Guid CityId, Guid AreaId,
-    double Latitude, double Longitude, string? Phone, string? WhatsApp, string? EffectivePhone, string? EffectiveWhatsApp, bool PublicFixedAddressConfirmed, string RowVersion);
+    double Latitude, double Longitude, string? Phone, string? WhatsApp, string? EffectivePhone, string? EffectiveWhatsApp, bool PublicFixedAddressConfirmed, string RowVersion,
+    System.Collections.Immutable.ImmutableArray<WorkingDayWrite> Hours, OpeningState Opening);
 public sealed record PublicBranchDto(Guid Id, Guid StoreId, string Kind, string Name, string Address, Guid GovernorateId, Guid CityId, Guid AreaId,
-    double Latitude, double Longitude, string? Phone, string? WhatsApp);
+    double Latitude, double Longitude, string? Phone, string? WhatsApp, System.Collections.Immutable.ImmutableArray<WorkingDayWrite> Hours, OpeningState Opening);
 public interface IBranchService
 {
     Task<Result<BranchDto>> CreateAsync(Guid actorId, Guid storeId, BranchWrite value, CancellationToken cancellationToken);
@@ -51,7 +52,7 @@ public static class BranchInput
     public static bool Normalize(BranchWrite? value, out BranchDetails? details)
     {
         details = null;
-        return value is not null && BranchDetails.TryCreate(value.Kind, value.Name, value.Address, value.GovernorateId, value.CityId, value.AreaId,
+        return value is not null && HoursInput.Normalize(value.Hours, out _) && BranchDetails.TryCreate(value.Kind, value.Name, value.Address, value.GovernorateId, value.CityId, value.AreaId,
             value.Latitude, value.Longitude, value.Phone, value.WhatsApp, value.PublicFixedAddressConfirmed, out details);
     }
 }

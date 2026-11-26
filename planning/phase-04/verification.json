@@ -388,6 +388,83 @@
       "exitCode": 0,
       "command": "git -c safe.directory=D:/HwalekNow diff --check",
       "detail": "Exit0;protected schedulehashunchanged."
+    },
+    {
+      "name": "S05FirstTestBuild",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Production compiled. New Unit tests produced13 CS8752 errors because a single target-typed new in params chose the array type. Explicit OpeningPeriodWrite constructors replace these expressions. No production workaround or ignored tests; clean rebuild and tests required."
+    },
+    {
+      "name": "S05Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Clean final build0warnings/errors after explicit test constructors and two-week DST lookahead."
+    },
+    {
+      "name": "S05Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~WeeklyHours|FullyQualifiedName~Branch|FullyQualifiedName~ApiFoundation|FullyQualifiedName~ArchitectureTests|FullyQualifiedName~Geography'",
+      "detail": "47Architecture+46Integration+42Unit=135passed/0failed/0skipped. Actual SQL/HTTP,existing S04 migration backfill,no permanent default,required hours,public closed visibility,concurrency and rollback after Save. Final lookahead change followed by23WeeklyHours tests,0failed/skipped. Final Branch validator fixture now includes valid required hours and proves a valid actor succeeds;clean Unit project rebuild0/0 and42Branch+WeeklyHours tests pass0failed/skipped."
+    },
+    {
+      "name": "S05TimeCases",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet test backend/tests/UnitTests/HawalekNow.UnitTests.csproj --configuration Release --no-build --no-restore --filter FullyQualifiedName~WeeklyHours",
+      "detail": "23passed/0failed/0skipped;strict weekly input,closed days,overnight/week boundary/adjacency,exact start/end,winter/summer offsets,Cairo2026 gap/repeated hour,skipped-gap period next opening13days ahead."
+    },
+    {
+      "name": "S05Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "Full solution format verification exit0."
+    },
+    {
+      "name": "S05FirstRoadmap",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "New hours documentation used an automatic Markdown heading anchor; repository verifier requires explicit id anchors. Added the explicit s05-weekly-hours id and rerun required."
+    },
+    {
+      "name": "S05Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~WeeklyHours|FullyQualifiedName~Branch|FullyQualifiedName~ApiFoundation|FullyQualifiedName~ArchitectureTests|FullyQualifiedName~Geography'",
+      "detail": "46 actual Integration tests passed. Includes5 new hours/migration cases: Branch+PickupPoint mandatory weekly input and closed visibility,real SQL JSON roundtrip and required columns,one-winner concurrent edits,rollback hours+Audit after Save,old S04 place migration with explicit closed week/no permanent default."
+    },
+    {
+      "name": "S05SecondRoadmap",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "Explicit anchor fixed. P04 evidence guard required a separate S05Sql named receipt as well as S05Tests; recorded the real already-passed SQL scope with its executed command. No check weakened or new test result invented."
+    },
+    {
+      "name": "S05Roadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "76 authoritative rows,75dependency edges and986 local links/anchors accepted. Explicit hours anchor and separately named actual SQL evidence corrected; prior failures retained."
+    },
+    {
+      "name": "S05GitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "27 ignored/36 allowed samples and468 tracked files accepted;protected schedule remains untracked with original SHA256."
+    },
+    {
+      "name": "S05DiffCheck",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "detail": "Exit0. No SDK/package/Word/Seed or protected schedule changes;exact schedule SHA256 unchanged."
     }
   ],
   "userApproval": "Pending",
@@ -624,6 +701,57 @@
         "publishedFiles": 116,
         "seedResources": 3,
         "restart": "Passed:host/container processes andUID65534denial",
+        "volumePreserved": true
+      }
+    },
+    {
+      "runId": 45853666822,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "f27b6ff3a3c8ef1b79acf2e37de70f4b9a86d951",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45853666822",
+      "jobs": [
+        {
+          "id": 140026302714,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45853666822/job/140026302714"
+        },
+        {
+          "id": 140026303208,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45853666822/job/140026303208"
+        },
+        {
+          "id": 140026303212,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45853666822/job/140026303212"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 319,
+        "unit": 157,
+        "passed": 523,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      },
+      "docker": {
+        "allowedInputs": 194,
+        "forbiddenFixtures": 82,
+        "publishedFiles": 116,
+        "seedResources": 3,
+        "restart": "Passed: host/container processes and unrelated UID denial",
         "volumePreserved": true
       }
     }

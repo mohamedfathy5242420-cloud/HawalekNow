@@ -400,6 +400,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P04-S05 مواعيد العمل
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S05.md).
+
 - الاعتمادات السابقة: [P04-S04](#p04-s04).
 - المخرج المطلوب: جدول أسبوعي وحساب مفتوح الآن والفتح القادم.
 - بوابة التحقق: V2 time edge cases وV3 endpoint.

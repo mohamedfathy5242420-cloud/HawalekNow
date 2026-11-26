@@ -21,8 +21,9 @@ public sealed class BranchService(HawalekDbContext context, MerchantStoreAccess 
             var owned = await access.OwnStoreAsync(actorId, storeId, true, cancellationToken);
             if (!owned.IsSuccess) return Result<BranchDto>.Failure(owned.Error!);
             if (!await locations.CanSelectInsideTransactionAsync(value.GovernorateId, value.CityId, value.AreaId, cancellationToken)) return Fail<BranchDto>(ErrorKind.Validation);
-            var branch = MerchantBranch.Create(storeId, details!); context.Add(branch); Audit(actorId, "Branch.Create", branch.Id);
-            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); return Result<BranchDto>.Success(ToDto(branch, owned.Value));
+            HoursInput.Normalize(value.Hours, out var hours);
+            var branch = MerchantBranch.Create(storeId, details!, hours!); context.Add(branch); Audit(actorId, "Branch.Create", branch.Id);
+            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); return Result<BranchDto>.Success(ToDto(branch, owned.Value, clock.GetUtcNow()));
         }
         catch (DbUpdateException) { context.ChangeTracker.Clear(); return Fail<BranchDto>(ErrorKind.Conflict); }
         catch (SqlException error) when (Conflict(error)) { context.ChangeTracker.Clear(); return Fail<BranchDto>(ErrorKind.Conflict); }
@@ -41,8 +42,9 @@ public sealed class BranchService(HawalekDbContext context, MerchantStoreAccess 
             if (!branch.RowVersion.AsSpan().SequenceEqual(Convert.FromBase64String(value.RowVersion))) return Fail<BranchDto>(ErrorKind.Conflict);
             if ((branch.AreaId != details!.AreaId || branch.CityId != details.CityId || branch.GovernorateId != details.GovernorateId) &&
                 !await locations.CanSelectInsideTransactionAsync(details.GovernorateId, details.CityId, details.AreaId, cancellationToken)) return Fail<BranchDto>(ErrorKind.Validation);
-            branch.Update(details); Audit(actorId, "Branch.Edit", branch.Id);
-            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); return Result<BranchDto>.Success(ToDto(branch, owned.Value));
+            HoursInput.Normalize(value.Details.Hours, out var hours);
+            branch.Update(details); branch.SetHours(hours!); Audit(actorId, "Branch.Edit", branch.Id);
+            await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); return Result<BranchDto>.Success(ToDto(branch, owned.Value, clock.GetUtcNow()));
         }
         catch (DbUpdateException) { context.ChangeTracker.Clear(); return Fail<BranchDto>(ErrorKind.Conflict); }
         catch (SqlException error) when (Conflict(error)) { context.ChangeTracker.Clear(); return Fail<BranchDto>(ErrorKind.Conflict); }
@@ -53,7 +55,8 @@ public sealed class BranchService(HawalekDbContext context, MerchantStoreAccess 
         var owned = await access.OwnStoreAsync(actorId, storeId, false, cancellationToken);
         if (!owned.IsSuccess) return Result<MerchantPage<BranchDto>>.Failure(owned.Error!);
         var rows = await Rows(storeId, page, pageSize, cancellationToken);
-        return Result<MerchantPage<BranchDto>>.Success(new(rows.Take(pageSize).Select(value => ToDto(value, owned.Value)).ToImmutableArray(), page, pageSize, rows.Count > pageSize));
+        var now = clock.GetUtcNow();
+        return Result<MerchantPage<BranchDto>>.Success(new(rows.Take(pageSize).Select(value => ToDto(value, owned.Value, now)).ToImmutableArray(), page, pageSize, rows.Count > pageSize));
     }
     public async Task<Result<MerchantPage<PublicBranchDto>>> PublicListAsync(Guid storeId, int page, int pageSize, CancellationToken cancellationToken)
     {
@@ -61,23 +64,24 @@ public sealed class BranchService(HawalekDbContext context, MerchantStoreAccess 
         var store = await context.Set<Store>().AsNoTracking().SingleOrDefaultAsync(value => value.Id == storeId, cancellationToken);
         if (store is null || !await access.PublicAsync(store, cancellationToken)) return Fail<MerchantPage<PublicBranchDto>>(ErrorKind.NotFound);
         var rows = await Rows(storeId, page, pageSize, cancellationToken);
-        return Result<MerchantPage<PublicBranchDto>>.Success(new(rows.Take(pageSize).Select(value => ToPublicDto(value, store)).ToImmutableArray(), page, pageSize, rows.Count > pageSize));
+        var now = clock.GetUtcNow();
+        return Result<MerchantPage<PublicBranchDto>>.Success(new(rows.Take(pageSize).Select(value => ToPublicDto(value, store, now)).ToImmutableArray(), page, pageSize, rows.Count > pageSize));
     }
     public async Task<Result<PublicBranchDto>> PublicAsync(Guid id, CancellationToken cancellationToken)
     {
         var branch = await context.Set<MerchantBranch>().AsNoTracking().SingleOrDefaultAsync(value => value.Id == id, cancellationToken);
         if (branch is null) return Fail<PublicBranchDto>(ErrorKind.NotFound);
         var store = await context.Set<Store>().AsNoTracking().SingleOrDefaultAsync(value => value.Id == branch.StoreId, cancellationToken);
-        return store is null || !await access.PublicAsync(store, cancellationToken) ? Fail<PublicBranchDto>(ErrorKind.NotFound) : Result<PublicBranchDto>.Success(ToPublicDto(branch, store));
+        return store is null || !await access.PublicAsync(store, cancellationToken) ? Fail<PublicBranchDto>(ErrorKind.NotFound) : Result<PublicBranchDto>.Success(ToPublicDto(branch, store, clock.GetUtcNow()));
     }
     private Task<List<MerchantBranch>> Rows(Guid storeId, int page, int pageSize, CancellationToken cancellationToken) => context.Set<MerchantBranch>().AsNoTracking()
         .Where(value => value.StoreId == storeId).OrderBy(value => value.Id).Skip((page - 1) * pageSize).Take(pageSize + 1).ToListAsync(cancellationToken);
     private void Audit(Guid actorId, string operation, Guid id) => context.Add(AuditEntry.Record(actorId, operation, "MerchantBranch", id, null, clock.GetUtcNow()));
     private static bool Conflict(SqlException error) => error.Number is 1205 or 1222 or 51003 or 51011;
     private static Result<T> Fail<T>(ErrorKind kind) => Result<T>.Failure(new(kind));
-    public static BranchDto ToDto(MerchantBranch branch, Store store) => new(branch.Id, store.Id, branch.Kind.ToString(), branch.Name, branch.Address, branch.GovernorateId,
+    public static BranchDto ToDto(MerchantBranch branch, Store store, DateTimeOffset now) => new(branch.Id, store.Id, branch.Kind.ToString(), branch.Name, branch.Address, branch.GovernorateId,
         branch.CityId, branch.AreaId, branch.Position.Latitude, branch.Position.Longitude, branch.Phone, branch.WhatsApp, branch.Phone ?? store.Phone, branch.WhatsApp ?? store.WhatsApp,
-        branch.PublicFixedAddressConfirmed, Convert.ToBase64String(branch.RowVersion));
-    public static PublicBranchDto ToPublicDto(MerchantBranch branch, Store store) => new(branch.Id, store.Id, branch.Kind.ToString(), branch.Name, branch.Address, branch.GovernorateId,
-        branch.CityId, branch.AreaId, branch.Position.Latitude, branch.Position.Longitude, branch.Phone ?? store.Phone, branch.WhatsApp ?? store.WhatsApp);
+        branch.PublicFixedAddressConfirmed, Convert.ToBase64String(branch.RowVersion), HoursInput.ToWrite(branch.Hours), branch.Hours.At(now));
+    public static PublicBranchDto ToPublicDto(MerchantBranch branch, Store store, DateTimeOffset now) => new(branch.Id, store.Id, branch.Kind.ToString(), branch.Name, branch.Address, branch.GovernorateId,
+        branch.CityId, branch.AreaId, branch.Position.Latitude, branch.Position.Longitude, branch.Phone ?? store.Phone, branch.WhatsApp ?? store.WhatsApp, HoursInput.ToWrite(branch.Hours), branch.Hours.At(now));
 }

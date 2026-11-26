@@ -1,5 +1,6 @@
 using HawalekNow.Application.Modules.Merchants;
 using HawalekNow.Domain.Modules.Locations;
+using HawalekNow.Domain.Modules.Merchants;
 using HawalekNow.Infrastructure.Modules.Identity;
 using HawalekNow.Infrastructure.Modules.Locations;
 using HawalekNow.Infrastructure.Modules.Merchants;
@@ -19,7 +20,7 @@ public static class BranchTestData
         context.AddRange(governorate, city, area); await context.SaveChangesAsync(); return new(governorate.Id, city.Id, area.Id);
     }
     public static BranchWrite Write(AdministrativePath path, string kind = "Branch", string? phone = null, string? whatsApp = null) =>
-        new(kind, "مكان تجاري", "العنوان العام الثابت", path.Governorate, path.City, path.Area, 30.0444, 31.2357, true, phone, whatsApp);
+        new(kind, "مكان تجاري", "العنوان العام الثابت", path.Governorate, path.City, path.Area, 30.0444, 31.2357, true, phone, whatsApp, HoursInput.ToWrite(WeeklyHours.AllClosed));
     public static BranchService Service(HawalekDbContext context) => new(context,
         new MerchantStoreAccess(context, new AccountAccess(context, new IdentityStateLock(context))),
         new AdministrativeDirectory(context, new LocationStateLock(context)), TimeProvider.System);

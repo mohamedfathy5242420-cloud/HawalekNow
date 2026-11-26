@@ -1,6 +1,6 @@
 # Merchant workflows and operations
 
-P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01–S04 are technically verified locally. CI45846221851 proves493 tests and real storage restart/permission checks on the S03 head31e8e3b3f86442c5e0eb4e909aced5b0d77e65c9; S04 has142 relevant checks, a clean build and33 repeated branch/geography checks. S05–S07 are not implemented. Full final-head CI is still required. UserApproval/V4 remain Pending under D021.
+P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01–S05 are technically verified locally. CI45853666822 proves523 tests and all three jobs on the S04 head f27b6ff3a3c8ef1b79acf2e37de70f4b9a86d951, including Docker and real file restarts/permission denial. S05 passes135 relevant checks and23 further time checks; S06–S07 are not implemented. Full final-head CI is still required. UserApproval/V4 remain Pending under D021.
 
 ## Accounts and existing security
 
@@ -133,7 +133,16 @@ S04 is technically verified locally:142 broad checks, a clean build0/0 and33 fol
   "longitude": 31.2357,
   "publicFixedAddressConfirmed": true,
   "phone": null,
-  "whatsApp": "+201112345678"
+  "whatsApp": "+201112345678",
+  "hours": [
+    { "day": 0, "closed": false, "periods": [{ "opens": "09:00", "closes": "17:00", "closesNextDay": false }] },
+    { "day": 1, "closed": false, "periods": [{ "opens": "09:00", "closes": "17:00", "closesNextDay": false }] },
+    { "day": 2, "closed": false, "periods": [{ "opens": "09:00", "closes": "17:00", "closesNextDay": false }] },
+    { "day": 3, "closed": false, "periods": [{ "opens": "09:00", "closes": "17:00", "closesNextDay": false }] },
+    { "day": 4, "closed": false, "periods": [{ "opens": "22:00", "closes": "02:00", "closesNextDay": true }] },
+    { "day": 5, "closed": true, "periods": [] },
+    { "day": 6, "closed": false, "periods": [{ "opens": "09:00", "closes": "17:00", "closesNextDay": false }] }
+  ]
 }
 ```
 
@@ -143,4 +152,18 @@ The Locations-owned `IAdministrativeDirectory` checks a full active path under i
 
 `GeoPoint` is stored as SQL Server `geography`, SRID4326, with X=Longitude/Y=Latitude. SQL checks require a nonempty Point with SRID4326. Domain/Application DTOs do not expose NTS types. Production and every test context use the existing SQL/NTS provider configuration. The actual SQL tests check `.Lat`, `.Long`, `.STSrid`, shape rejection, FK violations/races, rowVersion and state+Audit rollback after Save. No distance/search endpoint or map integration is claimed.
 
-`20261126152640_P04BranchesAndAdministrativeReferences` adds the place table, geography/contact/rowVersion fields and the supporting administrative index/FK. Owned places cascade only when the existing final Identity purge removes their parent store; soft account deletion hides them immediately while retaining data and independent Audit. It has not been applied to the application database. Weekly hours and open/next calculations are still S05 work, required before final P04 delivery; S04 alone is not the complete merchant phase.
+`20261126152640_P04BranchesAndAdministrativeReferences` adds the place table, geography/contact/rowVersion fields and the supporting administrative index/FK. Owned places cascade only when the existing final Identity purge removes their parent store; soft account deletion hides them immediately while retaining data and independent Audit. It has not been applied to the application database.
+
+<a id="s05-weekly-hours"></a>
+
+## S05 weekly hours
+
+Locally verified with135 relevant checks and a further23 time checks after the DST lookahead correction, all with zero failures/skips. Full solution format and build0/0 pass. Exact final-head CI remains required.
+
+`hours` is required on branch/pickup creation and full update through the existing PUT route, in the same rowVersion and Audit transaction as the place details. Supply all seven unique days, Sunday0 through Saturday6. A closed day has no new opening periods; an overnight period from the previous day may still continue. An open day has1–8 periods using exact24-hour `HH:mm`. `closesNextDay:true` permits a duration through midnight up to24 hours; equal start/end with this flag means24 hours. Without it, end must be later than start. Overlaps are rejected across days and the week boundary. Adjacent intervals are continuous.
+
+Owner/public DTOs include the canonical weekly `hours` and `opening:{openNow,nextOpen,closesAt,timeZone}`. The clock comes from TimeProvider. Open periods include their start and exclude their end. While open, `nextOpen` is null and `closesAt` is the end of the continuous opening; when closed, `nextOpen` is the next actual opening and `closesAt` is null. Entirely closed and continuously open weeks have no invented next transition. These are scheduling facts; a closed place remains publicly readable when its parent is eligible.
+
+The zone is `Africa/Cairo`, using the runtime's installed timezone data, including summer/winter changes. Local response timestamps include their actual UTC offset. For nonexistent local minutes at the spring transition, boundaries move to the first valid minute; a period wholly inside the skipped gap has no opening that week. For repeated minutes at the autumn transition, opening uses the first occurrence and closing the last. This explicit application policy uses [TimeZoneInfo invalid-time detection](https://learn.microsoft.com/en-us/dotnet/api/system.timezoneinfo.isinvalidtime?view=net-10.0) and [ambiguous offsets](https://learn.microsoft.com/en-us/dotnet/api/system.timezoneinfo.getambiguoustimeoffsets?view=net-10.0); Egypt transition data is in the [upstream timezone source](https://github.com/eggert/tz/blob/main/africa). Keep OS/container tzdata current through the normal deployment process; no fixed offset or new timezone package is embedded.
+
+Migration `20261126155950_P04BranchWeeklyHours` adds required JSON hours. Existing S04 Draft places are backfilled with an explicit all-closed week, without changing their other data or inventing opening hours. No permanent SQL default permits new callers to omit the schedule. The value converter validates stored schedules, and the API validates all business rules before persistence. Generation used DesignOnly settings; the application database is untouched. No new job/event/Outbox kind is needed for these read-time calculations.

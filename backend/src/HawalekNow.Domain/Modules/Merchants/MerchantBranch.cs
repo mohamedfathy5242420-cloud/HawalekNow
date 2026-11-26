@@ -18,13 +18,15 @@ public sealed class MerchantBranch
     public string? Phone { get; private set; }
     public string? WhatsApp { get; private set; }
     public bool PublicFixedAddressConfirmed { get; private set; }
+    public WeeklyHours Hours { get; private set; } = WeeklyHours.AllClosed;
     public byte[] RowVersion { get; private set; } = [];
     private MerchantBranch() { }
-    public static MerchantBranch Create(Guid storeId, BranchDetails details)
+    public static MerchantBranch Create(Guid storeId, BranchDetails details, WeeklyHours hours)
     {
         if (storeId == Guid.Empty) throw new ArgumentException("A store is required.");
-        var branch = new MerchantBranch { Id = Guid.CreateVersion7(), StoreId = storeId }; branch.Update(details); return branch;
+        var branch = new MerchantBranch { Id = Guid.CreateVersion7(), StoreId = storeId }; branch.Update(details); branch.SetHours(hours); return branch;
     }
+    public void SetHours(WeeklyHours hours) { ArgumentNullException.ThrowIfNull(hours); Hours = hours; }
     public void Update(BranchDetails details)
     {
         ArgumentNullException.ThrowIfNull(details);

@@ -102,6 +102,10 @@ Merchants تملكStore وبياناته ونشاطه الرئيسي وإدار�
 
 IFileStorage فيApplication.Shared.Storage ومنفذLocalFileStorage وdecoder والصلاحيات والقفل فيInfrastructure.Shared.Storage. Outbox primitives فيShared مستقلة عن تشغيلHangfire؛ Profile removal يؤجل طلبها حتى وجود ملفات تجارية، ويكتب نية حذفها داخل معاملةPurge القائمة. StoreService تملك معاملةSQL واحدة للتغيير وAudit وOutbox؛ الملف يكتب قبل المرجع، والتعويض يعيد فحصSQL بعدفشلCommit المحتمل. لا اعتمادمتبادل بينالوحدات أوتصويرEntities فيAudit. Shared لا تعرفStore؛ LogoCleanup وconsumer وreconciliation job فيMerchants وتستعملالعقد التقني. [العقود والتشغيل وحدودالفشل](MERCHANT_OPERATIONS.md) و[الحزمة والإشعارات](P04_DEPENDENCIES.md).
 
-## تأسيسS04 قيدالتحقق
+## تأسيس S04
 
 Merchants تملكMerchantBranchللفرع/نقطةالاستلام وGeoPointوقنواتالاتصالالاختيارية. IAdministrativeDirectory فيApplication.Locations.Contracts عقدLocationsللمسارالإداريالمتاح تحتقفلSharedحتىCommit؛لاEntityأوnavigationعابر. UniqueIndexالمملوكةلـLocations تدعمFKمركبةprimitiveفيMigrationالعامة، فتحميArea/City/Governorate منالكسر. تبقىإعادةإسنادAreaغيرالمستخدمةممكنةعبرواجهتهاالمالكة. GeographyPointMappingالتقنيةفيSharedتستهلكفعليًا منMerchants دونNTSفيDomain/Application، وكلسياقاتSQLالاختباريةأصبحتUseNetTopologySuite. BranchServiceتملكUoWواحدةللتغييروAudit؛لاEvent/Job/Outboxجديدةبلا حاجة. [دليلالمساراتوالمراجع](MERCHANT_OPERATIONS.md).
+
+## تأسيس S05
+
+WeeklyHours قيمة غير قابلة للتعديل الجزئي فيDomain.Merchants، بقواعد أسبوع كامل وفترات ومنع التداخل وحساب زمني عبر TimeZoneInfo/Africa/Cairo. تستخدم BranchService حقن TimeProvider وتحسب الحالة في وقت القراءة دون تخزين openNow متقادم أوJob دوري. HoursInput فيApplication يتحقق من عقد HH:mm ويحوله إلىقيمةDomain، وWeeklyHoursJson فيInfrastructure وحدها تملك تحويل JSON الخاص بـEF. تحفظ الساعات ضمن صف MerchantBranch وRowVersion وAudit والمعاملة الحالية. لا EF أوJSON أوNTS أوحزم جديدة فيDomain/Application، ولا علاقة بالبحث أوبالمنتجات المؤجلة إلىP05/P06. [العقد وسياسة DST](MERCHANT_OPERATIONS.md#s05-weekly-hours).

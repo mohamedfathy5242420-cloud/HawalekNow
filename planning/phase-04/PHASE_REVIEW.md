@@ -23,3 +23,7 @@ S03 نُفذت ومحليًا492/0/0 وبناء0/0 وlockedrestore/format/roadma
 نجحتبوابةS03النهائية على31e8e3b:CI45846221851 و493اختبارًا وDocker/restart/UIDdenialمحليًا، وأصبحتVerified/S04handoffInternalReady. يبدأS04 وفقD021؛S05–S07لمتبدأ وP05محظورة. UserApproval/V4Pending والتجربةوالشرحDeferred.
 
 S04Verifiedمحليًا:142فحصًا ثمبناء0/0 وإعادة33فحصًا وFormatverificationناجحة؛تسليمS05InternalReady. المواعيدلمتنفذبعدولاP05. تستمرP04InProgressواعتمادالمستخدم/V4Pending،وCIشاملةعلىرأسالتسليمالنهائيلازمة.
+
+نجحت CI45853666822 على رأس S04 الفعلي f27b6ff3a3c8ef1b79acf2e37de70f4b9a86d951 بكل الوظائف الثلاث و523 اختبارًا (47 Architecture +319 Integration +157 Unit)، صفر فشل أوتخطٍّ وبناء0/0. أثبتت Docker194 مدخلًا مسموحًا و82 عينة ممنوعة وموارد Seed الثلاث وبقاء التخزين بعد restart ورفض UID آخر. بدأت [S05](steps/S05.md) للمواعيد تحت D021؛ أول بناء لاختباراتها فشل بـ13 خطأ صياغة C# في مُنشئات params الجديدة، وصُحّح دون تغيير سلوك الإنتاج؛ إعادة البناء والتحقق قيد التنفيذ. تبقى S06–S07 غير منفذة وUserApproval/V4 Pending.
+
+S05 InReview/Verified محليًا:135 فحصًا ناجحًا، ثم Format verification وبناء0/0 وإعادة23 اختبارًا بعد إصلاح نافذة الفتح القادم لتشمل أسبوع فجوة DST. SQL/HTTP وترحيل بيانات S04 واختبار rollback مثبتة. [تسليم S06](handoffs/S05-to-S06.md) InternalReady؛ تبقى CI على رأس التسليم النهائي مطلوبة، وUserApproval/V4 Pending وP05NotStarted.

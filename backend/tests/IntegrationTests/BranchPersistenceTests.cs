@@ -49,7 +49,7 @@ public sealed class BranchPersistenceTests(SqlDatabase database) : IClassFixture
         var moved = await Assert.ThrowsAsync<SqlException>(() => context.Set<Area>().Where(value => value.Id == first.Area)
             .ExecuteUpdateAsync(set => set.SetProperty(value => value.CityId, second.City).SetProperty(value => value.GovernorateId, second.Governorate))); Assert.Equal(547, moved.Number);
         Assert.True(BranchInput.Normalize(BranchTestData.Write(first) with { CityId = second.City, GovernorateId = second.Governorate }, out var invalid));
-        context.Add(MerchantBranch.Create(setup.Store.Id, invalid!)); var insert = await Assert.ThrowsAsync<DbUpdateException>(() => context.SaveChangesAsync()); Assert.Equal(547, Assert.IsType<SqlException>(insert.InnerException).Number);
+        context.Add(MerchantBranch.Create(setup.Store.Id, invalid!, WeeklyHours.AllClosed)); var insert = await Assert.ThrowsAsync<DbUpdateException>(() => context.SaveChangesAsync()); Assert.Equal(547, Assert.IsType<SqlException>(insert.InnerException).Number);
         await using var read = database.CreateContext(); Assert.Single(await read.Set<MerchantBranch>().Where(value => value.StoreId == setup.Store.Id).ToArrayAsync());
         Assert.Equal(first.Area, (await read.Set<MerchantBranch>().SingleAsync(value => value.Id == branch.Id)).AreaId);
     }

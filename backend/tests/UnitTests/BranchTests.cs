@@ -19,7 +19,7 @@ public sealed class BranchTests
     public void Named_place_kinds_have_a_single_name_and_opaque_administrative_ids(string kind)
     {
         Assert.True(Details(kind, 30.0444, 31.2357, true, null, null, out var details));
-        var storeId = Guid.NewGuid(); var branch = MerchantBranch.Create(storeId, details!);
+        var storeId = Guid.NewGuid(); var branch = MerchantBranch.Create(storeId, details!, WeeklyHours.AllClosed);
         Assert.Equal(storeId, branch.StoreId); Assert.Equal(30.0444, branch.Position.Latitude); Assert.Equal(31.2357, branch.Position.Longitude);
         Assert.Equal(Governorate, branch.GovernorateId); Assert.Equal(City, branch.CityId); Assert.Equal(Area, branch.AreaId); Assert.True(branch.PublicFixedAddressConfirmed);
     }
@@ -49,7 +49,8 @@ public sealed class BranchTests
         Assert.False(Details("Branch", 30, 31, true, "not-a-phone", null, out _));
         Assert.False(BranchDetails.TryCreate("Branch", "name", " ", Governorate, City, Area, 30, 31, null, null, true, out _));
         Assert.False(BranchDetails.TryCreate("Branch", "name", "address", Governorate, City, Guid.Empty, 30, 31, null, null, true, out _));
-        var write = new BranchWrite("Branch", "name", "address", Governorate, City, Area, 30, 31, true);
+        var write = new BranchWrite("Branch", "name", "address", Governorate, City, Area, 30, 31, true, Hours: HoursInput.ToWrite(WeeklyHours.AllClosed));
+        Assert.True(new CreateBranchValidator().Validate(new CreateBranchCommand(Guid.NewGuid(), Guid.NewGuid(), write)).IsValid);
         Assert.False(new CreateBranchValidator().Validate(new CreateBranchCommand(Guid.Empty, Guid.NewGuid(), write)).IsValid);
     }
 
@@ -62,8 +63,8 @@ public sealed class BranchTests
         Assert.True(StoreDetails.TryCreate("store", "+201012345678", "+201112345678", null, null, null, out var storeDetails));
         var store = Store.Create(Guid.NewGuid(), Guid.NewGuid(), storeDetails!);
         Assert.True(Details("PickupPoint", 30, 31, true, phone, whatsApp, out var details));
-        var branch = MerchantBranch.Create(store.Id, details!); var dto = BranchService.ToPublicDto(branch, store);
+        var branch = MerchantBranch.Create(store.Id, details!, WeeklyHours.AllClosed); var now = DateTimeOffset.Parse("2026-11-26T10:00:00Z"); var dto = BranchService.ToPublicDto(branch, store, now);
         Assert.Equal(expectedPhone, dto.Phone); Assert.Equal(expectedWhatsApp, dto.WhatsApp);
-        Assert.Equal(phone, BranchService.ToDto(branch, store).Phone); Assert.Equal(whatsApp, BranchService.ToDto(branch, store).WhatsApp);
+        Assert.Equal(phone, BranchService.ToDto(branch, store, now).Phone); Assert.Equal(whatsApp, BranchService.ToDto(branch, store, now).WhatsApp);
     }
 }
