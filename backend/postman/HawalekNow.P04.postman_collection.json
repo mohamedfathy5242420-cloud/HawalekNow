@@ -1,7 +1,7 @@
 {
   "info": {
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "P04 is in progress. Only implemented requests are present. Select a journey, never run all decisions blindly. Use an isolated review database and confirmed test Merchant/Admin accounts from P02 setup. Shared real cookie jar, HTTPS with certificate validation, fresh principal-bound CSRF. Capture the merchant id/version using Own review before switching to Admin; decisions return the next version. Reasons are mandatory except approve. Personal trial is Deferred. Later P04 steps extend this collection.",
+    "description": "P04 is in progress. Only implemented requests are present. Select a journey, never run all decisions blindly. Use an isolated review database and confirmed test Merchant/Admin accounts from P02 setup. Shared real cookie jar, HTTPS with certificate validation, fresh principal-bound CSRF. Capture the merchant id/version using Own review before switching to Admin; decisions return the next version. Reasons are mandatory except approve. Personal trial is Deferred. Later P04 steps extend this collection. S03 store requests require a confirmed Merchant, one active Catalog activity and at least one contact. Upload a file manually; store activity cannot be changed by details edits. Public requests are expected200 only after approval and when the optional logo exists. These instructions do not claim a personal trial.",
     "name": "HawalekNow P04 merchants and stores"
   },
   "event": [
@@ -389,6 +389,256 @@
                   "if (pm.response.code === 200) { const r = pm.response.json(); pm.environment.set(\"merchantProfileId\", r.id); pm.environment.set(\"merchantRowVersion\", r.rowVersion); }"
                 ]
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Own store and optional logo",
+      "item": [
+        {
+          "name": "Create own store - confirmed Merchant Pending or Approved",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/store",
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"activityId\": \"{{activityId}}\",\r\n  \"details\": {\r\n    \"name\": \"متجر التجربة\",\r\n    \"phone\": \"+201012345678\",\r\n    \"whatsApp\": null,\r\n    \"facebook\": null,\r\n    \"instagram\": null,\r\n    \"tikTok\": null\r\n  }\r\n}"
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const s=pm.response.json();pm.environment.set(\"storeId\",s.id);pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Read own store - capture latest version",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/store"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const s=pm.response.json();pm.environment.set(\"storeId\",s.id);pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Edit own store details - activity stays unchanged",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/stores/{{storeId}}",
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"rowVersion\": \"{{storeRowVersion}}\",\r\n  \"details\": {\r\n    \"name\": \"متجر التجربة\",\r\n    \"phone\": \"+201012345678\",\r\n    \"whatsApp\": null,\r\n    \"facebook\": null,\r\n    \"instagram\": null,\r\n    \"tikTok\": null\r\n  }\r\n}"
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const s=pm.response.json();pm.environment.set(\"storeId\",s.id);pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Upload/replace own logo - choose a local PNG or JPEG",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/stores/{{storeId}}/logo",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "value": "{{storeRowVersion}}",
+                  "type": "text",
+                  "key": "rowVersion"
+                },
+                {
+                  "src": "",
+                  "type": "file",
+                  "key": "file"
+                }
+              ]
+            },
+            "description": "Select the file manually. Maximum2MiB and2048x2048;one PNG/JPEG image. Server decodes/re-encodes PNG, strips metadata, and ignores filename/client MIME. Refresh rowVersion after replacement. Missing logo returns404 and clients use a placeholder."
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const s=pm.response.json();pm.environment.set(\"storeId\",s.id);pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Read own logo after uploading",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/stores/{{storeId}}/logo"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Remove own logo - refresh version first",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/stores/{{storeId}}/logo",
+            "body": {
+              "mode": "raw",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              },
+              "raw": "{\r\n  \"rowVersion\": \"{{storeRowVersion}}\"\r\n}"
+            }
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const s=pm.response.json();pm.environment.set(\"storeId\",s.id);pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Public store - only after Admin approval",
+      "item": [
+        {
+          "name": "Public store - Pending is404,Approved is200",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/stores/{{storeId}}"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
+            }
+          ]
+        },
+        {
+          "name": "Public logo - only when present and public",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/stores/{{storeId}}/logo"
+          },
+          "event": [
+            {
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              },
+              "listen": "test"
             }
           ]
         }

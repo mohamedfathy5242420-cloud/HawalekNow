@@ -1,6 +1,6 @@
 # Merchant workflows and operations
 
-P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01 is technically verified. S02 initially passed139 focused checks, then its first full CI failed45 foundation fixture/path-inventory checks. After correcting those test fixtures, the full local solution passes433 tests (47 Architecture+265 Integration+121 Unit),0 failed/skipped, with build0 warnings/errors and full format verification. Exact-head CI on the correction remains required before S03. The phase remains under D021, with UserApproval/V4 Pending.
+P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01/S02 are technically verified: correction head5173c605ab558bc79dcc4fce5fa36024f5f2d25e passed all three jobs in CI45614038330 with433 tests and build0/0. The first S02 CI failure remains in the evidence. S03 is in progress; later steps are not implemented. UserApproval/V4 remain Pending under D021.
 
 ## Accounts and existing security
 
@@ -61,3 +61,50 @@ Import the [P04 collection](postman/HawalekNow.P04.postman_collection.json) and 
 5. For a separate rejected-account journey, reject a Pending merchant with a reason. The Merchant may read its own reason and manage Identity, but cannot self-resubmit. For suspension, Admin suspends an Approved account; its existing merchant cookie must fail live authentication until Admin reinstates it. Admin login remains available in the collection to switch away from that cookie.
 
 These are instructions and request artifacts, not evidence of the user's personal trial. V4 and the detailed teaching session remain Pending/Deferred respectively.
+
+## S03 store and optional logo
+
+S03 is implemented in the worktree and verification is in progress. It is not yet an InternalReady handoff. The initial storage decoder rejection and test build/HTTP-fixture failures are retained in the [step record](../planning/phase-04/steps/S03.md) and evidence. See the [dependency review](P04_DEPENDENCIES.md) for the pinned decoder, actual advisory check, native notices and unchanged existing package versions.
+
+| Method and path, relative to `/api/v1` | Access | Contract |
+| --- | --- | --- |
+| POST `merchants/store` | VerifiedMerchantSetup | `{ "activityId": "...", "details": { "name": "One name", "phone": "+201012345678" } }` |
+| GET `merchants/store` | VerifiedMerchantSetup | Own store, optional-logo flag and rowVersion |
+| PUT `merchants/stores/{id}` | VerifiedMerchantSetup, owner | `{ "rowVersion": "...", "details": { ... } }`; cannot reassign owner or main activity |
+| PUT `merchants/stores/{id}/logo` | Same owner policy | Multipart `rowVersion` and `file`; response is the new store DTO/version |
+| GET `merchants/stores/{id}/logo` | Same owner policy | Raw normalized `image/png`, not a filesystem key/path |
+| DELETE `merchants/stores/{id}/logo` | Same owner policy | JSON `{ "rowVersion": "..." }`; removing an already absent logo is a no-op |
+| GET `stores/{id}` | Public visibility gate | Approved merchant and confirmed active Identity account; no private owner/version fields |
+| GET `stores/{id}/logo` | Same public visibility gate | Raw `image/png`; no-store and nosniff |
+
+All mutations retain HTTPS, current-principal CSRF, live authorization and the shared merchant quota. Authentication itself ignores cookies on HTTP, including manually forwarded cookies; protected requests return401 before reaching a controller. Other merchants get404 for the private store resource. Pending/ChangesRequested may prepare it; confirming email does not publish it. `hasLogo:false` tells clients to display their placeholder; a missing optional logo returns404. No static-file middleware exposes the storage directory.
+
+The store name is one trimmed field of1–200 UTF-16 code units, with no controls. One of Phone/WhatsApp is required. Each channel accepts E.164 (`+` and7–15 digits); formatted spaces/hyphens/parentheses are removed, and Egyptian national10/11-digit numbers beginning0 become `+20...`. Optional Facebook/Instagram/TikTok links are bounded HTTPS URLs on the corresponding allowed service hosts, without userinfo or alternate ports. They are stored as links and never fetched by the server. Catalog selection must exist and be active, checked through its transaction-owned contract. Later deactivation stops new selection; it does not change an existing store's activity or silently hide the store. Activity changes arrive only through S06.
+
+`20261126141141_P04StoresAndLogoStorage` creates the store table with a unique merchant-account FK, contact/name constraints, rowVersion and a unique optional logo key. A primitive cross-schema FK to `catalog.Activities` prevents deleting an activity in use, without referencing another module's Entity/navigation. Generation used a nonconnecting DesignOnly configuration; it has not been applied to the application database. SQL tests migrate only newly owned random databases.
+
+## Storage boundaries and failure handling
+
+The default root is `App_Data/StoreFiles` under the API content root. Configure `FileStorage:Root` as a stable absolute local path outside webroot, preferably outside the checkout for deployment. The runtime directory is excluded from Git and Docker in all case variants of App_Data. A populated unmarked directory, traversal key, symlink/junction, changed ownership marker, permissive ACL/mode or changed image hash is rejected. The application does not take ownership of a foreign populated directory. Windows ACLs grant only the current owner; Unix directories/files are0700/0600. Keep the same root and persistent volume across restarts; changing the configured root is not an automatic file migration.
+
+Only one actual PNG/JPEG image is accepted, at most2MiB input and2048×2048. Server-side signature checks and decoding, restricted coders/delegates, bounded native resources, APNG rejection and PNG re-encoding remove metadata and trailing JPEG payloads. The client filename/MIME never selects a path or decoder. Normalized output is bounded at8MiB. No SVG/PDF/GIF, remote URL, document or product-image pipeline is introduced. Keys are server-generated GUIDs; private manifests bind them to this installation, dimensions, creation time, length and SHA256. File writes use create-new temporary files, flush to disk and atomic moves; a complete file exists before SQL can reference it.
+
+Each store mutation owns one existing DbContext/UoW transaction and acquires Identity's state lock. State changes and bounded Audit entries save together. Upload also holds a transaction-owned per-key SQL lock. If Save/Commit fails, the primary transaction is disposed before compensation. Compensation starts a fresh transaction, reacquires the key lock and checks committed SQL references before deleting. This handles a lost Commit acknowledgement: a file already referenced by a committed row is retained. If SQL/storage cannot prove it is unreferenced and owned, it is retained. Storage failures use the closed `Unavailable` error kind:503 with `service.unavailable` and the existing safe ProblemDetails envelope; no path, filename, native exception or input is exposed.
+
+Replacing/removing a logo and final account purge write encrypted `Merchants.DeleteLogo.v1` intents in the same SQL transaction as removing the reference. The existing Outbox pump invokes their consumer only after Commit. It checks references again, removes only verified owned bytes, and uses the established retry/backoff/terminal-failure mechanism; no OTP transport changes. Storage is resolved only while handling this message kind, so a file failure does not block resolving OTP handlers. Audit remains independent of operational logging and survives account/store deletion.
+
+An hourly `merchant-logo-reconciliation-v1` job on the `storage` queue examines owned manifests older than24 hours, checks SQL under the same per-key lock and removes unreferenced verified files. It keeps linked files and changed/unowned files. The worker retains the `identity` queue and also services `storage`. This job repairs interrupted upload compensation after storage/SQL becomes available. Incomplete temporary writes without a verified manifest are conservatively retained and never served; operator cleanup must establish ownership before removing such debris. No distributed transaction or immediate cleanup guarantee is claimed.
+
+## Storage runtime verification
+
+After committing production sources and building an exact-head image with the canonical test, run:
+
+```powershell
+./docker/test-api-build-context.ps1 -Image hawaleknow/api:p04-review -KeepImage
+./docker/smoke-api.ps1 -Image hawaleknow/api:p04-review
+./docker/test-store-files.ps1 -Image hawaleknow/api:p04-review
+```
+
+The last command builds a standalone verifier against the committed Infrastructure project. It writes/reads from two separate host processes, then two separate non-root containers using a newly labeled project volume, and checks that UID65534 cannot read the known existing image or write its directory. It does not start API Program or connect to SQL. Its JSON receipt records source head, image, outcomes and the retained volume name. The volume is preserved. These commands are instructions until their actual receipts are recorded; the earlier P03 smoke alone does not prove storage persistence or permissions.
+
+For the selected Postman store journey, use a confirmed Merchant session, select an active Catalog activity, create the store and optionally choose a local PNG/JPEG in the multipart request. Refresh the store version after each edit/upload. An Admin approves the merchant separately; public store/logo requests then become available. The collection includes only implemented S02/S03 routes. The personal trial remains Deferred and V4 Pending.

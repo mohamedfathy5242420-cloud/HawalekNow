@@ -5,17 +5,21 @@ using Hangfire.SqlServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HawalekNow.Infrastructure.Shared.Messaging;
 
 public static class BackgroundRegistration
 {
+    public static IServiceCollection AddOutboxPersistence(this IServiceCollection services)
+    {
+        services.TryAddSingleton<PayloadProtection>(); services.TryAddScoped<OutboxWriter>(); return services;
+    }
     public static IServiceCollection AddBackgroundProcessing(this IServiceCollection services)
     {
         // Deliberately closed: no global Serilog logger or general Hangfire/SQL diagnostics can expose metadata.
         LogProvider.SetCurrentLogProvider(new ClosedHangfireLogs());
-        services.AddSingleton<PayloadProtection>();
-        services.AddScoped<OutboxWriter>(); services.AddScoped<OutboxPump>();
+        services.AddOutboxPersistence(); services.AddScoped<OutboxPump>();
         services.AddSingleton<JobStorage>(provider => new SqlServerStorage(
             provider.GetRequiredService<IConfiguration>().GetConnectionString("Application") ?? throw new InvalidOperationException("Configure the application database."),
             new SqlServerStorageOptions
@@ -48,7 +52,7 @@ public sealed class HangfireWorker(IServiceProvider provider, IConfiguration con
         server = new BackgroundJobServer(new BackgroundJobServerOptions
         {
             WorkerCount = 1,
-            Queues = ["identity"],
+            Queues = ["identity", "storage"],
             SchedulePollingInterval = TimeSpan.FromSeconds(1),
             StopTimeout = TimeSpan.FromSeconds(5),
             ShutdownTimeout = TimeSpan.FromSeconds(10),

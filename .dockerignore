@@ -21,6 +21,8 @@
 !backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/all-shiyakha.json
 !backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/SOURCE.md
 !backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/LICENSE.txt
+!backend/src/HawalekNow.Infrastructure/Shared/Storage/ThirdParty/Magick.NET-15.1.0.LICENSE.txt
+!backend/src/HawalekNow.Infrastructure/Shared/Storage/ThirdParty/Magick.NET-15.1.0.NOTICE.txt
 # Exclude generated inputs even when their extension matches an allow rule.
 **/[Bb]in/**
 **/[Oo]bj/**
@@ -44,3 +46,4 @@
 **/.git/**
 **/.aws/**
 **/.azure/**
+**/[Aa][Pp][Pp]_[Dd][Aa][Tt][Aa]/**

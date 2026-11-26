@@ -1,2 +1,7 @@
 # Accepted upstream seed files are hash-pinned; preserve their bytes on every platform.
 backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/*.json -text
+
+# Reviewed upstream notices retain their exact bytes, including upstream whitespace.
+# This exception applies only to these two hash-pinned vendor documents, not application code.
+backend/src/HawalekNow.Infrastructure/Shared/Storage/ThirdParty/Magick.NET-15.1.0.LICENSE.txt -text -whitespace
+backend/src/HawalekNow.Infrastructure/Shared/Storage/ThirdParty/Magick.NET-15.1.0.NOTICE.txt -text -whitespace

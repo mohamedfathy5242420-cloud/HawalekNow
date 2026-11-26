@@ -521,6 +521,75 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Merchants.Store", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ActivityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Facebook")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Instagram")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("LogoKey")
+                        .HasMaxLength(32)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(32)");
+
+                    b.Property<Guid>("MerchantAccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(16)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(16)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("TikTok")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("WhatsApp")
+                        .HasMaxLength(16)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(16)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityId");
+
+                    b.HasIndex("LogoKey")
+                        .IsUnique()
+                        .HasFilter("[LogoKey] IS NOT NULL");
+
+                    b.HasIndex("MerchantAccountId")
+                        .IsUnique();
+
+                    b.ToTable("Stores", "merchants", t =>
+                        {
+                            t.HasCheckConstraint("CK_Stores_Contact", "NULLIF(LTRIM(RTRIM([Phone])), '') IS NOT NULL OR NULLIF(LTRIM(RTRIM([WhatsApp])), '') IS NOT NULL");
+
+                            t.HasCheckConstraint("CK_Stores_Name", "LEN(LTRIM(RTRIM([Name]))) > 0");
+                        });
+                });
+
             modelBuilder.Entity("HawalekNow.Domain.Modules.Search.SynonymGroup", b =>
                 {
                     b.Property<Guid>("Id")
@@ -987,6 +1056,15 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("GovernorateId")
                         .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Merchants.Store", b =>
+                {
+                    b.HasOne("HawalekNow.Domain.Modules.Merchants.MerchantAccount", null)
+                        .WithOne()
+                        .HasForeignKey("HawalekNow.Domain.Modules.Merchants.Store", "MerchantAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

@@ -55,6 +55,8 @@ public sealed class ApiDocumentTransformer : IOpenApiDocumentTransformer
                 });
                 foreach (var response in operation.Responses?.Values.OfType<OpenApiResponse>() ?? [])
                 {
+                    if (response.Content?.TryGetValue("image/png", out var image) == true)
+                        image.Schema = new OpenApiSchema { Type = JsonSchemaType.String, Format = "binary" };
                     response.Headers ??= new Dictionary<string, IOpenApiHeader>();
                     response.Headers[CorrelationIdMiddleware.HeaderName] = new OpenApiHeader
                     {

@@ -73,7 +73,7 @@ builder.Services.AddReferenceDataRateLimits();
 builder.Services.AddMerchantRateLimits();
 builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme).Configure<SessionTokens, TimeProvider>(
     (options, tokens, clock) => options.TokenValidationParameters = tokens.Validation(clock));
-builder.Services.AddPersistence(builder.Configuration).AddIdentityPersistence().AddMerchantAccounts().AddBackgroundProcessing();
+builder.Services.AddPersistence(builder.Configuration).AddIdentityPersistence().AddMerchantAccounts().AddMerchantStores().AddBackgroundProcessing();
 builder.Services.AddCatalogReferenceData();
 builder.Services.AddLocationsReferenceData();
 builder.Services.AddSearchReferenceData();

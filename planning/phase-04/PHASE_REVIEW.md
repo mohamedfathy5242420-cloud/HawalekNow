@@ -15,3 +15,7 @@ S02 Verified محليًا مع139 اختبارًا مناسبًا وFormat وف�
 فشلت CI S02 الأولى45610300309 على122277c في Backend بـ45 فشلًا، والتوثيق وDocker ناجحان. أُعيدت S02 إلى InProgress وتسليم S03 إلى Draft، مع حفظ نتائج139 المحلية لنطاقها فقط. التصحيح والاختبارات الكاملة قيد التنفيذ؛ لا بدء S03 قبل نجاحهما وCI الجديدة.
 
 نجحت إعادة التحقق المحلية بعد التصحيح:433 اختبارًا كاملًا، صفر failed/skipped، بناء0/0 وFormat verification. CI على رأس التصحيح هي البوابة التالية؛ لا بدء S03 بعد.
+
+نجحت CI التصحيح45614038330 على5173c605ab558bc79dcc4fce5fa36024f5f2d25e بجميع الوظائف الثلاث و433/0/0 وبناء0/0. أصبحت S02 Verified وتسليم S03 InternalReady وبدأت S03 وفق D021. تبقىS04–S07 غير منفذة وUserApproval/V4Pending وP05NotStarted. الفشل السابق محفوظ في الأدلة وسجل الخطوة.
+
+S03 نُفذت ومحليًا492/0/0 وبناء0/0 وlockedrestore/format/roadmap/Git/diff ناجحة. بوابةDocker وrestart وCI علىرأسالحفظ Pending؛ S04–S07 لمتبدأ. انظر[S03](steps/S03.md) و[تسليمS04](handoffs/S03-to-S04.md). تبقىUserApproval/V4Pending وP05NotStarted.

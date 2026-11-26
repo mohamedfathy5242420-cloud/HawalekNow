@@ -125,6 +125,7 @@ public sealed class ApiErrorTests
     [InlineData(ErrorKind.Validation, 400, "request.invalid")]
     [InlineData(ErrorKind.Unauthorized, 401, "request.unauthorized")]
     [InlineData(ErrorKind.Forbidden, 403, "request.forbidden")]
+    [InlineData(ErrorKind.Unavailable, 503, "service.unavailable")]
     public async Task Expected_result_errors_map_over_http(ErrorKind kind, int status, string code)
     {
         var (app, client, sink) = await StartAsync();

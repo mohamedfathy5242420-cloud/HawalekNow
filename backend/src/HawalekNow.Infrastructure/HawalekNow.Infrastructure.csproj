@@ -12,6 +12,7 @@
     <PackageReference Include="Hangfire.AspNetCore" Version="[1.8.25]" />
     <PackageReference Include="Hangfire.SqlServer" Version="[1.8.25]" />
     <PackageReference Include="Newtonsoft.Json" Version="[13.0.4]" />
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="[15.1.0]" />
     <ProjectReference Include="..\HawalekNow.Application\HawalekNow.Application.csproj" />
     <ProjectReference Include="..\HawalekNow.Domain\HawalekNow.Domain.csproj" />
   </ItemGroup>
@@ -27,6 +28,8 @@
     <EmbeddedResource Include="Modules/Locations/SeedData/*.json" LogicalName="HawalekNow.ReferenceSeed.%(Filename)%(Extension)" />
     <Content Include="Modules/Locations/SeedData/LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="Modules/Locations/SeedData/SOURCE.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="Shared/Storage/ThirdParty/Magick.NET-15.1.0.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" TargetPath="ThirdParty/Magick.NET-15.1.0.LICENSE.txt" />
+    <Content Include="Shared/Storage/ThirdParty/Magick.NET-15.1.0.NOTICE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" TargetPath="ThirdParty/Magick.NET-15.1.0.NOTICE.txt" />
   </ItemGroup>
 
 </Project>

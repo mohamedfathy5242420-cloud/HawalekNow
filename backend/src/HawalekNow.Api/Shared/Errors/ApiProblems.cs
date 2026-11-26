@@ -13,6 +13,7 @@ public static class ApiProblems
         ErrorKind.Validation => 400,
         ErrorKind.Unauthorized => 401,
         ErrorKind.Forbidden => 403,
+        ErrorKind.Unavailable => 503,
         _ => throw new ArgumentOutOfRangeException(nameof(error))
     });
 
@@ -27,6 +28,7 @@ public static class ApiProblems
             405 => ("The method is not allowed.", "request.method_not_allowed"),
             409 => ("The request conflicts with the current state.", "resource.conflict"),
             415 => ("The media type is not supported.", "request.unsupported_media_type"),
+            503 => ("The service is temporarily unavailable.", "service.unavailable"),
             < 500 => ("The request could not be completed.", "request.failed"),
             _ => ("An unexpected error occurred.", "server.error")
         };
