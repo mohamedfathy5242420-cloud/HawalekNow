@@ -1,6 +1,6 @@
 # Merchant workflows and operations
 
-P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01–S05 are technically verified locally. CI45853666822 proves523 tests and all three jobs on the S04 head f27b6ff3a3c8ef1b79acf2e37de70f4b9a86d951, including Docker and real file restarts/permission denial. S05 passes135 relevant checks and23 further time checks; S06–S07 are not implemented. Full final-head CI is still required. UserApproval/V4 remain Pending under D021.
+P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01–S05 are technically verified. CI45856851203 proves551 tests and all three jobs on the S05 head f7264282abb6bbd5c8d02070c545cb61ceadf7c7, including Cairo time calculations onLinux, Docker and real file restarts/permission denial. S06 is under verification and S07 is not implemented. Full final-head CI is still required. UserApproval/V4 remain Pending under D021.
 
 ## Accounts and existing security
 
@@ -167,3 +167,29 @@ Owner/public DTOs include the canonical weekly `hours` and `opening:{openNow,nex
 The zone is `Africa/Cairo`, using the runtime's installed timezone data, including summer/winter changes. Local response timestamps include their actual UTC offset. For nonexistent local minutes at the spring transition, boundaries move to the first valid minute; a period wholly inside the skipped gap has no opening that week. For repeated minutes at the autumn transition, opening uses the first occurrence and closing the last. This explicit application policy uses [TimeZoneInfo invalid-time detection](https://learn.microsoft.com/en-us/dotnet/api/system.timezoneinfo.isinvalidtime?view=net-10.0) and [ambiguous offsets](https://learn.microsoft.com/en-us/dotnet/api/system.timezoneinfo.getambiguoustimeoffsets?view=net-10.0); Egypt transition data is in the [upstream timezone source](https://github.com/eggert/tz/blob/main/africa). Keep OS/container tzdata current through the normal deployment process; no fixed offset or new timezone package is embedded.
 
 Migration `20261126155950_P04BranchWeeklyHours` adds required JSON hours. Existing S04 Draft places are backfilled with an explicit all-closed week, without changing their other data or inventing opening hours. No permanent SQL default permits new callers to omit the schedule. The value converter validates stored schedules, and the API validates all business rules before persistence. Generation used DesignOnly settings; the application database is untouched. No new job/event/Outbox kind is needed for these read-time calculations.
+
+<a id="s06-main-activity-changes"></a>
+
+## S06 main activity changes
+
+Locally verified with197 relevant tests (47 Architecture+100 Integration+50 Unit), no failures/skips, build0 warnings/errors and full format verification. Final-head CI remains required.
+
+| Method/path relative to `/api/v1` | Access | Input/result |
+| --- | --- | --- |
+| POST `merchants/stores/{storeId}/activity-change-requests` | VerifiedMerchantSetup + owner | `{ "activityId":"<new active id>", "storeRowVersion":"...", "reason":null }` |
+| GET `merchants/stores/{storeId}/activity-change-requests?page=1&pageSize=25` | Same owner policy | Own bounded request history with current request/store versions |
+| GET `admin/store-activity-changes?status=Pending&page=1&pageSize=25` | AdminOnly | Bounded queue/history; Pending/Approved/Rejected named filters |
+| POST `admin/store-activity-changes/{id}/approve` | AdminOnly | `{ "rowVersion":"...", "storeRowVersion":"...", "reason":null }` |
+| POST `admin/store-activity-changes/{id}/reject` | AdminOnly | Same versions, required reason |
+
+Only one Pending request may exist per store; a filtered unique SQL index also protects direct/concurrent writers. Requests contain immutable previous/requested activities, requester/time/reason and reviewed state/actor/time/reason. Reasons are bounded at1000 UTF-16 code units without NUL; request/approval reasons are optional, rejection needs a nonblank reason. All mutation routes retain HTTPS/cookie/live permissions, fresh CSRF and the shared mutation quota. Another merchant cannot list or submit under this store, and owner/actor fields cannot be reassigned through the body.
+
+Request submission validates current StoreRowVersion and the active target through Catalog's shared transaction-owned lock, then saves request+Audit without updating Store.ActivityId or its rowVersion. Pending/rejected requests have no effect on public store/branch data. Admin review rechecks current Identity facts for actor and owner under Identity locks and requires both current versions. Approval rechecks target availability and expected previous activity, then updates Store, request decision and Audit in one outer UoW transaction/Save/Commit. Rejection writes decision+Audit without changing Store.ActivityId/version. Duplicate requests, stale versions, replayed decisions or an unavailable approval target produce409. A declined request frees the pending slot; history remains. No asynchronous activity switch is used.
+
+Audit targets the Store with explicit Request/Approve/Reject operation and actor/time/reason, containing only proposed activity IDs for a Request and actual before/after IDs for decisions. The Request operation explicitly denotes a proposal, not a published state change. The per-request identity and history remain in `ActivityChanges`. No credential/session/payload snapshots are serialized. The physical cross-schema activity FKs protect both previous/requested Catalog references, including request history until its parent store's final purge; deactivation still permits historical reads. Final Identity purge cascades these owned request rows while independent Store Audit remains.
+
+Migration `20261126162152_P04StoreActivityChanges` adds the request table, status/review constraints, rowVersion, pending unique index and primitive Catalog FKs without cross-module entities/navigation. It was generated with DesignOnly settings and has not been applied to the application database. These synchronous decisions need no new Outbox kind or job.
+
+Before products are enabled in P05, acceptance must also set incompatible existing products toDraft in this same transaction, through a Products-owned contract that joins the existing UoW. The exact insertion point is documented beside `TryApplyApprovedActivity` in ActivityChangeService. P04 contains no products and performs no product updates; a no-op product handler or event without a consumer would not establish that future invariant. P05 must add its own real SQL rollback/concurrency tests across Store/request/product/Audit before claiming it.
+
+For Postman, start with the Merchant session and latest own StoreRowVersion. Choose another active Catalog activity as targetActivityId, submit and confirm public activity remains old. Switch deliberately to Admin, refresh the selected request's two versions from its queue entry, then choose approval OR rejection. Approval changes the public activity; rejection leaves it unchanged and permits another request. Refresh versions after any store edit. These are repeatable instructions for the pending personal trial, not a claim that the user performed it.

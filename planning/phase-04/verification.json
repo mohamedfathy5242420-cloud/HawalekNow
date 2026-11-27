@@ -465,6 +465,55 @@
       "exitCode": 0,
       "command": "git -c safe.directory=D:/HwalekNow diff --check",
       "detail": "Exit0. No SDK/package/Word/Seed or protected schedule changes;exact schedule SHA256 unchanged."
+    },
+    {
+      "name": "S06Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Initial production and subsequent implementation/test builds both0warnings/errors."
+    },
+    {
+      "name": "S06Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~ActivityChange|FullyQualifiedName~Store|FullyQualifiedName~Branch|FullyQualifiedName~Catalog|FullyQualifiedName~ReferenceLock|FullyQualifiedName~ApiFoundation|FullyQualifiedName~ArchitectureTests'",
+      "detail": "47Architecture+100Integration+50Unit=197passed/0failed/0skipped. Includes owner/admin live authorization,CSRF,versions/replays,public old activity through request/rejection,approved activity only after Admin,branch continuity,purge retention,real SQL one-winner races and rollback after Save."
+    },
+    {
+      "name": "S06Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~ActivityChange|FullyQualifiedName~Store|FullyQualifiedName~Branch|FullyQualifiedName~Catalog|FullyQualifiedName~ReferenceLock|FullyQualifiedName~ApiFoundation|FullyQualifiedName~ArchitectureTests'",
+      "detail": "100 actual Integration tests passed. New activity cases prove filtered pending unique index2601/2627,activity FKs547,unchanged Store version while pending/rejected,opposing approvals/rejections,active target recheck,stale Store version,atomic Store/request/Audit rollback after real Save. No products exist or are claimed."
+    },
+    {
+      "name": "S06Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "Full solution format verification exit0."
+    },
+    {
+      "name": "S06Roadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "76 source rows,75dependency edges,996local links/anchors accepted with S06Verified/S07InternalReady and Pending human approvals."
+    },
+    {
+      "name": "S06GitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "27 ignored/36allowed samples and478tracked files accepted."
+    },
+    {
+      "name": "S06DiffCheck",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "detail": "Exit0;five Postman request bodies parse;account credentials/tokens remain blank;protected schedule SHA256 unchanged."
     }
   ],
   "userApproval": "Pending",
@@ -748,6 +797,57 @@
       },
       "docker": {
         "allowedInputs": 194,
+        "forbiddenFixtures": 82,
+        "publishedFiles": 116,
+        "seedResources": 3,
+        "restart": "Passed: host/container processes and unrelated UID denial",
+        "volumePreserved": true
+      }
+    },
+    {
+      "runId": 45856851203,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "f7264282abb6bbd5c8d02070c545cb61ceadf7c7",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45856851203",
+      "jobs": [
+        {
+          "id": 140037373003,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45856851203/job/140037373003"
+        },
+        {
+          "id": 140037373435,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45856851203/job/140037373435"
+        },
+        {
+          "id": 140037373533,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45856851203/job/140037373533"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 324,
+        "unit": 180,
+        "passed": 551,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      },
+      "docker": {
+        "allowedInputs": 199,
         "forbiddenFixtures": 82,
         "publishedFiles": 116,
         "seedResources": 3,

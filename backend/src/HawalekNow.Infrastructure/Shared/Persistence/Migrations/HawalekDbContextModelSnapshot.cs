@@ -671,6 +671,72 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Merchants.StoreActivityChange", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PreviousActivityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("RequestReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid>("RequestedActivityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("RequestedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("RequestedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReviewReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTimeOffset?>("ReviewedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("ReviewedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PreviousActivityId");
+
+                    b.HasIndex("RequestedActivityId");
+
+                    b.HasIndex("StoreId")
+                        .IsUnique()
+                        .HasFilter("[Status] = 1");
+
+                    b.HasIndex("Status", "RequestedAt", "Id");
+
+                    b.ToTable("ActivityChanges", "merchants", t =>
+                        {
+                            t.HasCheckConstraint("CK_ActivityChanges_Different", "[PreviousActivityId] <> [RequestedActivityId]");
+
+                            t.HasCheckConstraint("CK_ActivityChanges_Review", "([Status]=1 AND [ReviewedBy] IS NULL AND [ReviewedAt] IS NULL AND [ReviewReason] IS NULL) OR ([Status] IN (2,3) AND [ReviewedBy] IS NOT NULL AND [ReviewedAt] IS NOT NULL AND ([Status]=2 OR NULLIF(LTRIM(RTRIM([ReviewReason])), '') IS NOT NULL))");
+
+                            t.HasCheckConstraint("CK_ActivityChanges_Status", "[Status] IN (1,2,3)");
+                        });
+                });
+
             modelBuilder.Entity("HawalekNow.Domain.Modules.Search.SynonymGroup", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1154,6 +1220,15 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.HasOne("HawalekNow.Domain.Modules.Merchants.MerchantAccount", null)
                         .WithOne()
                         .HasForeignKey("HawalekNow.Domain.Modules.Merchants.Store", "MerchantAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HawalekNow.Domain.Modules.Merchants.StoreActivityChange", b =>
+                {
+                    b.HasOne("HawalekNow.Domain.Modules.Merchants.Store", null)
+                        .WithMany()
+                        .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

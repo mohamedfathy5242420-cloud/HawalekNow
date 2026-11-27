@@ -1,7 +1,7 @@
 {
   "info": {
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "P04 is in progress. Only implemented requests are present. Select a journey, never run all decisions blindly. Use an isolated review database and confirmed test Merchant/Admin accounts from P02 setup. Shared real cookie jar, HTTPS with certificate validation, fresh principal-bound CSRF. Capture the merchant id/version using Own review before switching to Admin; decisions return the next version. Reasons are mandatory except approve. Personal trial is Deferred. Later P04 steps extend this collection. S03 store requests require a confirmed Merchant, one active Catalog activity and at least one contact. Upload a file manually; store activity cannot be changed by details edits. Public requests are expected200 only after approval and when the optional logo exists. These instructions do not claim a personal trial. S04 requests select a matching active governorate/city/area from P03. Confirm that the address is a fixed public business/pickup point, not a private home. Coordinates are explicit latitude/longitude. Optional contacts fall back independently to the store; branch approval is not a separate step. Mandatory hours arrive in S05 before final P04 delivery.",
+    "description": "P04 is in progress. Only implemented requests are present. Select a journey, never run all decisions blindly. Use an isolated review database and confirmed test Merchant/Admin accounts from P02 setup. Shared real cookie jar, HTTPS with certificate validation, fresh principal-bound CSRF. Capture the merchant id/version using Own review before switching to Admin; decisions return the next version. Reasons are mandatory except approve. Personal trial is Deferred. Later P04 steps extend this collection. S03 store requests require a confirmed Merchant, one active Catalog activity and at least one contact. Upload a file manually; store activity cannot be changed by details edits. Public requests are expected200 only after approval and when the optional logo exists. These instructions do not claim a personal trial. S04 requests select a matching active governorate/city/area from P03. Confirm that the address is a fixed public business/pickup point, not a private home. Coordinates are explicit latitude/longitude. Optional contacts fall back independently to the store; branch approval is not a separate step. S05 requires seven unique weekly days with strict HH:mm periods on create/update. Closed places stay public; opening includes Cairo offsets and DST. S06 activity change requests leave the old activity unchanged until Admin approval. Select approve or reject, refresh both versions after other edits, and do not run all decisions blindly.",
     "name": "HawalekNow P04 merchants and stores"
   },
   "event": [
@@ -784,6 +784,163 @@
                 "type": "text/javascript"
               },
               "listen": "test"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Main activity change - choose approve or reject",
+      "item": [
+        {
+          "name": "Request new main activity - old activity remains current",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/stores/{{storeId}}/activity-change-requests",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"activityId\": \"{{targetActivityId}}\",\r\n  \"storeRowVersion\": \"{{storeRowVersion}}\",\r\n  \"reason\": \"Requested business scope change.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const r=pm.response.json();pm.environment.set(\"activityRequestId\",r.id);pm.environment.set(\"activityRequestRowVersion\",r.rowVersion);pm.environment.set(\"storeRowVersion\",r.storeRowVersion);}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Own request history - refresh selected request versions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/merchants/stores/{{storeId}}/activity-change-requests?page=1&pageSize=100"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const r=pm.response.json().items.find(x=>x.id===pm.environment.get(\"activityRequestId\"));if(r){pm.environment.set(\"activityRequestRowVersion\",r.rowVersion);pm.environment.set(\"storeRowVersion\",r.storeRowVersion);}}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin pending list - refresh selected request versions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/store-activity-changes?status=Pending&page=1&pageSize=100"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const r=pm.response.json().items.find(x=>x.id===pm.environment.get(\"activityRequestId\"));if(r){pm.environment.set(\"activityRequestRowVersion\",r.rowVersion);pm.environment.set(\"storeRowVersion\",r.storeRowVersion);}}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin approve activity change - choose this OR reject",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/store-activity-changes/{{activityRequestId}}/approve",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{activityRequestRowVersion}}\",\r\n  \"storeRowVersion\": \"{{storeRowVersion}}\",\r\n  \"reason\": null\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const r=pm.response.json();pm.environment.set(\"activityRequestId\",r.id);pm.environment.set(\"activityRequestRowVersion\",r.rowVersion);pm.environment.set(\"storeRowVersion\",r.storeRowVersion);}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin reject activity change - choose this OR approve",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/store-activity-changes/{{activityRequestId}}/reject",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{activityRequestRowVersion}}\",\r\n  \"storeRowVersion\": \"{{storeRowVersion}}\",\r\n  \"reason\": \"{{reviewReason}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const r=pm.response.json();pm.environment.set(\"activityRequestId\",r.id);pm.environment.set(\"activityRequestRowVersion\",r.rowVersion);pm.environment.set(\"storeRowVersion\",r.storeRowVersion);}"
+                ],
+                "type": "text/javascript"
+              }
             }
           ]
         }

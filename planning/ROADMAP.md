@@ -410,6 +410,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P04-S06 تغيير النشاط الرئيسي
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S06.md).
+
 - الاعتمادات السابقة: [P04-S05](#p04-s05).
 - المخرج المطلوب: طلب موافقة وبقاء النشاط القديم ومعالجة المنتجات لاحقًا.
 - بوابة التحقق: V2 transitions وV3 admin flow.

@@ -1,6 +1,6 @@
 # مراجعة P04 التاجر والمتجر والفروع
 
-Updated: 2026-11-25
+Updated: 2026-11-27
 Status: InProgress
 ExecutionAuthorization: D021
 UserApproval: Pending
@@ -27,3 +27,7 @@ S04Verifiedمحليًا:142فحصًا ثمبناء0/0 وإعادة33فحصًا �
 نجحت CI45853666822 على رأس S04 الفعلي f27b6ff3a3c8ef1b79acf2e37de70f4b9a86d951 بكل الوظائف الثلاث و523 اختبارًا (47 Architecture +319 Integration +157 Unit)، صفر فشل أوتخطٍّ وبناء0/0. أثبتت Docker194 مدخلًا مسموحًا و82 عينة ممنوعة وموارد Seed الثلاث وبقاء التخزين بعد restart ورفض UID آخر. بدأت [S05](steps/S05.md) للمواعيد تحت D021؛ أول بناء لاختباراتها فشل بـ13 خطأ صياغة C# في مُنشئات params الجديدة، وصُحّح دون تغيير سلوك الإنتاج؛ إعادة البناء والتحقق قيد التنفيذ. تبقى S06–S07 غير منفذة وUserApproval/V4 Pending.
 
 S05 InReview/Verified محليًا:135 فحصًا ناجحًا، ثم Format verification وبناء0/0 وإعادة23 اختبارًا بعد إصلاح نافذة الفتح القادم لتشمل أسبوع فجوة DST. SQL/HTTP وترحيل بيانات S04 واختبار rollback مثبتة. [تسليم S06](handoffs/S05-to-S06.md) InternalReady؛ تبقى CI على رأس التسليم النهائي مطلوبة، وUserApproval/V4 Pending وP05NotStarted.
+
+نجحت CI45856851203 على f7264282abb6bbd5c8d02070c545cb61ceadf7c7 بكل الوظائف و551 اختبارًا (47+324+180)، صفرفشل/تخطٍّ وبناء0/0، بما فيها حسابات القاهرة علىLinux وDocker/التخزين. بدأت [S06](steps/S06.md) بعد التحقق المناسب؛ بناء الإنتاج الأول0/0، والاختبارات قيد العمل. S07 لم تبدأ وUserApproval/V4Pending.
+
+S06 InReview/Verified:197 فحصًا ناجحًا (47Architecture+100Integration+50Unit)، صفرفشل/تخطٍّ وبناء0/0 وFormat verification. أثبتت SQL/HTTP القبول والرفض والتزامن وrollback الفعلي معAudit وبقاءالنشاطالقديموظهورالفروع حتىقبولالطلب. [تسليم S07](handoffs/S06-to-S07.md)InternalReady. لا P05 أوMerge P04، واعتمادالمستخدم وV4Pending والتجربةوالشرحDeferred.

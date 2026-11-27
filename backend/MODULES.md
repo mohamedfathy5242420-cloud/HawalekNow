@@ -96,7 +96,7 @@ Merchants تملك انتقالات اعتماد التاجر وقرارات ا�
 
 AuditEntry فيDomain.Shared.Auditing مفهوم تقني محدود الحقول، وتكوينه فيInfrastructure.Shared.Auditing عبرDbContext الحالية. المستهلك الفعلي MerchantReviewService؛ تكتب الحالة والسجل معًا قبلCommit. actor/target معرفات مستقلة دون حذف متتابع لحفظ التاريخ، ولا تصويرEntities أوOTP أوTokens أوPasswordHash، ولا تغيير لسياسةLogging. [دليل التشغيل والعقود](MERCHANT_OPERATIONS.md). تعاد تغطية Audit العامة وinterceptors فيP08-S04 وفقQ003-03.
 
-## تأسيس S03 قيد التحقق
+## تأسيس S03
 
 Merchants تملكStore وبياناته ونشاطه الرئيسي وإدارة اللوجو. لا مرجع إلىEntity منCatalog أوIdentity؛ IActivityDirectory عقدCatalog لقراءة نشاط متاح تحت قفلCatalog داخل UoW الخارجية، وIAccountAccess عقدIdentity للتحقق الحي وقفل حالتها. FK فعلي primitive بينmerchants.Stores.ActivityId وcatalog.Activities.Id فيMigration العامة يمنع حذف المرجع، دونnavigation عابر للوحدات. Store-Account علاقةداخلMerchants وUnique يضمن متجرًا واحدًا.
 
@@ -109,3 +109,7 @@ Merchants تملكMerchantBranchللفرع/نقطةالاستلام وGeoPointو
 ## تأسيس S05
 
 WeeklyHours قيمة غير قابلة للتعديل الجزئي فيDomain.Merchants، بقواعد أسبوع كامل وفترات ومنع التداخل وحساب زمني عبر TimeZoneInfo/Africa/Cairo. تستخدم BranchService حقن TimeProvider وتحسب الحالة في وقت القراءة دون تخزين openNow متقادم أوJob دوري. HoursInput فيApplication يتحقق من عقد HH:mm ويحوله إلىقيمةDomain، وWeeklyHoursJson فيInfrastructure وحدها تملك تحويل JSON الخاص بـEF. تحفظ الساعات ضمن صف MerchantBranch وRowVersion وAudit والمعاملة الحالية. لا EF أوJSON أوNTS أوحزم جديدة فيDomain/Application، ولا علاقة بالبحث أوبالمنتجات المؤجلة إلىP05/P06. [العقد وسياسة DST](MERCHANT_OPERATIONS.md#s05-weekly-hours).
+
+## تأسيس S06
+
+Merchants تملكStoreActivityChange وطلبها ومراجعتها. يستخدمActivityChangeService عقديIdentity وCatalog القائمين داخل معاملته الخارجية، وتبقىحمايةFK للأنشطة primitive فيMigration العامة. الطلب لايعدلStore.ActivityId، والقبول يحدّثStore والقرار وAudit قبلCommit واحدة معنسختيهما. رفض الطلب لا يغير النشاط. لاوحدةProducts أوحزمةأوعقدno-op أوEvent/Job جديد؛ [نقطة تكاملP05](MERCHANT_OPERATIONS.md#s06-main-activity-changes) تتطلبإضافةتأثيرالمنتجاتالمستقبلي إلىهذهالمعاملةواختباره قبلتمكينها، وليستادعاءتنفيذهفيP04.

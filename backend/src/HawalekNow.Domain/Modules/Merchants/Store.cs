@@ -32,6 +32,11 @@ public sealed class Store
         if (key is not null && (key.Length != 32 || key.Any(character => character is not (>= '0' and <= '9' or >= 'a' and <= 'f')))) throw new ArgumentException("A generated image key is required.");
         LogoKey = key;
     }
+    public bool TryApplyApprovedActivity(Guid previousActivityId, Guid requestedActivityId)
+    {
+        if (ActivityId != previousActivityId || requestedActivityId == Guid.Empty || requestedActivityId == ActivityId) return false;
+        ActivityId = requestedActivityId; return true;
+    }
 }
 
 public sealed record StoreDetails

@@ -51,5 +51,5 @@ public static class MerchantRegistration
         .AddLocalFileStorage().AddScoped<StoredFileLock>().AddScoped<MerchantStoreAccess>()
         .AddScoped<LogoCleanup>().AddScoped<LogoReconciliationJob>()
         .AddScoped<IOutboxHandler, LogoDeleteHandler>()
-        .AddScoped<IStoreService, StoreService>().AddScoped<IBranchService, BranchService>().AddHostedService<MerchantMaintenanceScheduler>();
+        .AddScoped<IStoreService, StoreService>().AddScoped<IBranchService, BranchService>().AddScoped<IActivityChangeService, ActivityChangeService>().AddHostedService<MerchantMaintenanceScheduler>();
 }
