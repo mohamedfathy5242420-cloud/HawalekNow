@@ -1,0 +1,1340 @@
+{
+  "phase": "P04",
+  "authorization": "D021",
+  "baseMain": "63b189618a9c856151920da7669a4e2c9af86461",
+  "predecessor": {
+    "pr": 10,
+    "merged": true,
+    "mergeSha": "63b189618a9c856151920da7669a4e2c9af86461",
+    "postMergeVerification": "Passed",
+    "ciRun": 45600216946,
+    "acceptance": "D020"
+  },
+  "checks": [
+    {
+      "name": "S01Build",
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "status": "Passed",
+      "exitCode": 0,
+      "detail": "0 warnings/errors."
+    },
+    {
+      "name": "S01Tests",
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~MerchantAccount|FullyQualifiedName~ArchitectureTests'",
+      "status": "Passed",
+      "exitCode": 0,
+      "detail": "47 Architecture+3 Integration+35 Unit=85 passed;0 failed/skipped."
+    },
+    {
+      "name": "S01Sql",
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~MerchantAccount|FullyQualifiedName~ArchitectureTests'",
+      "status": "Passed",
+      "exitCode": 0,
+      "detail": "Actual SQL lifecycle,stale decision rejected,rollback after Save;no pending model changes."
+    },
+    {
+      "name": "S01PhaseGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/test-phase-gates.ps1",
+      "detail": "46 historical+27 P02+43 P03+20 P04 invalid states rejected;valid baselines accepted."
+    },
+    {
+      "name": "S02Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "0 warnings/errors;additive P04MerchantReviewsAndAudit generated without application DB contact."
+    },
+    {
+      "name": "S02Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~Merchant|FullyQualifiedName~AuthorizationTests|FullyQualifiedName~ArchitectureTests'",
+      "detail": "47 Architecture+45 Integration+47 Unit=139 passed;0 failed/skipped. Includes real HTTP,SQL,and existing P02 authorization matrix."
+    },
+    {
+      "name": "S02Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~Merchant|FullyQualifiedName~AuthorizationTests|FullyQualifiedName~ArchitectureTests'",
+      "detail": "Actual state+Audit saved together;injected IOException after SQL Save before Commit rolls back both;two different Admins race to one decision/audit;legacy migration preservation and audit retention verified."
+    },
+    {
+      "name": "S02Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "Repeated full solution verification after the fixture fix:exit0. Initial sandbox attempt could not connect to the Roslyn pipe; authorized run succeeded. Not counted as a pass before authorization."
+    },
+    {
+      "name": "S02Roadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "76 source steps;946 links;all predecessor and P04 sequential gates accepted."
+    },
+    {
+      "name": "S02GitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "25 forbidden+36 allowed samples;404 tracked files not ignored before S02 staging."
+    },
+    {
+      "name": "S02DiffCheck",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "detail": "Exit0."
+    },
+    {
+      "name": "S02FullSolutionTests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "After the CI fixture/inventory fix:47 Architecture+265 actual Integration+121 Unit=433 passed;0 failed/skipped. Previous failed CI and focused139 are retained."
+    },
+    {
+      "name": "S02FixedBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "0 warnings/errors after the fixture fix."
+    },
+    {
+      "name": "S02FixedRoadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "76 authoritative source steps and955 local links accepted;S02 InProgress after failed CI,awaiting correction CI."
+    },
+    {
+      "name": "S02FixedGitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "25 forbidden+36 allowed samples;421 tracked files not ignored."
+    },
+    {
+      "name": "S02FixedCI",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub REST inspect actions/runs/45614038330 +3 jobs +completed logs at head5173c605ab558bc79dcc4fce5fa36024f5f2d25e",
+      "detail": "All3jobs success;433passed/0failed/0skipped;build0/0;Docker167allowed/79forbidden/0extras and104clean published files;phase gates46+27+43+20."
+    },
+    {
+      "name": "S02FixedPhaseGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/test-phase-gates.ps1",
+      "detail": "Local actual baselines accepted;46 historical+27 P02+43 P03+20 P04 invalid states rejected."
+    },
+    {
+      "name": "S03StorageInitialBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Storage foundation and19 file tests compiled with0 warnings/errors;no Store implementation yet."
+    },
+    {
+      "name": "S03StorageInitialTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "dotnet test backend/tests/IntegrationTests/HawalekNow.IntegrationTests.csproj --configuration Release --no-restore --no-build --filter 'FullyQualifiedName~LocalFileStorageTests'",
+      "detail": "14passed/5failed/0skipped. Valid independent PNG fixtures are rejected by restricted native decoder;diagnosis in progress. Not a successful storage verification."
+    },
+    {
+      "name": "S03PackageAudit",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet list backend/HawalekNow.slnx package --vulnerable --include-transitive --no-restore",
+      "detail": "Official api.nuget.org/v3 source used;no vulnerable packages reported across7projects. Lock diff adds onlyMagick.NET-Q8-AnyCPU15.1.0 andCore15.1.0;existing resolved package versions unchanged."
+    },
+    {
+      "name": "S03StorageFixedTests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet test backend/tests/IntegrationTests/HawalekNow.IntegrationTests.csproj --configuration Release --no-restore --no-build --filter 'FullyQualifiedName~LocalFileStorageTests'",
+      "detail": "After native-list limit fix:19 passed/0failed/0skipped on actual files;three later JPEG/link/permission tests require the next run."
+    },
+    {
+      "name": "S03StoreFirstTestBuild",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "0warnings/5errors in new test sources:missing ApplicationUser namespace and three ambiguous target-typed validator calls. SQL/HTTP test execution did not start; corrected and awaiting rerun."
+    },
+    {
+      "name": "S03FirstCombinedTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~Store|FullyQualifiedName~LocalFileStorage|FullyQualifiedName~ApiFoundation|FullyQualifiedName~ApiError|FullyQualifiedName~PersistenceTests|FullyQualifiedName~AccountLifecycle|FullyQualifiedName~ArchitectureTests'",
+      "detail": "47 Architecture+143 Integration+16 Unit=206 passed;1 HTTP test expectation failed;0 skipped. Existing Identity ignores cookies on HTTP, so protected request correctly returns401. Corrected the fixture to assert both browser/manual-cookie401;full rerun in progress."
+    },
+    {
+      "name": "S03FirstRoadmap",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "S03 was active but its roadmap Status line had not been added. Added the matching InProgress/Pending line without changing the76 source rows;rerun required."
+    },
+    {
+      "name": "S03Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Full solution build0 warnings/errors after fixes."
+    },
+    {
+      "name": "S03Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "Full solution47 Architecture+307 Integration+138 Unit=492 passed;0 failed/skipped."
+    },
+    {
+      "name": "S03Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "Actual SQL/HTTP:unique store,FK reference deletion,ownership/live Identity,rollback after Save,state+Audit+Outbox,actual committed-transaction acknowledgement failure retains referenced image,retry and orphan reconciliation,purge cascade+postcommit file consumer."
+    },
+    {
+      "name": "S03LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode",
+      "detail": "Exit0;existing resolved package versions unchanged;two new pinned image packages only."
+    },
+    {
+      "name": "S03Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "Full solution verification exit0."
+    },
+    {
+      "name": "S03Roadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "Final precommit verification:76 authoritative rows and970 links accepted;S03InProgress/approvalPending/P05prohibited. Earlier963-link pass retained in step history."
+    },
+    {
+      "name": "S03GitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "27 forbidden+36 allowed samples;424 tracked files not ignored before S03 staging."
+    },
+    {
+      "name": "S03DiffCheck",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "detail": "Exit0;protected scheduleSHA256unchanged."
+    },
+    {
+      "name": "S03PackageAuditCurrent",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet list backend/HawalekNow.slnx package --vulnerable --include-transitive --no-restore",
+      "detail": "2026-11-26:official api.nuget.org source;no vulnerable packages reported across7projects."
+    },
+    {
+      "name": "S03InitialCommitAttempt",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./tmp/commit-p04-s03.ps1",
+      "detail": "Staged diff check rejected upstream CRLF/trailing/EOF whitespace in verbatim vendor notices;commit/push did not run. Exact-byte hash comparison succeeded. Added -whitespace only on the two hash-pinned non-executable vendor documents;application/Seed rules unchanged;rerun required."
+    },
+    {
+      "name": "S03FirstCI",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub REST run45843772918/jobs/completed logs at5a842ecb720bb171b3b7fded11a1df52b6b1b8e8",
+      "detail": "All3jobs success;492/0/0;build0/0;Docker185/82/0extra;116published files;Linux real host/container restart and unrelatedUID denial passed."
+    },
+    {
+      "name": "S03DockerInitial",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./docker/test-api-build-context.ps1 -Image hawaleknow/api:p04-s03-5a842ec -KeepImage",
+      "detail": "Actual archived5a842ec;185allowed/82forbidden/0missing/0extra;3exactSeedresources and116clean published files;native notices hash-checked."
+    },
+    {
+      "name": "S03DockerSmokeInitial",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./docker/smoke-api.ps1 -Image hawaleknow/api:p04-s03-5a842ec",
+      "detail": "Non-root/read-only API liveness,correlation,safe404,Production-docs gate;no SQL/mail readiness or storage claim."
+    },
+    {
+      "name": "S03WindowsRuntimeInitial",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./docker/test-store-files.ps1 -Image hawaleknow/api:p04-s03-5a842ec",
+      "detail": "Windows host write failed setting ACL on project-owned tmp directory. Root already belonged to current user;setting the same owner requested unavailableWRITE_OWNER. No container storage probe/volume creation occurred in this failed run. Full CI/Linux pass is retained separately."
+    },
+    {
+      "name": "S03WindowsDaclProbe",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet publish isolated StoreFiles verifier;dotnet StoreFiles.dll write/read in separate processes at the original failing host-images path",
+      "detail": "After checking existing ownership and changing only DACL:actual write/read restart at the same Windows path passed,private permissions preserved. Regression tests and new-head Docker/CI still required."
+    },
+    {
+      "name": "S03WindowsFixBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "0warnings/errors after the DACL-only fix."
+    },
+    {
+      "name": "S03WindowsFixTests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~Store|FullyQualifiedName~LocalFileStorage|FullyQualifiedName~ArchitectureTests'",
+      "detail": "47 Architecture+45 Integration+16 Unit=108passed/0failed/0skipped. Includes an actual Windows DACL denyingWRITE_OWNER and two-instance readback;store SQL/HTTP/recovery tests passed. Exact new-head full CI and Docker pending."
+    },
+    {
+      "name": "S03FixedCI",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "GitHub REST run45846221851/jobs/completed logs at31e8e3b3f86442c5e0eb4e909aced5b0d77e65c9",
+      "detail": "All3jobs success;493/0/0(47+308+138);build0/0;format/lockedrestore/Docker/runtime/phasegates successful."
+    },
+    {
+      "name": "S03FixedDocker",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./docker/test-api-build-context.ps1 -Image hawaleknow/api:p04-s03-31e8e3b -KeepImage",
+      "detail": "Local exact archived31e8e3b:185allowed/82forbidden/0missing/0extra;3exactSeedresources,unchanged attribution and116clean published files."
+    },
+    {
+      "name": "S03FixedSmoke",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./docker/smoke-api.ps1 -Image hawaleknow/api:p04-s03-31e8e3b",
+      "detail": "Local non-root/read-only API,liveness,correlation,safe404,Production-docs gate;no SQL/mail readiness claim."
+    },
+    {
+      "name": "S03FixedStorageRuntime",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./docker/test-store-files.ps1 -Image hawaleknow/api:p04-s03-31e8e3b",
+      "detail": "Actual Windows host write/read in separate processes;two fresh non-root Linux containers preserve image hash/ownership;UID65534cannot read known existing blob or write directory;new owned volume retained."
+    },
+    {
+      "name": "S04InitialBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Initial production branch implementation compiled0warnings/errors before new tests."
+    },
+    {
+      "name": "S04FirstTestBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "New tests compiled with4xUnit1031 warnings/0errors for .Result after WhenAll. Replaced with awaited results;clean rebuild required."
+    },
+    {
+      "name": "S04Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Final clean build0warnings/errors after replacing blocking task reads with await."
+    },
+    {
+      "name": "S04Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~Branch|FullyQualifiedName~Geography|FullyQualifiedName~Location|FullyQualifiedName~ReferenceLock|FullyQualifiedName~MerchantReviewPersistence|FullyQualifiedName~StorePersistence|FullyQualifiedName~SynonymPersistence|FullyQualifiedName~ApiFoundation|FullyQualifiedName~ArchitectureTests'",
+      "detail": "47 Architecture+72 Integration+23 Unit=142passed/0failed/0skipped. Followup clean-code Branch/Geography subset14Integration+19Unit=33passed/0failed/0skipped."
+    },
+    {
+      "name": "S04Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild (branch/geography/location reference filters)",
+      "detail": "Actual SQL geography Lat30.0444/Long31.2357/SRID4326 andshapeCHECK;composite Area/City/GovernorateFK547;directSQLdelete/reparent blocked;concurrentdeletecannotorphan;branch+AuditrollbackafterSave;staleupdateconflict;HTTPapproval/fallback/ownership/purgepassed."
+    },
+    {
+      "name": "S04Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "Full solution format verification exit0."
+    },
+    {
+      "name": "S04Roadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "76 authoritative rows and978 links accepted after the final S04 step/handoff update."
+    },
+    {
+      "name": "S04GitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "27 ignored and36 allowed samples;453 tracked files accepted;D021 sequential technical handoffs and Pending human approvals preserved."
+    },
+    {
+      "name": "S04DiffCheck",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "detail": "Exit0;protected schedulehashunchanged."
+    },
+    {
+      "name": "S05FirstTestBuild",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Production compiled. New Unit tests produced13 CS8752 errors because a single target-typed new in params chose the array type. Explicit OpeningPeriodWrite constructors replace these expressions. No production workaround or ignored tests; clean rebuild and tests required."
+    },
+    {
+      "name": "S05Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Clean final build0warnings/errors after explicit test constructors and two-week DST lookahead."
+    },
+    {
+      "name": "S05Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~WeeklyHours|FullyQualifiedName~Branch|FullyQualifiedName~ApiFoundation|FullyQualifiedName~ArchitectureTests|FullyQualifiedName~Geography'",
+      "detail": "47Architecture+46Integration+42Unit=135passed/0failed/0skipped. Actual SQL/HTTP,existing S04 migration backfill,no permanent default,required hours,public closed visibility,concurrency and rollback after Save. Final lookahead change followed by23WeeklyHours tests,0failed/skipped. Final Branch validator fixture now includes valid required hours and proves a valid actor succeeds;clean Unit project rebuild0/0 and42Branch+WeeklyHours tests pass0failed/skipped."
+    },
+    {
+      "name": "S05TimeCases",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet test backend/tests/UnitTests/HawalekNow.UnitTests.csproj --configuration Release --no-build --no-restore --filter FullyQualifiedName~WeeklyHours",
+      "detail": "23passed/0failed/0skipped;strict weekly input,closed days,overnight/week boundary/adjacency,exact start/end,winter/summer offsets,Cairo2026 gap/repeated hour,skipped-gap period next opening13days ahead."
+    },
+    {
+      "name": "S05Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "Full solution format verification exit0."
+    },
+    {
+      "name": "S05FirstRoadmap",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "New hours documentation used an automatic Markdown heading anchor; repository verifier requires explicit id anchors. Added the explicit s05-weekly-hours id and rerun required."
+    },
+    {
+      "name": "S05Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~WeeklyHours|FullyQualifiedName~Branch|FullyQualifiedName~ApiFoundation|FullyQualifiedName~ArchitectureTests|FullyQualifiedName~Geography'",
+      "detail": "46 actual Integration tests passed. Includes5 new hours/migration cases: Branch+PickupPoint mandatory weekly input and closed visibility,real SQL JSON roundtrip and required columns,one-winner concurrent edits,rollback hours+Audit after Save,old S04 place migration with explicit closed week/no permanent default."
+    },
+    {
+      "name": "S05SecondRoadmap",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "Explicit anchor fixed. P04 evidence guard required a separate S05Sql named receipt as well as S05Tests; recorded the real already-passed SQL scope with its executed command. No check weakened or new test result invented."
+    },
+    {
+      "name": "S05Roadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "76 authoritative rows,75dependency edges and986 local links/anchors accepted. Explicit hours anchor and separately named actual SQL evidence corrected; prior failures retained."
+    },
+    {
+      "name": "S05GitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "27 ignored/36 allowed samples and468 tracked files accepted;protected schedule remains untracked with original SHA256."
+    },
+    {
+      "name": "S05DiffCheck",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "detail": "Exit0. No SDK/package/Word/Seed or protected schedule changes;exact schedule SHA256 unchanged."
+    },
+    {
+      "name": "S06Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Initial production and subsequent implementation/test builds both0warnings/errors."
+    },
+    {
+      "name": "S06Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~ActivityChange|FullyQualifiedName~Store|FullyQualifiedName~Branch|FullyQualifiedName~Catalog|FullyQualifiedName~ReferenceLock|FullyQualifiedName~ApiFoundation|FullyQualifiedName~ArchitectureTests'",
+      "detail": "47Architecture+100Integration+50Unit=197passed/0failed/0skipped. Includes owner/admin live authorization,CSRF,versions/replays,public old activity through request/rejection,approved activity only after Admin,branch continuity,purge retention,real SQL one-winner races and rollback after Save."
+    },
+    {
+      "name": "S06Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -Filter 'FullyQualifiedName~ActivityChange|FullyQualifiedName~Store|FullyQualifiedName~Branch|FullyQualifiedName~Catalog|FullyQualifiedName~ReferenceLock|FullyQualifiedName~ApiFoundation|FullyQualifiedName~ArchitectureTests'",
+      "detail": "100 actual Integration tests passed. New activity cases prove filtered pending unique index2601/2627,activity FKs547,unchanged Store version while pending/rejected,opposing approvals/rejections,active target recheck,stale Store version,atomic Store/request/Audit rollback after real Save. No products exist or are claimed."
+    },
+    {
+      "name": "S06Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "Full solution format verification exit0."
+    },
+    {
+      "name": "S06Roadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "76 source rows,75dependency edges,996local links/anchors accepted with S06Verified/S07InternalReady and Pending human approvals."
+    },
+    {
+      "name": "S06GitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "27 ignored/36allowed samples and478tracked files accepted."
+    },
+    {
+      "name": "S06DiffCheck",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "detail": "Exit0;five Postman request bodies parse;account credentials/tokens remain blank;protected schedule SHA256 unchanged."
+    },
+    {
+      "name": "S07InitialBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Initial production implementation compiled0warnings/errors before new moderation/journey tests. No S07 SQL/test pass claimed."
+    },
+    {
+      "name": "S07FirstTestBuild",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Production and Unit tests compiled. New SQL test lacked the Infrastructure.Identity import for ApplicationUser, causing CS0246 and downstream CS1503. Added the correct import;no production workaround or suppressed tests. Full rebuild/tests required."
+    },
+    {
+      "name": "S07FirstFullTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "detail": "Full run not successful: Architecture47passed;Integration aborted after53failed/174passed/0skipped among227observed;Unit198passed.52 SQL execution-timeout messages during owned database creation/migration/cleanup;no assertion-failure headers. SQL running/healthy/noOOM,CPU560%,master CREATE DATABASE blocked LCK_M_X/ASYNC_IO_COMPLETION. Stopped only verified testhost27508 under owned solution process31632; no DB/container/volume deleted or restarted. Confirmed zero CREATE/ALTER DATABASE requests after termination. Bound collection concurrency to min(4,host CPUs),preserving all tests and explicit Task.WhenAll races;retry required."
+    },
+    {
+      "name": "S07SecondFullTests",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -NoBuild -MaxParallelThreads 4 -Diagnostics",
+      "detail": "Runner confirms parallel collections on4threads and350Integration cases discovered. Architecture47passed;Integration aborted with237passed/100failed/totalUnknown;Unit198passed. Repeated SQL provisioning and pre-login timeouts persist;this is not a full successful result. New merchant SMTP journey and all7Admin SQL cases passed within the run;no broad claim from them. Stopped only verified owned Integrationtesthost6180 under solution21596 after failures;DBs/containers/volumes preserved by that stop. First diagnostic stop script failed before any stop due automatic Matches variable collision;corrected to task-prefixed variables. Added test-only lifecycle gate around DBcreate/migrate/drop;business cases and explicit transaction races remain parallel, no timeout/assertion changed. Rebuild/full retry required."
+    },
+    {
+      "name": "S07PackageAudit",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet list backend/HawalekNow.slnx package --vulnerable --include-transitive",
+      "detail": "27Nov2026: all7projects report no vulnerable packages from current NuGet sources;not a timeless guarantee. No package/SDK upgrade."
+    },
+    {
+      "name": "S07LifecycleBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "Full solution rebuilt0warnings/errors after test-only lifecycle serialization and Catalog51010 conflict mapping with two real-lock HTTP regressions. Full597-case expected scope must be verified by runner;no test pass inferred."
+    },
+    {
+      "name": "S07InterruptedFullTests",
+      "status": "Unavailable",
+      "exitCode": 1,
+      "command": "./backend/test-p02.ps1 -NoBuild -MaxParallelThreads 4 -Diagnostics",
+      "detail": "27Nov: lifecycle-gated full run was explicitly interrupted at the user stop request. Logs show269 passed case lines (47Architecture and222Integration),zero failed case lines,but no Integration/Unit terminal result. This is incomplete evidence,not a full pass. Resumed28Nov only after authoritative process inspection found no previous testhost;new full run uses the same source and all352Integration cases."
+    },
+    {
+      "name": "S07LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode",
+      "detail": "28Nov resumed run: locked graph restored successfully,without package/SDK changes."
+    },
+    {
+      "name": "S07Build",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "28Nov resumed full Release build:0warnings/0errors. Full tests still running;no inferred test pass."
+    },
+    {
+      "name": "S07Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "28Nov: full solution verification exited0 after all production/test source changes."
+    },
+    {
+      "name": "S07Postman",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "node tmp/p04-s07-20261128/verify-postman.cjs",
+      "detail": "43requests,44scripts,23raw bodies,3seven-day schedules with periods arrays,14Admin requests with versions/reasons,blank secrets;4functional CSRF bootstrap cases. No network or personal trial performed."
+    },
+    {
+      "name": "S07PhaseGates",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/test-phase-gates.ps1",
+      "detail": "28Nov InProgress baseline: actual baselines accepted;46historical+27P02+43P03+19P04 invalid states rejected. No checker weakened."
+    },
+    {
+      "name": "S07SmokeContracts",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./docker/test-smoke-contracts.ps1",
+      "detail": "Valid string/byte-array ProblemDetails accepted;8incorrect/leaking contracts rejected. No containers/data changed."
+    },
+    {
+      "name": "S07Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -MaxParallelThreads 4 -Diagnostics",
+      "detail": "28Nov terminal exit0:47Architecture+352Integration+198Unit=597passed,0failed/0skipped. Every integration case discovered;parallel collections remain on4threads;explicit transaction races unchanged."
+    },
+    {
+      "name": "S07Sql",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -MaxParallelThreads 4 -Diagnostics",
+      "detail": "Actual isolated SQL/HTTP:7Admin persistence cases+7Admin HTTP cases;state/details/branch Audit rollback after Save,competing admins,owner-vs-admin race,immutable ownership,live role/Identity,CSRF/current versions/public gates,soft deletion/OTP recovery. Real registration->SMTP delivery->confirmation->preparation->approval->moderation->activity approval journey passed. Both actual Catalog lock-timeout HTTP cases return safe409 and preserve state. Full historical SQL/HTTP/storage/DST/migration suites pass."
+    },
+    {
+      "name": "LockedRestore",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode",
+      "detail": "28Nov full locked restore exited0;existing dependency graph unchanged."
+    },
+    {
+      "name": "ReleaseBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "detail": "28Nov full solution0warnings/0errors."
+    },
+    {
+      "name": "Tests",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./backend/test-p02.ps1 -NoBuild -MaxParallelThreads 4 -Diagnostics",
+      "detail": "Full597=47Architecture+352Integration+198Unit;0failed/0skipped;terminal exit0 on28Nov."
+    },
+    {
+      "name": "Format",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "detail": "28Nov full solution verify-no-changes exit0."
+    },
+    {
+      "name": "Roadmap",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-roadmap.ps1",
+      "detail": "28Nov final InReview state accepted:76source rows,75edges,1051local links/anchors;all7steps Verified,human approval/V4Pending,P05prohibited."
+    },
+    {
+      "name": "GitRules",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "./planning/verify-git-workflow.ps1",
+      "detail": "28Nov final prestaging:27ignored+36allowed samples and504tracked files all accepted. New scoped Docker receipt is explicitly staged and checked by final-head CI."
+    },
+    {
+      "name": "DiffCheck",
+      "status": "Passed",
+      "exitCode": 0,
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "detail": "28Nov delivery diff check exit0 after correcting one extra EOF blank line;historical DeliveryFirstDiff failure retained. Production/test/SDK diff from verified implementation head is empty;staged check also required."
+    },
+    {
+      "name": "Docker",
+      "status": "Passed",
+      "command": "./docker/test-api-build-context.ps1 -Image hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622 -KeepImage; ./docker/smoke-api.ps1 -Image hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622; ./docker/test-store-files.ps1 -Image hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622",
+      "detail": "28Nov exact implementation head0c88c6b:211allowed/82forbidden,0missing/extra/forbidden,3exactSeedresources and116clean published files;non-root/read-only smoke;actual host2process and2fresh-container storage persistence;UID65534denied;new labeled volume preserved. Receipt docker-review-verification.json. Final metadata head is checked separately.",
+      "exitCode": 0
+    },
+    {
+      "name": "CI",
+      "status": "Passed",
+      "command": "GitHub REST actions/runs/46145684103+3completed jobs/logs at head0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+      "detail": "28Nov: all3jobs completed/success;597tests/0failed/0skipped,build0/0,format,documentation/Git/negative gates,Docker211allowed/82forbidden/116published/3Seed and restart/UIDdenial. This is the S07 implementation baseline;final delivery metadata commit gets its own CI before task completion.",
+      "exitCode": 0
+    },
+    {
+      "name": "DeliveryFirstDiff",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "detail": "Final documentation pass found one extra blank line at end of steps/S07.md introduced by an appended receipt. Trimmed to one final newline;no code or historical evidence removed. Recheck required."
+    }
+  ],
+  "userApproval": "Pending",
+  "v4": "Pending",
+  "p05Handoff": "Draft",
+  "intermediateCI": [
+    {
+      "runId": 45605384702,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "0c7c822fbc9aaa6c62bf62059bd7a7ca586f5625",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45605384702",
+      "jobs": [
+        {
+          "id": 139174796155,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45605384702/job/139174796155"
+        },
+        {
+          "id": 139174796761,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45605384702/job/139174796761"
+        },
+        {
+          "id": 139174796764,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45605384702/job/139174796764"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 250,
+        "unit": 109,
+        "passed": 406,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "runId": 45610300309,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "failure",
+      "headSha": "122277c72b228ed779a8f2ee9e32f1e846504273",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45610300309",
+      "jobs": [
+        {
+          "id": 139191766824,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45610300309/job/139191766824"
+        },
+        {
+          "id": 139191767160,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45610300309/job/139191767160"
+        },
+        {
+          "id": 139191767428,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45610300309/job/139191767428"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "unit": 121,
+        "integrationPassed": 220,
+        "integrationFailed": 45,
+        "passed": 388,
+        "failed": 45,
+        "skipped": 0
+      },
+      "diagnosis": "44 isolated foundation-host DI failures from missing test-only IMerchantReviewService registration;1 exact OpenAPI path inventory mismatch. Real merchant SQL/HTTP tests passed;full solution failed."
+    },
+    {
+      "runId": 45614038330,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "5173c605ab558bc79dcc4fce5fa36024f5f2d25e",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45614038330",
+      "jobs": [
+        {
+          "id": 139204696490,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45614038330/job/139204696490"
+        },
+        {
+          "id": 139204696859,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45614038330/job/139204696859"
+        },
+        {
+          "id": 139204696948,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45614038330/job/139204696948"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 265,
+        "unit": 121,
+        "passed": 433,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      },
+      "docker": {
+        "allowedInputs": 167,
+        "forbiddenFixtures": 79,
+        "extraFiles": 0,
+        "publishedFiles": 104,
+        "seedResources": 3,
+        "smoke": "Passed:non-root/read-only,liveness,correlation,safe404,production-docs gate;no SQL/mail readiness or persistence claim"
+      }
+    },
+    {
+      "runId": 45843772918,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "5a842ecb720bb171b3b7fded11a1df52b6b1b8e8",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45843772918",
+      "jobs": [
+        {
+          "id": 139991991975,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45843772918/job/139991991975"
+        },
+        {
+          "id": 139991992522,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45843772918/job/139991992522"
+        },
+        {
+          "id": 139991992614,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45843772918/job/139991992614"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 307,
+        "unit": 138,
+        "passed": 492,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      },
+      "docker": {
+        "allowedInputs": 185,
+        "forbiddenFixtures": 82,
+        "publishedFiles": 116,
+        "seedResources": 3,
+        "restart": "Passed:Linux host+two containers,UID65534denied,owned volume retained",
+        "smoke": "Passed:no SQL/mail readiness claim"
+      }
+    },
+    {
+      "runId": 45846221851,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "31e8e3b3f86442c5e0eb4e909aced5b0d77e65c9",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45846221851",
+      "jobs": [
+        {
+          "id": 140000477467,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45846221851/job/140000477467"
+        },
+        {
+          "id": 140000477955,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45846221851/job/140000477955"
+        },
+        {
+          "id": 140000478024,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45846221851/job/140000478024"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 308,
+        "unit": 138,
+        "passed": 493,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      },
+      "docker": {
+        "allowedInputs": 185,
+        "forbiddenFixtures": 82,
+        "publishedFiles": 116,
+        "seedResources": 3,
+        "restart": "Passed:host/container processes andUID65534denial",
+        "volumePreserved": true
+      }
+    },
+    {
+      "runId": 45853666822,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "f27b6ff3a3c8ef1b79acf2e37de70f4b9a86d951",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45853666822",
+      "jobs": [
+        {
+          "id": 140026302714,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45853666822/job/140026302714"
+        },
+        {
+          "id": 140026303208,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45853666822/job/140026303208"
+        },
+        {
+          "id": 140026303212,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45853666822/job/140026303212"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 319,
+        "unit": 157,
+        "passed": 523,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      },
+      "docker": {
+        "allowedInputs": 194,
+        "forbiddenFixtures": 82,
+        "publishedFiles": 116,
+        "seedResources": 3,
+        "restart": "Passed: host/container processes and unrelated UID denial",
+        "volumePreserved": true
+      }
+    },
+    {
+      "runId": 45856851203,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "f7264282abb6bbd5c8d02070c545cb61ceadf7c7",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45856851203",
+      "jobs": [
+        {
+          "id": 140037373003,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45856851203/job/140037373003"
+        },
+        {
+          "id": 140037373435,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45856851203/job/140037373435"
+        },
+        {
+          "id": 140037373533,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45856851203/job/140037373533"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 324,
+        "unit": 180,
+        "passed": 551,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      },
+      "docker": {
+        "allowedInputs": 199,
+        "forbiddenFixtures": 82,
+        "publishedFiles": 116,
+        "seedResources": 3,
+        "restart": "Passed: host/container processes and unrelated UID denial",
+        "volumePreserved": true
+      }
+    },
+    {
+      "runId": 46038731521,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "e2d9877e85e54f2273b9b3c885e6500f23332f0d",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46038731521",
+      "jobs": [
+        {
+          "id": 140640689882,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46038731521/job/140640689882"
+        },
+        {
+          "id": 140640690146,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46038731521/job/140640690146"
+        },
+        {
+          "id": 140640690251,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46038731521/job/140640690251"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 335,
+        "unit": 187,
+        "passed": 569,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      },
+      "docker": {
+        "allowedInputs": 206,
+        "forbiddenFixtures": 82,
+        "publishedFiles": 116,
+        "seedResources": 3,
+        "restart": "Passed: host/container processes and unrelated UID denial",
+        "volumePreserved": true
+      }
+    },
+    {
+      "runId": 46145684103,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103",
+      "jobs": [
+        {
+          "id": 140981109278,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109278"
+        },
+        {
+          "id": 140981109455,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109455"
+        },
+        {
+          "id": 140981109482,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109482"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 352,
+        "unit": 198,
+        "passed": 597,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      },
+      "docker": {
+        "allowedInputs": 211,
+        "forbiddenFixtures": 82,
+        "publishedFiles": 116,
+        "seedResources": 3,
+        "restart": "Passed:host/container and unrelated Linux UID denial",
+        "volumePreserved": true
+      },
+      "scope": "Verified S07 implementation head before the final documentation-only delivery commit. Final PR head requires its own successful run,recorded in PR checks/body and the final receipt;this earlier SHA is not relabeled."
+    }
+  ],
+  "s03StorageRuntime": {
+    "status": "Passed",
+    "sourceHead": "31e8e3b3f86442c5e0eb4e909aced5b0d77e65c9",
+    "image": "hawaleknow/api:p04-s03-31e8e3b",
+    "volume": "hawaleknow_p04_store_files_5c371ffb8ba24c8287774a738a63375b",
+    "owner": "5c371ffb8ba24c8287774a738a63375b",
+    "restart": "Passed",
+    "permissions": "Passed: owner modes0700/0600 and an unrelated UID65534 cannot read the known existing image or write its directory.",
+    "hostRestart": "Passed",
+    "volumeCreated": true,
+    "volumePreserved": true
+  },
+  "preservation": {
+    "baseMain": "63b189618a9c856151920da7669a4e2c9af86461",
+    "protectedFiles": [
+      {
+        "path": "Hawalek_Now_Approved_Requirements_AR.docx",
+        "baselineBlob": "5657f38d693915ca98bb7d7f53827cfeb0dc61f0",
+        "currentBlob": "5657f38d693915ca98bb7d7f53827cfeb0dc61f0",
+        "sha256": "364BAEDD73E1759ADE17CE5DB78722232A175DE6F05096CB3A1200CAD7682635",
+        "status": "Unchanged"
+      },
+      {
+        "path": "Hawalek_Now_Backend_Master_Execution_Plan_AR.docx",
+        "baselineBlob": "a47f7d7c27b5753e16b8b0a8847b4813382b4ae8",
+        "currentBlob": "a47f7d7c27b5753e16b8b0a8847b4813382b4ae8",
+        "sha256": "03925C464A065AC46473C951EC3D362B1B952C94722B76C17877100CC9CC01CC",
+        "status": "Unchanged"
+      },
+      {
+        "path": "global.json",
+        "baselineBlob": "e1c5e9980fedfa6ce8a2a67c128634c78c392f46",
+        "currentBlob": "e1c5e9980fedfa6ce8a2a67c128634c78c392f46",
+        "sha256": "6A8E9044030D136BD4C04FFF9684111A3478B27559BFB6D19E4D380F0DE91510",
+        "status": "Unchanged"
+      },
+      {
+        "path": "backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/LICENSE.txt",
+        "baselineBlob": "10f443544a236a841a885a12259dda793e6c5ec1",
+        "currentBlob": "10f443544a236a841a885a12259dda793e6c5ec1",
+        "sha256": "1A5399958B19341FA159BD73E03F798C89D49BA48D336B1C1C62F6BD95386994",
+        "status": "Unchanged"
+      },
+      {
+        "path": "backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/SOURCE.md",
+        "baselineBlob": "f03db128d55270b9e11416fcf0e67a5fa3d12061",
+        "currentBlob": "f03db128d55270b9e11416fcf0e67a5fa3d12061",
+        "sha256": "A7CB4A166FB2657DDFDC7538A02E9B3EB9D1144BDF2900F15643D8A26E474F25",
+        "status": "Unchanged"
+      },
+      {
+        "path": "backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/all-district.json",
+        "baselineBlob": "7142efb89b0f3d281cc50a2fdc786c4783c35a6c",
+        "currentBlob": "7142efb89b0f3d281cc50a2fdc786c4783c35a6c",
+        "sha256": "F265357BDF7248FD162F1CC23B7C8A68F966CA4BC2988FED408AEF078C1C01D8",
+        "status": "Unchanged"
+      },
+      {
+        "path": "backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/all-governorate.json",
+        "baselineBlob": "074ef2a061adc7a728a7cbe7ab0ff7a808474f02",
+        "currentBlob": "074ef2a061adc7a728a7cbe7ab0ff7a808474f02",
+        "sha256": "EA86B0A7C7219D1DC7C79D6FAECF1C66325F78443277CC491D8D39A94CC9CA27",
+        "status": "Unchanged"
+      },
+      {
+        "path": "backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/all-shiyakha.json",
+        "baselineBlob": "3ba252ecfb183a78d53207ab0409303a42f4ac04",
+        "currentBlob": "3ba252ecfb183a78d53207ab0409303a42f4ac04",
+        "sha256": "A4458361D556ADB1617C836D804FDE399757FA849D0ED7351A5C428E21A51002",
+        "status": "Unchanged"
+      }
+    ],
+    "packageGraph": {
+      "status": "Passed",
+      "changedLockfiles": 5,
+      "existingGraphEntriesUnchanged": 384,
+      "added": [
+        {
+          "name": "Magick.NET-Q8-AnyCPU",
+          "version": "15.1.0"
+        },
+        {
+          "name": "Magick.NET.Core",
+          "version": "15.1.0"
+        }
+      ]
+    },
+    "scheduleSha256": "26DC5102E591FA55D245C9294C3B2222B72DD6A57EA2E32AC29F999FDB5C2403",
+    "scheduleStaged": false
+  },
+  "tests": {
+    "architecture": 47,
+    "integration": 352,
+    "unit": 198,
+    "passed": 597,
+    "failed": 0,
+    "skipped": 0
+  },
+  "ci": {
+    "runId": 46145684103,
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103",
+    "jobs": [
+      {
+        "id": 140981109278,
+        "name": "Documentation and Git rules",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109278"
+      },
+      {
+        "id": 140981109455,
+        "name": "Restore, build, tests and format",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109455"
+      },
+      {
+        "id": 140981109482,
+        "name": "API and SQL image builds",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109482"
+      }
+    ],
+    "tests": {
+      "architecture": 47,
+      "integration": 352,
+      "unit": 198,
+      "passed": 597,
+      "failed": 0,
+      "skipped": 0
+    },
+    "build": {
+      "warnings": 0,
+      "errors": 0
+    },
+    "docker": {
+      "allowedInputs": 211,
+      "forbiddenFixtures": 82,
+      "publishedFiles": 116,
+      "seedResources": 3,
+      "restart": "Passed:host/container and unrelated Linux UID denial",
+      "volumePreserved": true
+    },
+    "scope": "Verified S07 implementation head before the final documentation-only delivery commit. Final PR head requires its own successful run,recorded in PR checks/body and the final receipt;this earlier SHA is not relabeled."
+  },
+  "implementation": {
+    "head": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+    "productionTree": "5f711a9f11aab372c040eb34160320261a7248e0",
+    "testsTree": "86b3895955473df97ebccd6b9b2e3f4c8069a3c1",
+    "finalHeadEvidence": "Final PR#11 current head must have a separate completed/success pull_request run with3successful jobs and597tests. Inspect final PR body/checks and final delivery receipt;never treat this implementation baseline SHA as a later head."
+  },
+  "s07StorageRuntime": {
+    "phase": "P04",
+    "sourceHead": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+    "status": "Passed",
+    "scope": "Exact S07 implementation baseline before the final documentation delivery commit. Final PR head receives separate CI and Docker checks;its SHA/result are recorded in PR#11 checks/body and the final receipt,not inferred from this earlier SHA.",
+    "context": {
+      "run": "160c5bc7c5d444b9ae280ecd02722134",
+      "sourceHead": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+      "rulesSha256": "4BB69D525E3F57E071AD0E2B9D667BAB5E4596131C27B8111D047135F4A52BAF",
+      "status": "Passed",
+      "context": "Passed",
+      "forbidden": [],
+      "missing": [],
+      "unexpected": [],
+      "allowedCount": 211,
+      "forbiddenCount": 82,
+      "image": "hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622",
+      "artifacts": "Passed",
+      "imageId": "sha256:33e52b1d45eb10dc19815350566fa33acc10acd04c0b110949337b482600a962"
+    },
+    "imageArtifacts": {
+      "seedResources": 3,
+      "publishedFiles": 116,
+      "seedAttributionLicense": "Exact bytes verified",
+      "magickNotices": "Exact published LICENSE/NOTICE verified"
+    },
+    "smoke": {
+      "status": "Passed",
+      "detail": "non-root/read-only,liveness,correlation,safe404,Production-docs gate;not SQL/mail readiness"
+    },
+    "storage": {
+      "status": "Passed",
+      "sourceHead": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+      "image": "hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622",
+      "volume": "hawaleknow_p04_store_files_a41e5a833b8a44ed8697869386ab67f2",
+      "owner": "a41e5a833b8a44ed8697869386ab67f2",
+      "restart": "Passed",
+      "permissions": "Passed: owner modes0700/0600 and an unrelated UID65534 cannot read the known existing image or write its directory.",
+      "hostRestart": "Passed",
+      "volumeCreated": true,
+      "volumePreserved": true
+    },
+    "ci": {
+      "run": 46145684103,
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103"
+    }
+  }
+}

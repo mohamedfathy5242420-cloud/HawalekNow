@@ -9,6 +9,9 @@ namespace HawalekNow.IntegrationTests;
 // Every fixture owns a newly created database. It never migrates or deletes an existing application database.
 public sealed class SqlDatabase : IAsyncLifetime
 {
+    // Provisioning/dropping isolated databases shares SQL master/model and disk resources.
+    // Serialize only that administrative lifecycle; test bodies and their transaction races remain parallel.
+    private static readonly SemaphoreSlim LifecycleGate = new(1, 1);
     private readonly string databaseName = "HN_P02_Test_" + Guid.CreateVersion7().ToString("N");
     private string? masterConnection;
     private bool created;
@@ -17,9 +20,10 @@ public sealed class SqlDatabase : IAsyncLifetime
     public string? InitialMigration { get; init; }
 
     public HawalekDbContext CreateContext() => new(new DbContextOptionsBuilder<HawalekDbContext>()
-        .UseSqlServer(ConnectionString, sql => sql.MigrationsHistoryTable("__EFMigrationsHistory", "operations")).Options);
+        .UseSqlServer(ConnectionString, sql => sql.UseNetTopologySuite().MigrationsHistoryTable("__EFMigrationsHistory", "operations")).Options);
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync() => DuringLifecycleAsync(InitializeDatabaseAsync);
+    private async Task InitializeDatabaseAsync()
     {
         var configured = Environment.GetEnvironmentVariable("HAWALEKNOW_TEST_SQL")
             ?? throw new InvalidOperationException("Set HAWALEKNOW_TEST_SQL to the isolated test SQL server connection with Database=master. No in-memory fallback is allowed.");
@@ -40,7 +44,8 @@ public sealed class SqlDatabase : IAsyncLifetime
         else await context.GetService<IMigrator>().MigrateAsync(InitialMigration);
     }
 
-    public async Task DisposeAsync()
+    public Task DisposeAsync() => DuringLifecycleAsync(DisposeDatabaseAsync);
+    private async Task DisposeDatabaseAsync()
     {
         if (!created) return;
         // Both the random name and creation ownership are checked before any destructive SQL.
@@ -52,5 +57,13 @@ public sealed class SqlDatabase : IAsyncLifetime
         await using var command = connection.CreateCommand();
         command.CommandText = $"ALTER DATABASE [{databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE [{databaseName}]";
         await command.ExecuteNonQueryAsync();
+        created = false;
+    }
+
+    private static async Task DuringLifecycleAsync(Func<Task> action)
+    {
+        await LifecycleGate.WaitAsync();
+        try { await action(); }
+        finally { LifecycleGate.Release(); }
     }
 }

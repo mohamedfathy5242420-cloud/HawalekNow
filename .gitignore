@@ -35,6 +35,7 @@ Desktop.ini
 .docker-data/
 docker-data/
 volumes/
+**/[Aa][Pp][Pp]_[Dd][Aa][Tt][Aa]/
 
 # Local configuration and secrets; examples must contain placeholders only
 .env

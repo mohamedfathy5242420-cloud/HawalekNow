@@ -6,9 +6,21 @@ $paths = @(& git -c "safe.directory=$([IO.Path]::GetFullPath($Root).Replace('\',
 if ($LASTEXITCODE -ne 0) { throw 'Cannot enumerate P03 fixture.' }
 foreach ($path in $paths | Sort-Object -Unique) {
     if ($path -eq 'docs/TARGET_SCHEDULE.md') { continue }
+    if ($path.StartsWith('planning/phase-04/')) { continue }
     $destination = Join-Path $fixture $path
     [IO.Directory]::CreateDirectory((Split-Path $destination -Parent)) | Out-Null
     [IO.File]::Copy((Join-Path $Root $path), $destination)
+}
+if ((Get-Content (Join-Path $fixture 'docs/CURRENT_STATE.md') -Raw) -match '(?m)^- Phase: P04\r?$') {
+    [IO.File]::Copy((Join-Path $fixture 'docs/P03_CLOSED_STATE.md'), (Join-Path $fixture 'docs/CURRENT_STATE.md'), $true)
+    $mapPath = Join-Path $fixture 'planning/ROADMAP.md'
+    $legacyMap = [IO.File]::ReadAllText($mapPath)
+    $legacyMap = [regex]::Replace($legacyMap, '(?ms)^### P04-S0[1-7] .*?(?=^### |\z)', { param($m) [regex]::Replace($m.Value, '(?m)^- Status: [^\r\n]+\r?\n', '') })
+    [IO.File]::WriteAllText($mapPath, $legacyMap)
+    foreach ($doc in (Get-ChildItem -LiteralPath $fixture -Filter '*.md' -Recurse -File)) {
+        $text = [regex]::Replace([IO.File]::ReadAllText($doc.FullName), '\[([^\]\r\n]+)\]\([^)\r\n]*phase-04[^)\r\n]*\)', '$1')
+        [IO.File]::WriteAllText($doc.FullName, $text)
+    }
 }
 function Check-P03 { & (Join-Path $fixture 'planning/verify-roadmap.ps1') -Root $fixture | Out-Null }
 $script:p03Rejections = 0
@@ -37,6 +49,7 @@ if ($closedBaseline) {
     foreach ($path in @('planning/phase-03/PHASE_REVIEW.md', 'planning/phase-03/handoffs/S07-to-P04.md') + @(1..7 | ForEach-Object { 'planning/phase-03/steps/S{0:d2}.md' -f $_ })) {
         $text = $closedFiles[$path]
         $text = [regex]::Replace($text, '(?m)^Status: Done\r?$', 'Status: InReview')
+        if ($path.EndsWith('S07-to-P04.md')) { $text = $text.Replace('Status: Ready', 'Status: Draft').Replace('TransitionGate: Passed', 'TransitionGate: Pending') }
         foreach ($name in @('UserApproval', 'ReviewStatus', 'V4')) { $text = [regex]::Replace($text, "(?m)^${name}: Approved\r?`$", "${name}: Pending") }
         [IO.File]::WriteAllText((Join-Path $fixture $path), $text)
     }
@@ -88,8 +101,15 @@ if ($closedBaseline) {
         $script:removedClosureCheck = $checkName
         Reject-P03 "missing $checkName" 'planning/phase-03/verification.json' { param($t) $e=$t|ConvertFrom-Json; $e.checks=@($e.checks|Where-Object name -ne $script:removedClosureCheck); $e|ConvertTo-Json -Depth 30 }
     }
-    Reject-P03 'premature Ready before merge gate' 'planning/phase-03/handoffs/S07-to-P04.md' { param($t) $t.Replace('Status: Draft', 'Status: Ready') }
-    Reject-P03 'unverified post merge claimed' 'planning/phase-03/handoffs/S07-to-P04.md' { param($t) $t.Replace('TransitionGate: Pending', 'TransitionGate: Passed') }
+    if ($closedFiles['planning/phase-03/handoffs/S07-to-P04.md'].Contains('TransitionGate: Passed')) {
+        Reject-P03 'Ready handoff inconsistent with completed gate' 'planning/phase-03/handoffs/S07-to-P04.md' { param($t) $t.Replace('Status: Ready', 'Status: Draft') }
+        Reject-P03 'post merge verification missing' 'planning/phase-03/MERGE_RECEIPT.md' { param($t) $t.Replace('PostMergeVerification: Passed', 'PostMergeVerification: Pending') }
+        Reject-P03 'main CI wrong head' 'planning/phase-03/merge-verification.json' { param($t) $e=$t|ConvertFrom-Json; $e.ci.headSha='0000000000000000000000000000000000000000'; $e|ConvertTo-Json -Depth 35 }
+        Reject-P03 'main CI failed job' 'planning/phase-03/merge-verification.json' { param($t) $e=$t|ConvertFrom-Json; $e.ci.jobs[0].conclusion='failure'; $e|ConvertTo-Json -Depth 35 }
+    } else {
+        Reject-P03 'premature Ready before merge gate' 'planning/phase-03/handoffs/S07-to-P04.md' { param($t) $t.Replace('Status: Draft', 'Status: Ready') }
+        Reject-P03 'unverified post merge claimed' 'planning/phase-03/handoffs/S07-to-P04.md' { param($t) $t.Replace('TransitionGate: Pending', 'TransitionGate: Passed') }
+    }
     Check-P03
 }
 Write-Output "PASS: actual P03 baseline accepted; $script:p03Rejections invalid predecessor/source/approval/phase claims rejected."

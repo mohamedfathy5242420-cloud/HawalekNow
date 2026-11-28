@@ -1,5 +1,24 @@
 # Backend
 
+الحالة الجارية: P04 كاملة InReview بخطواتها S01–S07، و597 اختبارًا ناجحًا محليًا وفي CI46145684103 على رأس التنفيذ0c88c6b، وبناء0/0 وlocked restore وFormat وDocker والتخزين المستمر والصلاحيات. تبقى Draft PR #11 واحدة وUserApproval/V4 Pending والتجربة والشرح Deferred. تثبت CI وDocker لرأس تحديث التسليم النهائي في وصف PR وChecks. [CURRENT_STATE](../docs/CURRENT_STATE.md) و[تقرير التسليم](../planning/phase-04/DELIVERY_REPORT.md) هما مرجعا الحالة والأدلة.
+
+للتشغيل والإعداد الآمن وHTTPS وCookie/CSRF استخدم [دليل Identity](IDENTITY_OPERATIONS.md). تشرح [عمليات البيانات المرجعية](REFERENCE_DATA_OPERATIONS.md) Catalog وLocations وSeed والمرادفات، ويشرح [دليل Merchants](MERCHANT_OPERATIONS.md) المتجر واللوجو والفروع والمواعيد وطلبات النشاط والإدارة وPostman وحدود المعاملات. لا تطبق Migrations على قاعدة تطبيق موجودة لمجرد تشغيل الاختبارات؛ فاحص الاختبارات ينشئ قواعدSQL جديدة مملوكة له ويزيلها تحت حراس الملكية.
+
+```powershell
+dotnet restore backend/HawalekNow.slnx --locked-mode
+dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1
+./backend/test-p02.ps1 -NoBuild
+dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore
+./planning/verify-roadmap.ps1
+./planning/verify-git-workflow.ps1
+```
+
+يحدد المشغل توازي مجموعات الاختبار بحد `min(4, CPUs)`. تُسلسل تهيئة قواعد الاختبار وترحيلها وتنظيفها وحدها ببوابة داخل SqlDatabase، لأنها تشترك في مواردmaster/model والقرص؛ أجسام الاختبارات وسباقات المعاملات خارجها. يمكن تحديد `-MaxParallelThreads 4 -Diagnostics` لتسجيل الإعداد؛ تبقى جميع الاختبارات وسباقات `Task.WhenAll` داخلها فعالة. يستخدم ذلك إعداد [xUnit.MaxParallelThreads الرسمي](https://xunit.net/docs/config-runsettings#maxparallelthreads)، ولا يغيّر مهلات SQL أوتعريف النجاح.
+
+لم تتغير نسخة SDK أوالحزم الموجودة؛ الحزمة الإضافية اللازمة للوجو وتراخيصها موثقة في [P04 dependencies](P04_DEPENDENCIES.md). لا منتجات أوبحث منتجات أوخرائط أوFrontend ضمن هذا التنفيذ، ولا دمجP04 أوبدءP05. الفقرات التالية سجل تأسيس P01 تاريخي؛ أوصاف غياب Business endpoints والخدمات المؤجلة تخص وقتها ولا تصف الشفرة الحالية.
+
+## سجل التأسيس P01 التاريخي
+
 P01 InReview وفق D012: S07/S08 Verified تقنيًا وCI ناجح و126 اختبارًا بلا فشل أو تخطٍّ. [مراجعة المرحلة](../planning/phase-01/PHASE_REVIEW.md) تجمع الأدلة والفشل والإصلاح ومراجعات المستخدم Pending. [CI/Docker](CI.md) و[Scalar/Postman](API_EXPLORATION.md). GET /api/v1/health/live فقط؛ التوثيق Development دون Readiness أو Business. نتائج S04–S06 أدناه تاريخية.
 
 S05 يؤسس [نتائج التطبيق وسياسة أخطاء HTTP والشرح خطوة بخطوة](API_ERRORS.md)؛ [ملف التنفيذ](../planning/phase-01/steps/S05.md) يسجل التحقق والمراجعة. الحالة الجارية في CURRENT_STATE.

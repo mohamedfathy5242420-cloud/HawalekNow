@@ -16,6 +16,10 @@ PR واحد للمرحلة إلى main يجمع مخرجات الخطوات وأ
 
 سجل المرحلة InProgress عند البدء، ثم InReview عند جاهزية مراجعتها. تميز الخطوة ExecutionStatus وVerificationStatus عن UserApproval وV4؛ InternalReady مسموح للتسليم داخل المرحلة بعد التحقق. لا تسجل Done أو تسليم المرحلة التالية Ready قبل اعتماد المستخدم المطلوب. سجل الفحوص الفعلية وسبب N/A والفشل والعائق؛ وجود PR أو نجاح Push أو CI لا يعني اعتماد المرحلة. لا دمج أو تغيير Branch Protection أو تكاملات في إذن تنفيذ P01 الحالي.
 
+## إذن تنفيذ P04 الحالي
+
+D021 يثبتنجاحبوابةP03 وفقD020 عندmain63b189618a9c856151920da7669a4e2c9af86461. الفرع codex/p04-implement-merchants-stores-and-branches وDraft PR واحدة؛ الخطواتS01–S07بالتتابعبعدتحققالسابقة. تسليمP04InReview/UserApproval/V4Pending وتسليمP05Draft. لاReady أوMerge لـP04 ولاP05. [إيصالP03](../planning/phase-03/MERGE_RECEIPT.md) يحفظSHAوفحوصماقبلوبعدالدمج.
+
 ## إذن إغلاق P03 وتنفيذ P04 الحالي
 
 D020 بتاريخ 2026-11-25 يجيز Commit/Push وReady وSquash لـPR #10 بعد نجاح الفحوص وCI على رأس الإغلاق وفحص الحماية دون تجاوز. يحتفظ بفرع P03 محليًا وبعيدًا. بدء P04 من main المتحقق منها مشروط بالدمج وفحوص ما بعده وCI main وتسليم Ready. P04 تسلم كاملة Draft/InReview مع UserApproval/V4 Pending وتسليم P05 Draft؛ لا دمج P04 أو بدء P05. التجربة الشخصية والشرح Deferred وليستا Passed. الأذونات الأقدم أدناه تاريخية في نطاقها.

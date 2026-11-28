@@ -2,6 +2,22 @@
 
 آخر تحديث: 2026-11-25
 
+## D021 إذن تنفيذ P04 بعد نجاح بوابة P03
+
+Status: Approved
+ApprovalDate: 2026-11-25
+ExecutionMode: Phase
+AuthorizedPhase: P04
+PhaseUserApproval: Pending
+MergeAuthorization: NotAuthorized
+P05Execution: NotAuthorized
+BaseMain: 63b189618a9c856151920da7669a4e2c9af86461
+PredecessorAcceptance: D020
+
+تحققت شروط إذن المستخدم في D020: أغلقت PR #10 بـSquash، وحدثت main المحلية بـff-only إلى SHA أعلاه وطابقت شجرتها رأس الإغلاق. نجحت فحوص ما بعد الدمج و370 اختبارًا بلا فشل أوتخطٍّ، وFormat وDocker والفاحصان وبوابات 46+27+41 وCI main45600216946 بالوظائف الثلاث. [إيصال P03](../planning/phase-03/MERGE_RECEIPT.md) و[الأدلة](../planning/phase-03/merge-verification.json) يثبتان البوابة، وتسليم P04 Ready.
+
+بدأ الفرع codex/p04-implement-merchants-stores-and-branches من main المتحقق منها لتنفيذ S01–S07 بالترتيب بعد التحقق التقني المناسب لكل خطوة، دون انتظار اعتماد بشري لكل خطوة. هذا إذن تنفيذ وليس اعتماد مخرجات P04؛ تسلم المرحلة كاملة InReview في Draft PR واحدة، مع UserApproval/V4 Pending وتسليم P05 Draft. لا دمج P04 أوبدء P05. التجربة الشخصية وجلسة الشرح السابقة Deferred وليستا Passed؛ الشرح التفصيلي مهمة مستقلة بعد التسليم. تحفظ ملفات Word وSeed والجدول والفروع والبيانات وVolumes وسياسات Identity وLogging وحدود الوحدات وفق طلب المستخدم.
+
 ## D020 قبول P03 وإذن إغلاقها وبدء P04 بعد البوابة
 
 Status: Approved

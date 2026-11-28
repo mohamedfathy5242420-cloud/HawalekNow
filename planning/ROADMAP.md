@@ -356,6 +356,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P04-S01 استكمال MerchantAccount
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S01.md).
+
 - الاعتمادات السابقة: [P03-S07](#p03-s07) + Phase Review وHandoff للمرحلة السابقة.
 - المخرج المطلوب: حالات Pending وChangesRequested وApproved وRejected وSuspended.
 - بوابة التحقق: V2 state machine وV3 persistence.
@@ -363,6 +365,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p04-s02"></a>
 
 ### P04-S02 مراجعة واعتماد التاجر
+
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S02.md).
 
 - الاعتمادات السابقة: [P04-S01](#p04-s01).
 - المخرج المطلوب: Admin approve وrequest changes وreject مع السبب.
@@ -374,6 +378,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P04-S03 إنشاء المتجر
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S03.md).
+
 - الاعتمادات السابقة: [P04-S02](#p04-s02).
 - المخرج المطلوب: متجر واحد للحساب ونشاط رئيسي واتصال ولوجو اختياري.
 - بوابة التحقق: V2 invariants وV3 API.
@@ -384,6 +390,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P04-S04 الفروع ونقاط الاستلام
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S04.md).
+
 - الاعتمادات السابقة: [P04-S03](#p04-s03).
 - المخرج المطلوب: أماكن متعددة وبيانات اتصال fallback وموقع geography.
 - بوابة التحقق: V2 fallback وV3 distance-ready data.
@@ -391,6 +399,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p04-s05"></a>
 
 ### P04-S05 مواعيد العمل
+
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S05.md).
 
 - الاعتمادات السابقة: [P04-S04](#p04-s04).
 - المخرج المطلوب: جدول أسبوعي وحساب مفتوح الآن والفتح القادم.
@@ -400,6 +410,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P04-S06 تغيير النشاط الرئيسي
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S06.md).
+
 - الاعتمادات السابقة: [P04-S05](#p04-s05).
 - المخرج المطلوب: طلب موافقة وبقاء النشاط القديم ومعالجة المنتجات لاحقًا.
 - بوابة التحقق: V2 transitions وV3 admin flow.
@@ -407,6 +419,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 <a id="p04-s07"></a>
 
 ### P04-S07 إدارة المتجر بواسطة Admin
+
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S07.md).
 
 - الاعتمادات السابقة: [P04-S06](#p04-s06).
 - المخرج المطلوب: تعديل وتعليق وإخفاء مع سبب وAudit.

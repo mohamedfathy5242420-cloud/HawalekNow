@@ -22,6 +22,7 @@ public sealed class ResultTests
     [InlineData(ErrorKind.Validation)]
     [InlineData(ErrorKind.Unauthorized)]
     [InlineData(ErrorKind.Forbidden)]
+    [InlineData(ErrorKind.Unavailable)]
     public void Failure_has_exact_error_and_value_access_throws(ErrorKind kind)
     {
         var error = new Error(kind);

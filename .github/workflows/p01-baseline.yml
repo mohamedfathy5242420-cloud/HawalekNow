@@ -1,4 +1,4 @@
-name: Backend baseline and P03 reference data
+name: Backend baseline and P04 merchant workflows
 
 on:
   pull_request:
@@ -142,11 +142,22 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Read the existing pinned SDK for the standalone storage verifier
+        id: storage_sdk
+        run: |
+          echo "version=$(jq -r '.sdk.version' global.json)" >> "$GITHUB_OUTPUT"
+          echo "DOTNET_INSTALL_DIR=$RUNNER_TEMP/dotnet" >> "$GITHUB_ENV"
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: ${{ steps.storage_sdk.outputs.version }}
       - name: Verify Docker exclusions, build API and inspect embedded seed artifacts
         shell: pwsh
         run: ./docker/test-api-build-context.ps1 -Image hawaleknow/api:p01-ci -KeepImage
       - name: Verify application startup and environment gates in Docker
         shell: pwsh
         run: ./docker/smoke-api.ps1 -Image hawaleknow/api:p01-ci
+      - name: Verify store-file persistence across real process/container restarts and unrelated-user denial
+        shell: pwsh
+        run: ./docker/test-store-files.ps1 -Image hawaleknow/api:p01-ci
       - name: Build the existing SQL Full Text image
         run: docker build --pull --platform linux/amd64 --tag hawaleknow/sql-fts:p01-ci docker/sql

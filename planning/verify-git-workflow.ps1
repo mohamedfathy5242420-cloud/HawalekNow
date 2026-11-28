@@ -9,6 +9,7 @@ function Assert-Ignore([string]$Path,[bool]$Expected){
   if(($result -eq 0) -ne $Expected){throw "Ignore mismatch: $Path; expected ignored=$Expected"}
 }
 $blocked += 'docker/.env'
+$blocked += @('backend/src/HawalekNow.Api/App_Data/logo.png', 'backend/src/HawalekNow.Api/app_data/private.cs')
 $allowed += @('docker/.env.example','docker/compose.yaml','docker/sql/Dockerfile','docker/sql/.dockerignore','docker/local.ps1')
 $allowed += @('backend/postman/HawalekNow.P01-S07.postman_collection.json','backend/postman/HawalekNow.Local.postman_environment.json')
 $allowed += @('.github/workflows/p01-baseline.yml','.dockerignore','backend/Dockerfile','docker/smoke-api.ps1','backend/tests/UnitTests/packages.lock.json','backend/tests/ArchitectureTests/packages.lock.json')

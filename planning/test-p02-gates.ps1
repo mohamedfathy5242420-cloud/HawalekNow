@@ -6,22 +6,22 @@ $paths = @(& git -c "safe.directory=$([IO.Path]::GetFullPath($Root).Replace('\',
 if ($LASTEXITCODE -ne 0) { throw 'Cannot enumerate P02 gate fixture.' }
 foreach ($path in $paths | Sort-Object -Unique) {
     if ($path -eq 'docs/TARGET_SCHEDULE.md') { continue }
-    if ($path.StartsWith('planning/phase-03/')) { continue }
+    if ($path.StartsWith('planning/phase-03/') -or $path.StartsWith('planning/phase-04/')) { continue }
     $destination = Join-Path $fixture $path
     [IO.Directory]::CreateDirectory((Split-Path $destination -Parent)) | Out-Null
     [IO.File]::Copy((Join-Path $Root $path), $destination)
 }
-if ((Get-Content -LiteralPath (Join-Path $fixture 'docs/CURRENT_STATE.md') -Raw) -match '(?m)^- Phase: P03\r?$') {
+if ((Get-Content -LiteralPath (Join-Path $fixture 'docs/CURRENT_STATE.md') -Raw) -match '(?m)^- Phase: P0[34]\r?$') {
     [IO.File]::Copy((Join-Path $fixture 'docs/P02_CLOSED_STATE.md'), (Join-Path $fixture 'docs/CURRENT_STATE.md'), $true)
     $mapPath = Join-Path $fixture 'planning/ROADMAP.md'
     $legacyMap = [IO.File]::ReadAllText($mapPath)
-    $legacyMap = [regex]::Replace($legacyMap, '(?ms)(^### P03-S0[1-7] .*?)(?=^### |\z)', { param($m) [regex]::Replace($m.Value, '(?m)^- Status: [^\r\n]+\r?\n', '') })
+    $legacyMap = [regex]::Replace($legacyMap, '(?ms)(^### P0[34]-S0[1-7] .*?)(?=^### |\z)', { param($m) [regex]::Replace($m.Value, '(?m)^- Status: [^\r\n]+\r?\n', '') })
     [IO.File]::WriteAllText($mapPath, $legacyMap)
     # The historical P02 baseline intentionally contains no P03 execution files.
     # Preserve current documentation in the real worktree; remove only its forward links inside this fixture.
     foreach ($legacyDoc in (Get-ChildItem -LiteralPath $fixture -Filter '*.md' -Recurse -File)) {
         $legacyText = [IO.File]::ReadAllText($legacyDoc.FullName)
-        $legacyText = [regex]::Replace($legacyText, '\[([^\]\r\n]+)\]\([^)\r\n]*phase-03[^)\r\n]*\)', '$1')
+        $legacyText = [regex]::Replace($legacyText, '\[([^\]\r\n]+)\]\([^)\r\n]*phase-0[34][^)\r\n]*\)', '$1')
         [IO.File]::WriteAllText($legacyDoc.FullName, $legacyText)
     }
 }

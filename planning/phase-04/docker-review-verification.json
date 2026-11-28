@@ -1,0 +1,47 @@
+{
+  "phase": "P04",
+  "sourceHead": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+  "status": "Passed",
+  "scope": "Exact S07 implementation baseline before the final documentation delivery commit. Final PR head receives separate CI and Docker checks;its SHA/result are recorded in PR#11 checks/body and the final receipt,not inferred from this earlier SHA.",
+  "context": {
+    "run": "160c5bc7c5d444b9ae280ecd02722134",
+    "sourceHead": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+    "rulesSha256": "4BB69D525E3F57E071AD0E2B9D667BAB5E4596131C27B8111D047135F4A52BAF",
+    "status": "Passed",
+    "context": "Passed",
+    "forbidden": [],
+    "missing": [],
+    "unexpected": [],
+    "allowedCount": 211,
+    "forbiddenCount": 82,
+    "image": "hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622",
+    "artifacts": "Passed",
+    "imageId": "sha256:33e52b1d45eb10dc19815350566fa33acc10acd04c0b110949337b482600a962"
+  },
+  "imageArtifacts": {
+    "seedResources": 3,
+    "publishedFiles": 116,
+    "seedAttributionLicense": "Exact bytes verified",
+    "magickNotices": "Exact published LICENSE/NOTICE verified"
+  },
+  "smoke": {
+    "status": "Passed",
+    "detail": "non-root/read-only,liveness,correlation,safe404,Production-docs gate;not SQL/mail readiness"
+  },
+  "storage": {
+    "status": "Passed",
+    "sourceHead": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+    "image": "hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622",
+    "volume": "hawaleknow_p04_store_files_a41e5a833b8a44ed8697869386ab67f2",
+    "owner": "a41e5a833b8a44ed8697869386ab67f2",
+    "restart": "Passed",
+    "permissions": "Passed: owner modes0700/0600 and an unrelated UID65534 cannot read the known existing image or write its directory.",
+    "hostRestart": "Passed",
+    "volumeCreated": true,
+    "volumePreserved": true
+  },
+  "ci": {
+    "run": 46145684103,
+    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103"
+  }
+}

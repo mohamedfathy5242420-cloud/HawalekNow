@@ -20,6 +20,15 @@
           "Hangfire.Core": "[1.8.25]"
         }
       },
+      "Magick.NET-Q8-AnyCPU": {
+        "type": "Direct",
+        "requested": "[15.1.0, 15.1.0]",
+        "resolved": "15.1.0",
+        "contentHash": "nHJpUfEkhiDu5XJAymHWQBCinVQJABTK2j6haHqs650UPUP9iEMqN73VNu8m+YyoyEp5gGwO65hqivhgzzpfnQ==",
+        "dependencies": {
+          "Magick.NET.Core": "15.1.0"
+        }
+      },
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
         "type": "Direct",
         "requested": "[10.0.14, 10.0.14]",
@@ -149,6 +158,11 @@
         "type": "Transitive",
         "resolved": "2.14.1",
         "contentHash": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw=="
+      },
+      "Magick.NET.Core": {
+        "type": "Transitive",
+        "resolved": "15.1.0",
+        "contentHash": "WIaemRN4tJvw5BNUfsO8/V3LojV5FOCojQ/sQ4ruXme1o2frRYfcvHPhKV5E6TbYoEdVEvtGX+8Wbut0F2lJHg=="
       },
       "MediatR": {
         "type": "Transitive",

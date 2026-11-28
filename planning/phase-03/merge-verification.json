@@ -1,0 +1,216 @@
+{
+  "phase": "P03",
+  "acceptance": "D020",
+  "closureHead": "e15ee40971a384dd364094308d80499854e89907",
+  "mergeSha": "63b189618a9c856151920da7669a4e2c9af86461",
+  "mergedAt": "2026-11-25T10:59:43Z",
+  "pr": 10,
+  "postMergeVerification": "Passed",
+  "tests": {
+    "architecture": 47,
+    "integration": 247,
+    "unit": 76,
+    "passed": 370,
+    "failed": 0,
+    "skipped": 0
+  },
+  "checks": [
+    {
+      "name": "ReleaseBuild",
+      "command": "dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1",
+      "status": "Passed",
+      "exitCode": 0,
+      "completedAt": "2026-11-25T13:02:25.071195+02:00"
+    },
+    {
+      "name": "Format",
+      "command": "dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore",
+      "status": "Passed",
+      "exitCode": 0,
+      "completedAt": "2026-11-25T13:09:19.3830722+02:00"
+    },
+    {
+      "name": "LockedRestore",
+      "command": "dotnet restore backend/HawalekNow.slnx --locked-mode --disable-parallel",
+      "status": "Passed",
+      "exitCode": 0,
+      "completedAt": "2026-11-25T13:00:35.18913+02:00"
+    },
+    {
+      "name": "Tests",
+      "command": "./backend/test-p02.ps1 -NoBuild",
+      "status": "Passed",
+      "exitCode": 0,
+      "completedAt": "2026-11-25T13:08:06.6760144+02:00"
+    },
+    {
+      "name": "Roadmap",
+      "command": "./planning/verify-roadmap.ps1",
+      "status": "Passed",
+      "exitCode": 0
+    },
+    {
+      "name": "GitRules",
+      "command": "./planning/verify-git-workflow.ps1",
+      "status": "Passed",
+      "exitCode": 0
+    },
+    {
+      "name": "PhaseGates",
+      "command": "./planning/test-phase-gates.ps1",
+      "status": "Passed",
+      "exitCode": 0
+    },
+    {
+      "name": "Docker",
+      "command": "./docker/test-api-build-context.ps1",
+      "status": "Passed",
+      "exitCode": 0
+    },
+    {
+      "name": "DiffCheck",
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "status": "Passed",
+      "exitCode": 0
+    }
+  ],
+  "ci": {
+    "runId": 45600216946,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "63b189618a9c856151920da7669a4e2c9af86461",
+    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45600216946",
+    "jobs": [
+      {
+        "id": 139156887937,
+        "name": "Restore, build, tests and format",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45600216946/job/139156887937"
+      },
+      {
+        "id": 139156888407,
+        "name": "Documentation and Git rules",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45600216946/job/139156888407"
+      },
+      {
+        "id": 139156888414,
+        "name": "API and SQL image builds",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45600216946/job/139156888414"
+      }
+    ],
+    "tests": {
+      "architecture": 47,
+      "integration": 247,
+      "unit": 76,
+      "passed": 370,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "closureCI": {
+    "runId": 45599519138,
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "e15ee40971a384dd364094308d80499854e89907",
+    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45599519138",
+    "jobs": [
+      {
+        "id": 139154394501,
+        "name": "Restore, build, tests and format",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45599519138/job/139154394501"
+      },
+      {
+        "id": 139154394923,
+        "name": "Documentation and Git rules",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45599519138/job/139154394923"
+      },
+      {
+        "id": 139154395007,
+        "name": "API and SQL image builds",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45599519138/job/139154395007"
+      }
+    ],
+    "tests": {
+      "architecture": 47,
+      "integration": 247,
+      "unit": 76,
+      "passed": 370,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "docker": {
+    "run": "984beaf6ab16437a9c70d54c49afd5a5",
+    "sourceHead": "63b189618a9c856151920da7669a4e2c9af86461",
+    "rulesSha256": "11DFEA636E9DB2B61E88A4C0102A60EE6796204BAF2CD3D9E80FD216FEDCFF2A",
+    "status": "Passed",
+    "context": "Passed",
+    "forbidden": [],
+    "missing": [],
+    "unexpected": [],
+    "allowedCount": 157,
+    "forbiddenCount": 79,
+    "image": "hawaleknow/api-context-test:984beaf6ab16437a9c70d54c49afd5a5",
+    "artifacts": "Passed",
+    "imageId": "sha256:1bf60eb238c9d0a270e802d8be1fd7977db5221ad9e255184bfa2c803c00484d"
+  },
+  "repositoryInspection": {
+    "checkedAt": "2026-11-25T12:59:41.2068649+02:00",
+    "expectedHead": "e15ee40971a384dd364094308d80499854e89907",
+    "allow_squash_merge": true,
+    "delete_branch_on_merge": false,
+    "main_protected": false,
+    "main": "5e4250ff31f84c8806649c7ef1786574da7dd00a",
+    "rules": [],
+    "reviews": [],
+    "checks": [
+      {
+        "name": "API and SQL image builds",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "e15ee40971a384dd364094308d80499854e89907",
+        "details_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45599519138/job/139154395007"
+      },
+      {
+        "name": "Documentation and Git rules",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "e15ee40971a384dd364094308d80499854e89907",
+        "details_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45599519138/job/139154394923"
+      },
+      {
+        "name": "Restore, build, tests and format",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "e15ee40971a384dd364094308d80499854e89907",
+        "details_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45599519138/job/139154394501"
+      }
+    ],
+    "statuses": [],
+    "threads": {
+      "pageInfo": {
+        "hasNextPage": false
+      },
+      "nodes": []
+    },
+    "mergeable": true,
+    "mergeableState": "clean"
+  },
+  "userPersonalReview": "Deferred",
+  "educationalWalkthrough": "Deferred",
+  "scheduleSha256": "26DC5102E591FA55D245C9294C3B2222B72DD6A57EA2E32AC29F999FDB5C2403",
+  "retainedP03Branch": "codex/p03-implement-reference-data-and-locations"
+}

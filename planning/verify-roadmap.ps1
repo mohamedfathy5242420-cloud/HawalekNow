@@ -52,7 +52,7 @@ if(Test-Path (Join-Path $Root 'backend/API_ERRORS.md')){$files += 'backend/API_E
 foreach($candidate in @('backend/API_EXPLORATION.md','planning/phase-01/steps/S07.md','planning/phase-01/handoffs/S07-to-S08.md','planning/phase-01/steps/S08.md','planning/phase-01/PHASE_REVIEW.md','planning/phase-01/handoffs/S08-to-P02.md','backend/CI.md','planning/phase-01/CLOSURE.md')){
   if(Test-Path (Join-Path $Root $candidate)){$files += $candidate}
 }
-foreach($candidate in @('README.md','backend/README.md','docker/README.md','planning/phase-01/steps/S01.md','planning/phase-01/handoffs/S01-to-S02.md','planning/phase-01/steps/S02.md','planning/phase-01/handoffs/S02-to-S03.md','planning/phase-01/steps/S03.md','planning/phase-01/handoffs/S03-to-S04.md','backend/MODULES.md','backend/PACKAGES.md','planning/phase-01/steps/S04.md','planning/phase-01/handoffs/S04-to-S05.md','planning/phase-01/steps/S05.md','planning/phase-01/handoffs/S05-to-S06.md','planning/phase-01/steps/S06.md','planning/phase-01/handoffs/S06-to-S07.md')){
+foreach($candidate in @('README.md','backend/README.md','docker/README.md','planning/phase-01/steps/S01.md','planning/phase-01/handoffs/S01-to-S02.md','planning/phase-01/steps/S02.md','planning/phase-01/handoffs/S02-to-S03.md','planning/phase-01/steps/S03.md','planning/phase-01/handoffs/S03-to-S04.md','backend/MODULES.md','backend/MERCHANT_OPERATIONS.md','backend/PACKAGES.md','planning/phase-01/steps/S04.md','planning/phase-01/handoffs/S04-to-S05.md','planning/phase-01/steps/S05.md','planning/phase-01/handoffs/S05-to-S06.md','planning/phase-01/steps/S06.md','planning/phase-01/handoffs/S06-to-S07.md')){
   if(Test-Path (Join-Path $Root $candidate)){$files += $candidate}
 }
 $moduleRoot=Join-Path $Root 'backend/src'
@@ -68,6 +68,9 @@ if(Test-Path (Join-Path $Root 'planning/phase-02')){
 }
 if(Test-Path (Join-Path $Root 'planning/phase-03')){
  $files += @(Get-ChildItem -LiteralPath (Join-Path $Root 'planning/phase-03') -Filter '*.md' -Recurse -File | ForEach-Object {[IO.Path]::GetRelativePath($Root,$_.FullName)})
+}
+if(Test-Path (Join-Path $Root 'planning/phase-04')){
+ $files += @(Get-ChildItem -LiteralPath (Join-Path $Root 'planning/phase-04') -Filter '*.md' -Recurse -File | ForEach-Object {[IO.Path]::GetRelativePath($Root,$_.FullName)})
 }
 foreach($file in $files){
   $path=Join-Path $Root $file
@@ -92,7 +95,7 @@ foreach($kind in @('STEP','HANDOFF')){
 $s02=Get-Content (Join-Path $Root 'planning/phase-00/steps/S02.md') -Raw
 $s03=Get-Content (Join-Path $Root 'planning/phase-00/steps/S03.md') -Raw
 $state=Get-Content (Join-Path $Root 'docs/CURRENT_STATE.md') -Raw
-if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: (P00-S04|P01-S0[1-8]|P02-S0[1-9]|P03-S0[1-7])\r?$'){throw 'Closure state mismatch'}
+if($s02 -notmatch '(?m)^Status: Done\r?$' -or $s03 -notmatch '(?m)^Status: Done\r?$' -or $state -notmatch '(?m)^- Step: (P00-S04|P01-S0[1-8]|P02-S0[1-9]|P03-S0[1-7]|P04-S0[1-7])\r?$'){throw 'Closure state mismatch'}
 $handoff=Get-Content (Join-Path $Root 'planning/phase-00/handoffs/S03-to-S04.md') -Raw
 if($handoff -notmatch '(?m)^Status: Ready\r?$' -or $handoff -notmatch '(?m)^From: P00-S03\r?$' -or $handoff -notmatch '(?m)^To: P00-S04\r?$'){throw 'Closure handoff mismatch'}
 $currentStatus=[regex]::Match($state,'(?m)^- Status: (\w+)\r?$').Groups[1].Value
@@ -100,7 +103,7 @@ $s04Path=Join-Path $Root 'planning/phase-00/steps/S04.md'
 $currentStep=[regex]::Match($state,'(?m)^- Step: (P\d{2}-S\d{2})\r?$').Groups[1].Value
 $displayStep=$currentStep; $displayStatus=$currentStatus
 $phaseExecution=$state -match '(?m)^- ExecutionMode: Phase\r?$'
-$p02Execution=$state -match '(?m)^- Phase: P0[23]\r?$'
+$p02Execution=$state -match '(?m)^- Phase: P0[234]\r?$'
 $s06Closed=$phaseExecution -or $currentStep -eq 'P01-S07'
 if($phaseExecution){
   & (Join-Path $PSScriptRoot 'verify-phase.ps1') -Root $Root

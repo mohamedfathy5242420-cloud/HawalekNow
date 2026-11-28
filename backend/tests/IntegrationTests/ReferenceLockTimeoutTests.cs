@@ -15,7 +15,7 @@ public sealed class ReferenceLockTimeoutTests(SqlDatabase database) : IClassFixt
     public async Task Explicit_seed_lock_has_enough_command_time_and_restores_previous_setting(bool locations)
     {
         var capture = new Capture();
-        await using var context = new HawalekDbContext(new DbContextOptionsBuilder<HawalekDbContext>().UseSqlServer(database.ConnectionString).AddInterceptors(capture).Options);
+        await using var context = new HawalekDbContext(new DbContextOptionsBuilder<HawalekDbContext>().UseSqlServer(database.ConnectionString, sql => sql.UseNetTopologySuite()).AddInterceptors(capture).Options);
         context.Database.SetCommandTimeout(7);
         await using (var transaction = await context.BeginAsync())
         {

@@ -13,6 +13,7 @@ public static class CatalogRegistration
         services.AddScoped<ICatalogAdministration, CatalogAdministration>();
         services.AddScoped<CatalogQueries>(); services.AddScoped<ICatalogQueries, CachedCatalogQueries>(); services.AddReferenceOptionsCache();
         services.AddScoped<IInitialActivities, InitialActivities>();
+        services.AddScoped<IActivityDirectory, ActivityDirectory>();
         return services;
     }
 }

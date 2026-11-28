@@ -15,7 +15,7 @@ public static class GeographyPointMapping
         if (value is null || value.IsEmpty || value.Coordinate is null || value.SRID != Srid || !double.IsNaN(value.Z) || !double.IsNaN(value.M)) throw new ArgumentException("A two-dimensional SRID4326 point is required.");
         return GeoPoint.Create(value.Y, value.X);
     }
-    // Future module-owned mappings opt in; this creates no entity or production table.
+    // Module-owned mappings opt in; Merchants consumes this for branch/pickup geography.
     public static PropertyBuilder<GeoPoint> HasGeographyPoint(this PropertyBuilder<GeoPoint> property) =>
         property.HasConversion(new ValueConverter<GeoPoint, Point>(value => ToSqlPoint(value), value => FromSqlPoint(value))).HasColumnType("geography");
 }

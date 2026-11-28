@@ -1,4 +1,6 @@
-param([string]$Filter = '', [switch]$NoBuild)
+param([string]$Filter = '', [switch]$NoBuild,
+    [ValidateRange(1, 64)][int]$MaxParallelThreads = [Math]::Min(4, [Environment]::ProcessorCount),
+    [switch]$Diagnostics)
 $ErrorActionPreference = 'Stop'
 $p02Root = Split-Path $PSScriptRoot -Parent
 $p02PriorConnection = [Environment]::GetEnvironmentVariable('HAWALEKNOW_TEST_SQL')
@@ -22,6 +24,11 @@ try {
     $p02TestArgs = @('test', (Join-Path $PSScriptRoot 'HawalekNow.slnx'), '--configuration', 'Release', '--no-restore', '--disable-build-servers', '-m:1')
     if ($NoBuild) { $p02TestArgs += '--no-build' }
     if ($Filter) { $p02TestArgs += @('--filter', $Filter) }
+    # Bound independent SQL fixture creation to local server capacity. Explicit Task.WhenAll race tests remain unchanged.
+    if ($Diagnostics) { $p02TestArgs += @('--logger', 'console;verbosity=normal') }
+    $p02TestArgs += @('--', "xUnit.MaxParallelThreads=$MaxParallelThreads")
+    if ($Diagnostics) { $p02TestArgs += @('xUnit.DiagnosticMessages=true', 'xUnit.LongRunningTestSeconds=60') }
+    Write-Output "Test collection concurrency limit: $MaxParallelThreads. Explicit transaction race tests remain enabled."
     & dotnet @p02TestArgs
     if ($LASTEXITCODE -ne 0) { throw 'P02 verification failed; inspect test names, never print connection strings or secrets.' }
 } finally {

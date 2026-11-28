@@ -104,6 +104,19 @@
           "Hangfire.Core": "[1.8.25]"
         }
       },
+      "Magick.NET-Q8-AnyCPU": {
+        "type": "Transitive",
+        "resolved": "15.1.0",
+        "contentHash": "nHJpUfEkhiDu5XJAymHWQBCinVQJABTK2j6haHqs650UPUP9iEMqN73VNu8m+YyoyEp5gGwO65hqivhgzzpfnQ==",
+        "dependencies": {
+          "Magick.NET.Core": "15.1.0"
+        }
+      },
+      "Magick.NET.Core": {
+        "type": "Transitive",
+        "resolved": "15.1.0",
+        "contentHash": "WIaemRN4tJvw5BNUfsO8/V3LojV5FOCojQ/sQ4ruXme1o2frRYfcvHPhKV5E6TbYoEdVEvtGX+8Wbut0F2lJHg=="
+      },
       "MediatR": {
         "type": "Transitive",
         "resolved": "12.5.0",
@@ -696,6 +709,7 @@
           "Hangfire.SqlServer": "[1.8.25, 1.8.25]",
           "HawalekNow.Application": "[1.0.0, )",
           "HawalekNow.Domain": "[1.0.0, )",
+          "Magick.NET-Q8-AnyCPU": "[15.1.0, 15.1.0]",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "[10.0.14, 10.0.14]",
           "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.14, 10.0.14]",
           "Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite": "[10.0.14, 10.0.14]",

@@ -53,12 +53,14 @@ try {
     $seed = 'backend/src/HawalekNow.Infrastructure/Modules/Locations/SeedData/'
     $seedNames = @('all-governorate.json', 'all-district.json', 'all-shiyakha.json')
     $seedPaths = @(($seedNames + @('SOURCE.md', 'LICENSE.txt')) | ForEach-Object { $seed + $_ })
+    $storageNotices = @('backend/src/HawalekNow.Infrastructure/Shared/Storage/ThirdParty/Magick.NET-15.1.0.LICENSE.txt',
+        'backend/src/HawalekNow.Infrastructure/Shared/Storage/ThirdParty/Magick.NET-15.1.0.NOTICE.txt')
     $allowed = @(Get-ChildItem -LiteralPath $context -Recurse -File -Force | ForEach-Object {
         $relative = [IO.Path]::GetRelativePath($context, $_.FullName).Replace('\', '/')
-        if ($relative -eq 'global.json' -or $relative -in $seedPaths -or
+        if ($relative -eq 'global.json' -or $relative -in $seedPaths -or $relative -in $storageNotices -or
             ($relative -match '^backend/src/.+/(?:[^/]+\.cs|[^/]+\.csproj|packages\.lock\.json|appsettings\.json|appsettings\.Development\.json)$')) { $relative }
     })
-    if ($allowed.Count -lt 20 -or @($seedPaths | Where-Object { $_ -notin $allowed }).Count) { throw 'Required canonical build inputs were not staged.' }
+    if ($allowed.Count -lt 20 -or @(($seedPaths + $storageNotices) | Where-Object { $_ -notin $allowed }).Count) { throw 'Required canonical build inputs were not staged.' }
     $names = @('appsettings.Local.json', 'appsettings.Development.Local.json', 'appsettings.Production.Local.json', 'appsettings.Staging.Local.json',
         '.env', '.env.local', '.env.Development', 'secrets.json', 'private.pfx', 'private.p12', 'private.key', 'private.pem', 'private.p8',
         'private.ppk', 'private.jks', 'private.keystore', 'private.pvk', 'private.snk', 'private.cer', 'private.crt', 'private.der', 'unapproved.json', 'unapproved.txt', 'private.dll')
@@ -67,7 +69,9 @@ try {
         foreach ($name in $names) { $relative = $directory + $name; Write-Fixture $relative; $forbidden += $relative }
     }
     foreach ($relative in @('backend/src/HawalekNow.Api/bin/Release/Generated.cs', 'backend/src/HawalekNow.Api/obj/Generated.cs',
-            'backend/tests/PrivateTest.cs', 'docs/TARGET_SCHEDULE.md', '.git/config', '.aws/credentials', 'tmp/private.txt')) {
+            'backend/tests/PrivateTest.cs', 'docs/TARGET_SCHEDULE.md', '.git/config', '.aws/credentials', 'tmp/private.txt',
+            'backend/src/HawalekNow.Api/App_Data/private.cs', 'backend/src/HawalekNow.Infrastructure/App_Data/private.cs',
+            'backend/src/HawalekNow.Api/app_data/private-lower.cs')) {
         Write-Fixture $relative; $forbidden += $relative
     }
     $receipt.allowedCount = $allowed.Count; $receipt.forbiddenCount = $forbidden.Count
@@ -90,12 +94,13 @@ try {
     if (-not $ContextOnly) {
         & docker image inspect $Image 1>$null 2>$null
         if ($LASTEXITCODE -eq 0) { throw 'Refusing to overwrite an existing image tag.' }
-        Invoke-DockerChecked @('build', '--progress=plain', '--label', ($label + '=' + $run), '--tag', $Image, '--file', (Join-Path $context 'backend/Dockerfile'), $context)
+        Invoke-DockerChecked @('build', '--progress=plain', '--label', ($label + '=' + $run), '--label', ('io.hawaleknow.source-head=' + $receipt.sourceHead), '--tag', $Image, '--file', (Join-Path $context 'backend/Dockerfile'), $context)
         [IO.Directory]::CreateDirectory($probe) | Out-Null
         Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'verification/SeedArtifacts.cs') -Destination (Join-Path $probe 'Program.cs')
         [IO.File]::WriteAllText((Join-Path $probe 'ArtifactProbe.csproj'), '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup></Project>')
         $expected = @{ resources = @($seedNames | ForEach-Object { @{ name = 'HawalekNow.ReferenceSeed.' + $_; sha256 = (Get-FileHash -LiteralPath (Join-Path $context ($seed + $_)) -Algorithm SHA256).Hash } });
             content = @(@('SOURCE.md', 'LICENSE.txt') | ForEach-Object { @{ path = 'Modules/Locations/SeedData/' + $_; sha256 = (Get-FileHash -LiteralPath (Join-Path $context ($seed + $_)) -Algorithm SHA256).Hash } }) }
+        $expected.content += @($storageNotices | ForEach-Object { @{ path = 'ThirdParty/' + [IO.Path]::GetFileName($_); sha256 = (Get-FileHash -LiteralPath (Join-Path $context $_) -Algorithm SHA256).Hash } })
         $expected | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $probe 'expected.json') -Encoding utf8
         $sdk = [regex]::Match([IO.File]::ReadAllText((Join-Path $context 'backend/Dockerfile')), '(?m)^FROM (\S+) AS build\r?$').Groups[1].Value
         if ($sdk -notmatch '^mcr\.microsoft\.com/dotnet/sdk:[^\s]+@sha256:[0-9a-f]{64}$') { throw 'Expected the unchanged pinned SDK build image.' }

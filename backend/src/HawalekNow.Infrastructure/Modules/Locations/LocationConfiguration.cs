@@ -31,6 +31,8 @@ public sealed class AreaConfiguration : IEntityTypeConfiguration<Area>
     {
         builder.ToTable("Areas", "locations", table => table.HasCheckConstraint("CK_Areas_Names", "LEN([NameAr]) > 0 AND LEN([NameEn]) > 0"));
         builder.HasKey(value => value.Id); builder.Property(value => value.NameAr).HasMaxLength(160).IsRequired(); builder.Property(value => value.NameEn).HasMaxLength(160).IsRequired();
+        // Unique index supports the opaque commercial FK while allowing unused areas to be reparented.
+        builder.HasIndex(value => new { value.Id, value.CityId, value.GovernorateId }).IsUnique();
         builder.Property(value => value.RowVersion).IsRowVersion();
         builder.HasOne<City>().WithMany().HasForeignKey(value => new { value.CityId, value.GovernorateId })
             .HasPrincipalKey(value => new { value.Id, value.GovernorateId }).OnDelete(DeleteBehavior.ClientNoAction);
