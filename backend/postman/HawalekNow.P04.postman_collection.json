@@ -1,7 +1,7 @@
 {
   "info": {
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "P04 is in progress. Only implemented requests are present. Select a journey, never run all decisions blindly. Use an isolated review database and confirmed test Merchant/Admin accounts from P02 setup. Shared real cookie jar, HTTPS with certificate validation, fresh principal-bound CSRF. Capture the merchant id/version using Own review before switching to Admin; decisions return the next version. Reasons are mandatory except approve. Personal trial is Deferred. Later P04 steps extend this collection. S03 store requests require a confirmed Merchant, one active Catalog activity and at least one contact. Upload a file manually; store activity cannot be changed by details edits. Public requests are expected200 only after approval and when the optional logo exists. These instructions do not claim a personal trial. S04 requests select a matching active governorate/city/area from P03. Confirm that the address is a fixed public business/pickup point, not a private home. Coordinates are explicit latitude/longitude. Optional contacts fall back independently to the store; branch approval is not a separate step. S05 requires seven unique weekly days with strict HH:mm periods on create/update. Closed places stay public; opening includes Cairo offsets and DST. S06 activity change requests leave the old activity unchanged until Admin approval. Select approve or reject, refresh both versions after other edits, and do not run all decisions blindly.",
+    "description": "All P04 S01-S07 request families are present. Read the phase delivery report for the current verification and Draft PR status. Select a journey, never run all decisions blindly. Use an isolated review database and confirmed test Merchant/Admin accounts from P02 setup. Shared real cookie jar, HTTPS with certificate validation, fresh principal-bound CSRF. Capture the merchant id/version using Own review before switching to Admin; decisions return the next version. Reasons are mandatory except approve. Personal trial is Deferred. S03 store requests require a confirmed Merchant, one active Catalog activity and at least one contact. Upload a file manually; store activity cannot be changed by details edits. Public requests are expected200 only after approval and when the optional logo exists. These instructions do not claim a personal trial. S04 requests select a matching active governorate/city/area from P03. Confirm that the address is a fixed public business/pickup point, not a private home. Coordinates are explicit latitude/longitude. Optional contacts fall back independently to the store; branch approval is not a separate step. S05 requires seven unique weekly days with strict HH:mm periods on create/update. Closed places stay public; opening includes Cairo offsets and DST. S06 activity change requests leave the old activity unchanged until Admin approval. Select approve or reject, refresh both versions after other edits, and do not run all decisions blindly. S07 Admin requests require reasons and current versions. Hide and Store suspension are independent; publish/resume each clear only their own flag. Account suspension still uses the S02 Identity behavior. Logo changes use the existing content policy. Select actions deliberately; public visibility still requires merchant approval and active Identity. The collection artifacts are validated separately from user execution. Personal trial remains Deferred and V4 Pending.",
     "name": "HawalekNow P04 merchants and stores"
   },
   "event": [
@@ -940,6 +940,441 @@
                   "if(pm.response.code===200){const r=pm.response.json();pm.environment.set(\"activityRequestId\",r.id);pm.environment.set(\"activityRequestRowVersion\",r.rowVersion);pm.environment.set(\"storeRowVersion\",r.storeRowVersion);}"
                 ],
                 "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin existing stores and moderation",
+      "item": [
+        {
+          "name": "Admin store list - refresh selected store only",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores?page=1&pageSize=100"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const r=pm.response.json().items.find(x=>x.store.id===pm.environment.get(\"storeId\"));if(r)pm.environment.set(\"storeRowVersion\",r.store.rowVersion);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin private store - refresh version",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const body=pm.response.json();const s=body.store||body;pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin correct store details - immutable owner and activity",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{storeRowVersion}}\",\r\n  \"details\": {\r\n    \"name\": \"متجر التجربة\",\r\n    \"phone\": \"+201012345678\",\r\n    \"whatsApp\": null,\r\n    \"facebook\": null,\r\n    \"instagram\": null,\r\n    \"tikTok\": null\r\n  },\r\n  \"reason\": \"{{reviewReason}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const body=pm.response.json();const s=body.store||body;pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin hide store - reason and current version",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}/hide",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{storeRowVersion}}\",\r\n  \"reason\": \"{{reviewReason}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const body=pm.response.json();const s=body.store||body;pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin publish store - reason and current version",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}/publish",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{storeRowVersion}}\",\r\n  \"reason\": \"{{reviewReason}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const body=pm.response.json();const s=body.store||body;pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin suspend store - reason and current version",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}/suspend",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{storeRowVersion}}\",\r\n  \"reason\": \"{{reviewReason}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const body=pm.response.json();const s=body.store||body;pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin resume store - reason and current version",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}/resume",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{storeRowVersion}}\",\r\n  \"reason\": \"{{reviewReason}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const body=pm.response.json();const s=body.store||body;pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin private optional logo - present only",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}/logo"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin replace optional logo - select actual PNG or JPEG file",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}/logo",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "rowVersion",
+                  "type": "text",
+                  "value": "{{storeRowVersion}}"
+                },
+                {
+                  "key": "reason",
+                  "type": "text",
+                  "value": "{{reviewReason}}"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const body=pm.response.json();const s=body.store||body;pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin remove optional logo - refresh version first",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}/logo",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"rowVersion\": \"{{storeRowVersion}}\",\r\n  \"reason\": \"{{reviewReason}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const body=pm.response.json();const s=body.store||body;pm.environment.set(\"storeRowVersion\",s.rowVersion);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin places - refresh selected branch version",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}/branches?page=1&pageSize=100"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200){const b=pm.response.json().items.find(x=>x.id===pm.environment.get(\"branchId\"));if(b)pm.environment.set(\"branchRowVersion\",b.rowVersion);}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin correct selected branch details and required hours",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}/branches/{{branchId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"details\": {\r\n    \"kind\": \"PickupPoint\",\r\n    \"name\": \"نقطة الاستلام\",\r\n    \"address\": \"عنوان تجاري عام ثابت\",\r\n    \"governorateId\": \"{{governorateId}}\",\r\n    \"cityId\": \"{{cityId}}\",\r\n    \"areaId\": \"{{areaId}}\",\r\n    \"latitude\": 30.0444,\r\n    \"longitude\": 31.2357,\r\n    \"publicFixedAddressConfirmed\": true,\r\n    \"phone\": null,\r\n    \"whatsApp\": \"+201112345678\",\r\n    \"hours\": [\r\n      {\r\n        \"day\": 0,\r\n        \"closed\": false,\r\n        \"periods\": [\r\n          {\r\n            \"opens\": \"09:00\",\r\n            \"closes\": \"17:00\",\r\n            \"closesNextDay\": false\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"day\": 1,\r\n        \"closed\": false,\r\n        \"periods\": [\r\n          {\r\n            \"opens\": \"09:00\",\r\n            \"closes\": \"17:00\",\r\n            \"closesNextDay\": false\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"day\": 2,\r\n        \"closed\": false,\r\n        \"periods\": [\r\n          {\r\n            \"opens\": \"09:00\",\r\n            \"closes\": \"17:00\",\r\n            \"closesNextDay\": false\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"day\": 3,\r\n        \"closed\": false,\r\n        \"periods\": [\r\n          {\r\n            \"opens\": \"09:00\",\r\n            \"closes\": \"17:00\",\r\n            \"closesNextDay\": false\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"day\": 4,\r\n        \"closed\": false,\r\n        \"periods\": [\r\n          {\r\n            \"opens\": \"09:00\",\r\n            \"closes\": \"17:00\",\r\n            \"closesNextDay\": false\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"day\": 5,\r\n        \"closed\": true,\r\n        \"periods\": []\r\n      },\r\n      {\r\n        \"day\": 6,\r\n        \"closed\": false,\r\n        \"periods\": [\r\n          {\r\n            \"opens\": \"09:00\",\r\n            \"closes\": \"17:00\",\r\n            \"closesNextDay\": false\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  },\r\n  \"rowVersion\": \"{{branchRowVersion}}\",\r\n  \"reason\": \"{{reviewReason}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));",
+                  "if(pm.response.code===200)pm.environment.set(\"branchRowVersion\",pm.response.json().rowVersion);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin retained Store Audit",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/stores/{{storeId}}/audit?page=1&pageSize=100"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin retained branch Audit",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Correlation-ID",
+                "value": "{{correlationId}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/merchant-branches/{{branchId}}/audit?page=1&pageSize=100"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected HTTP status', () => pm.response.to.have.status(200));"
+                ]
               }
             }
           ]

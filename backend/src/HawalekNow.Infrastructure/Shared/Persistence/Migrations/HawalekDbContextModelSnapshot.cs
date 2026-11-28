@@ -619,6 +619,12 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LogoKey")
                         .HasMaxLength(32)
                         .IsUnicode(false)
@@ -643,9 +649,17 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
+                    b.Property<string>("SuspensionReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("TikTok")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("VisibilityReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("WhatsApp")
                         .HasMaxLength(16)
@@ -666,6 +680,8 @@ namespace HawalekNow.Infrastructure.Shared.Persistence.Migrations
                     b.ToTable("Stores", "merchants", t =>
                         {
                             t.HasCheckConstraint("CK_Stores_Contact", "NULLIF(LTRIM(RTRIM([Phone])), '') IS NOT NULL OR NULLIF(LTRIM(RTRIM([WhatsApp])), '') IS NOT NULL");
+
+                            t.HasCheckConstraint("CK_Stores_ModerationReasons", "([IsHidden]=0 OR NULLIF(LTRIM(RTRIM([VisibilityReason])), '') IS NOT NULL) AND ([IsSuspended]=0 OR NULLIF(LTRIM(RTRIM([SuspensionReason])), '') IS NOT NULL)");
 
                             t.HasCheckConstraint("CK_Stores_Name", "LEN(LTRIM(RTRIM([Name]))) > 0");
                         });

@@ -1,11 +1,11 @@
 # حالة مشروع HawalekNow
 
-آخر تحديث: 2026-11-27
+آخر تحديث: 2026-11-28
 
 أغلقت P03 ودمجت وفق D020 عند63b189618a9c856151920da7669a4e2c9af86461، ونجحت فحوص ما بعد الدمج وCI main45600216946 وأصبح تسليم P04 Ready. [الإيصال](../planning/phase-03/MERGE_RECEIPT.md) و[الحالة المغلقة التاريخية](P03_CLOSED_STATE.md) و[الأدلة](../planning/phase-03/merge-verification.json) تحفظ النتيجة والتاريخ. التجربة الشخصية والشرح Deferred وليسا Passed.
 
 - Phase: P04
-- Step: P04-S06
+- Step: P04-S07
 - Status: InProgress
 - ExecutionMode: Phase
 - UserApproval: Pending
@@ -15,10 +15,10 @@
 - BaseMain: 63b189618a9c856151920da7669a4e2c9af86461
 - P05Status: NotStarted
 - Scope: التاجر والمتجر والفروع والمواعيد ومراجعة الإدارة وAudit والتخزين الآمن للوجو وفق P04؛ لا منتجات أوبحث أوخرائط أوFrontend.
-- ActiveStepFile: planning/phase-04/steps/S06.md
-- NextStep: حفظ S06 المتحقق منها ورفعها إلى Draft PR نفسها، ثم بدء S07 لإدارة المتجر.
+- ActiveStepFile: planning/phase-04/steps/S07.md
+- NextStep: حفظ S07 المتحققة محليًا، ثم Docker وCI الدقيقة وتسليم P04 InReview في PR المسودة، دون دمجها أو بدء P05.
 - Remote: https://github.com/mohamedfathy5242420-cloud/HawalekNow.git
 
-S01–S05 InReview/Verified تقنيًا. نجحت CI45856851203 على f7264282abb6bbd5c8d02070c545cb61ceadf7c7 كاملة مع551 اختبارًا وبناء بلا تحذيرات أوأخطاء، وDocker وrestart/UIDdenial وحسابات القاهرة علىLinux. [الأدلة](../planning/phase-04/verification.json) تحفظ النتائج والإخفاقات السابقة والـvolumes المملوكة. اعتماد المستخدم وV4 Pending، والشرح والتجربة الشخصية Deferred، ولا P05 أوMerge P04.
+S01–S07 InReview/Verified محليًا. انتهى فحص الحل الكامل في28نوفمبر بنجاح597 اختبارًا (47Architecture+352Integration+198Unit)، صفر فشل أوتخطٍّ، وlocked restore وبناء بلا تحذيرات أوأخطاء وFormat. تشمل الأدلة SQL/HTTP الفعلية وrollback والتزامن ورحلة التسجيل وتوصيل SMTP والتأكيد والموافقة والإدارة، وتحفظ الإخفاقات والتصحيحات السابقة.
 
-S06 InReview/Verified بعد197 فحصًا بصفر فشل أوتخطٍّ وبناء0/0 وFormat verification؛ [تسليم S07](../planning/phase-04/handoffs/S06-to-S07.md) InternalReady. S07 لم تبدأ، وCI شاملة على رأس التسليم النهائي لا تزال مطلوبة.
+تظل المرحلة InProgress لحين Docker وCI على رأس S07 المحفوظ ورأس التسليم النهائي. CI46038731521 تغطي رأس S06e2d9877 فقط ولا تنسب إلى S07. [تقرير التسليم](../planning/phase-04/DELIVERY_REPORT.md) و[الأدلة](../planning/phase-04/verification.json) و[S07](../planning/phase-04/steps/S07.md). اعتماد المستخدم وV4 Pending، والتجربة الشخصية والشرح Deferred، وتسليم P05 Draft؛ لا P05 أوMerge P04.

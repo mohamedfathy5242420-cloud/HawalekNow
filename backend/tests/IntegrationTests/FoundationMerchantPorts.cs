@@ -9,7 +9,20 @@ namespace HawalekNow.IntegrationTests;
 public static class FoundationMerchantPorts
 {
     public static IServiceCollection AddFoundationMerchantPorts(this IServiceCollection services) =>
-        services.AddScoped<IMerchantReviewService, UnusedReview>().AddScoped<IStoreService, UnusedStore>().AddScoped<IBranchService, UnusedBranches>().AddScoped<IActivityChangeService, UnusedActivityChanges>();
+        services.AddScoped<IMerchantReviewService, UnusedReview>().AddScoped<IStoreService, UnusedStore>().AddScoped<IBranchService, UnusedBranches>().AddScoped<IActivityChangeService, UnusedActivityChanges>().AddScoped<IStoreAdministration, UnusedAdministration>();
+
+    private sealed class UnusedAdministration : IStoreAdministration
+    {
+        public Task<Result<AdminStoreDto>> ReadAsync(Guid actorId, Guid id, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<MerchantPage<AdminStoreDto>>> ListAsync(Guid actorId, int page, int pageSize, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<StoreDto>> UpdateAsync(Guid actorId, Guid id, AdminStoreUpdateWrite value, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<StoreDto>> ModerateAsync(Guid actorId, Guid id, StoreAdministrationAction action, StoreModerationWrite value, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<StoreDto>> ChangeLogoAsync(Guid actorId, Guid id, string rowVersion, Stream? content, string reason, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<byte[]>> ReadLogoAsync(Guid actorId, Guid id, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<MerchantPage<BranchDto>>> BranchesAsync(Guid actorId, Guid storeId, int page, int pageSize, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<BranchDto>> UpdateBranchAsync(Guid actorId, Guid storeId, Guid id, AdminBranchUpdateWrite value, CancellationToken cancellationToken) => throw Unused();
+        public Task<Result<MerchantPage<MerchantAuditDto>>> AuditAsync(Guid actorId, Guid id, bool branch, int page, int pageSize, CancellationToken cancellationToken) => throw Unused();
+    }
 
     private sealed class UnusedActivityChanges : IActivityChangeService
     {

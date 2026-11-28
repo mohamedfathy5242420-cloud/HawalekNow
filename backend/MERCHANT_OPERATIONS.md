@@ -1,6 +1,6 @@
 # Merchant workflows and operations
 
-P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01–S05 are technically verified. CI45856851203 proves551 tests and all three jobs on the S05 head f7264282abb6bbd5c8d02070c545cb61ceadf7c7, including Cairo time calculations onLinux, Docker and real file restarts/permission denial. S06 is under verification and S07 is not implemented. Full final-head CI is still required. UserApproval/V4 remain Pending under D021.
+P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01–S07 are locally verified: full597 tests (47 Architecture+352 Integration+198 Unit), no failures/skips, locked restore, build0/0 and format verification on28Nov. S07 Docker and exact-head CI remain required. CI46038731521 covers only the S06 head e2d9877e85e54f2273b9b3c885e6500f23332f0d. UserApproval/V4 remain Pending under D021. The [delivery report](../planning/phase-04/DELIVERY_REPORT.md) records the evidence scopes and retained failures.
 
 ## Accounts and existing security
 
@@ -184,7 +184,7 @@ Locally verified with197 relevant tests (47 Architecture+100 Integration+50 Unit
 
 Only one Pending request may exist per store; a filtered unique SQL index also protects direct/concurrent writers. Requests contain immutable previous/requested activities, requester/time/reason and reviewed state/actor/time/reason. Reasons are bounded at1000 UTF-16 code units without NUL; request/approval reasons are optional, rejection needs a nonblank reason. All mutation routes retain HTTPS/cookie/live permissions, fresh CSRF and the shared mutation quota. Another merchant cannot list or submit under this store, and owner/actor fields cannot be reassigned through the body.
 
-Request submission validates current StoreRowVersion and the active target through Catalog's shared transaction-owned lock, then saves request+Audit without updating Store.ActivityId or its rowVersion. Pending/rejected requests have no effect on public store/branch data. Admin review rechecks current Identity facts for actor and owner under Identity locks and requires both current versions. Approval rechecks target availability and expected previous activity, then updates Store, request decision and Audit in one outer UoW transaction/Save/Commit. Rejection writes decision+Audit without changing Store.ActivityId/version. Duplicate requests, stale versions, replayed decisions or an unavailable approval target produce409. A declined request frees the pending slot; history remains. No asynchronous activity switch is used.
+Request submission validates current StoreRowVersion and the active target through Catalog's exclusive transaction-owned tree lock, then saves request+Audit without updating Store.ActivityId or its rowVersion. Pending/rejected requests have no effect on public store/branch data. Admin review rechecks current Identity facts for actor and owner under Identity locks and requires both current versions. Approval rechecks target availability and expected previous activity, then updates Store, request decision and Audit in one outer UoW transaction/Save/Commit. Rejection writes decision+Audit without changing Store.ActivityId/version. Duplicate requests, stale versions, replayed decisions, an unavailable approval target or Catalog's explicit lock-unavailable error51010 produce409. A declined request frees the pending slot; history remains. No asynchronous activity switch is used.
 
 Audit targets the Store with explicit Request/Approve/Reject operation and actor/time/reason, containing only proposed activity IDs for a Request and actual before/after IDs for decisions. The Request operation explicitly denotes a proposal, not a published state change. The per-request identity and history remain in `ActivityChanges`. No credential/session/payload snapshots are serialized. The physical cross-schema activity FKs protect both previous/requested Catalog references, including request history until its parent store's final purge; deactivation still permits historical reads. Final Identity purge cascades these owned request rows while independent Store Audit remains.
 
@@ -193,3 +193,74 @@ Migration `20261126162152_P04StoreActivityChanges` adds the request table, statu
 Before products are enabled in P05, acceptance must also set incompatible existing products toDraft in this same transaction, through a Products-owned contract that joins the existing UoW. The exact insertion point is documented beside `TryApplyApprovedActivity` in ActivityChangeService. P04 contains no products and performs no product updates; a no-op product handler or event without a consumer would not establish that future invariant. P05 must add its own real SQL rollback/concurrency tests across Store/request/product/Audit before claiming it.
 
 For Postman, start with the Merchant session and latest own StoreRowVersion. Choose another active Catalog activity as targetActivityId, submit and confirm public activity remains old. Switch deliberately to Admin, refresh the selected request's two versions from its queue entry, then choose approval OR rejection. Approval changes the public activity; rejection leaves it unchanged and permits another request. Refresh versions after any store edit. These are repeatable instructions for the pending personal trial, not a claim that the user performed it.
+
+<a id="s07-store-administration"></a>
+
+## S07 store administration
+
+All paths in this table require AdminOnly, current Identity authorization and no-store responses. Mutations also require HTTPS, the established cookies, fresh CSRF, a current resource rowVersion, a nonblank reason up to1000 UTF-16 code units without NUL, and the existing mutation quota. The target owner's Identity must be active and confirmed for mutations; soft deletion is not overridden. Owner IDs, activity and moderation flags cannot be reassigned through ordinary detail bodies.
+
+| Method/path relative to `/api/v1` | Contract |
+| --- | --- |
+| GET `admin/stores?page=1&pageSize=25` | Bounded stores with private StoreDto, owner ID, merchant status and current Identity facts |
+| GET `admin/stores/{id}` | Same private administrative view |
+| PUT `admin/stores/{id}` | `{ "rowVersion":"...", "details":{...StoreWrite...}, "reason":"..." }` |
+| POST `admin/stores/{id}/hide` | `{ "rowVersion":"...", "reason":"..." }` |
+| POST `admin/stores/{id}/publish` | Same write; removes Hide only |
+| POST `admin/stores/{id}/suspend` | Same write; blocks owner commercial edits and public appearance |
+| POST `admin/stores/{id}/resume` | Same write; removes Store suspension only |
+| GET/PUT/DELETE `admin/stores/{id}/logo` | Private PNG read; upload multipart file+rowVersion+reason with the same limits; delete uses rowVersion+reason |
+| GET `admin/stores/{storeId}/branches?page=1&pageSize=25` | Bounded private branch/pickup details, versions, contacts, hours/status |
+| PUT `admin/stores/{storeId}/branches/{id}` | `{ "rowVersion":"...", "details":{...BranchWrite including required hours...}, "reason":"..." }` |
+| GET `admin/stores/{id}/audit?page=1&pageSize=25` | Store-target Audit, including retained records after final purge |
+| GET `admin/merchant-branches/{id}/audit?page=1&pageSize=25` | Branch-target Audit, also retained after purge |
+
+Hide and Suspend are independent Store flags. Hide removes all public Store/logo/place/list reads while keeping owner preparation possible. Store suspension also rejects owner details/logo/branch/activity-request mutations with403; the owner can still read the private Store and its reason. Resume does not clear Hide, and Publish does not clear Suspend or approve the merchant. Closed weekly hours are unrelated and do not hide a place. Private StoreDto includes both flags/reasons and the Store-level CanOwnerEdit rule; Identity/setup eligibility remains a separate prerequisite.
+
+Merchant-account suspension through S02 retains the existing Identity behavior: live sessions and login are denied until account reinstatement. Store suspension does not change that account state or invent a session revocation. The existing `merchants/account/publishing-access` route is the account-approval probe established in P02, not proof that a Store/place/product is publicly eligible. Resource reads/mutations also enforce Store moderation and account state. A future P05 publishing contract must consume these Store restrictions as well as account approval.
+
+StoreAdministration delegates details, branch and logo edits to shared service cores. Each core owns one outer UoW transaction; no independent MediatR transaction is composed around another. Live Admin/owner Identity locks, rowVersion comparison, data validation and explicit Audit precede one Save/Commit. Moderate actions write both flag states to bounded before/after metadata; edit actions record explicit operation/target/actor/reason/time without entity/credential snapshots. Existing Catalog/Locations checks still own their locks and entities. Administrative branch edits cannot move it between stores or bypass required hours/reference integrity.
+
+Logo changes reuse actual content normalization, private ownership proofs, pre-reference writes, uncertain-Commit compensation, transactional deletion intents and post-commit cleanup/retry from S03. The Audit actor is the Admin; deletion intents remain associated with the merchant owner whose commercial data is being cleaned. No new event or job kind is introduced. Audit stays separate from operational logs and is accessible only to a currently authorized Admin.
+
+Migration `20261127171325_P04StoreModeration` adds independent flags and last visibility/suspension reasons, with a SQL reason constraint. Existing stores start with both flags false; their account approval and data remain unchanged. The historical S04→current migration test now inserts the historical Store shape explicitly, so it does not depend on columns that did not exist then. The application database remains untouched.
+
+These P04 administrative workflows cover the phase's specified edit/suspend/hide output, including reversal and editing existing place/logo data. The wider MVP permissions for creating accounts/products on behalf of merchants and separate commercial delete/restore flows are not implemented by this phase. Existing Identity soft deletion/recovery/purge remains authoritative. P05 is not started, and this phase is not merged.
+
+<a id="local-review-commands"></a>
+
+## Local review commands and journeys
+
+Run from the repository root. The existing [Identity guide](IDENTITY_OPERATIONS.md) lists the required SQL application connection and independent Identifier/Otp/Outbox/JWT keys, issuer/audience and Admin bootstrap settings. Keep these outside tracked files. Choose a new review database you own, a trusted development HTTPS certificate, a stable private `Security__KeyRingPath` and a stable absolute `FileStorage__Root` outside webroot. The test wrapper uses separate random test databases and the owned local SMTP service; its settings do not configure a persistent review application for you.
+
+```powershell
+./backend/start-p02-services.ps1
+dotnet restore backend/HawalekNow.slnx --locked-mode
+dotnet build backend/HawalekNow.slnx --configuration Release --no-restore --disable-build-servers -m:1
+./backend/test-p02.ps1 -NoBuild -MaxParallelThreads 4
+dotnet format backend/HawalekNow.slnx --verify-no-changes --no-restore
+./planning/verify-roadmap.ps1
+./planning/verify-git-workflow.ps1
+```
+
+For a separate persistent local review, set `ConnectionStrings__Application` explicitly to that owned review database, plus the settings from Identity operations. The following application setup commands are instructions for that review; this implementation task applies migrations only to isolated test databases. The seed-admin mode uses your configured Admin values and preserves any existing Admin. Copy the SMTP port from the owned service metadata into `Email__SmtpPort` and set `Email__SmtpHost=127.0.0.1`. Configure the Development environment before starting the local host.
+
+```powershell
+dotnet tool run dotnet-ef database update --project backend/src/HawalekNow.Infrastructure --configuration Release --no-build
+dotnet run --project backend/src/HawalekNow.Api --configuration Release --no-build --no-restore --no-launch-profile -- --seed-admin
+$env:ASPNETCORE_ENVIRONMENT = 'Development'
+dotnet run --project backend/src/HawalekNow.Api --configuration Release --no-build --no-restore --no-launch-profile --urls https://localhost:7443
+```
+
+Import [P04 collection](postman/HawalekNow.P04.postman_collection.json) and its [blank local environment](postman/HawalekNow.P04.Local.postman_environment.json); set baseUrl to the trusted local HTTPS endpoint. Use [P02 collection](postman/HawalekNow.P02.postman_collection.json) for registration, email confirmation and recovery. Each mutation obtains fresh principal-bound CSRF through the collection's prerequest script. Select requests for a journey instead of running all mutually exclusive decisions. The automatic `MerchantPhaseJourneyTests` path starts with real registration/SMTP verification; manual user execution remains V4Pending.
+
+The main journeys are: confirmed Pending merchant prepares store/logo/places/hours privately; Admin requests changes and owner resubmits or Admin approves; approved data becomes public without separate place review; closed hours remain visible; owner requests a different active activity while public data stays old, followed by a chosen Admin approval/rejection; Admin hides/suspends/edits the selected store and reverses each restriction independently; Identity deletion/recovery retains owned data and the existing session rules. Refresh the affected Store/Branch/request version after each mutation or conflicting edit. Other-merchant, customer and guest requests retain their authorization/ownership boundaries.
+
+For exact committed-head Docker checks, use a fresh tag. These commands preserve owned volumes and verify the image's recorded source head.
+
+```powershell
+$p04Image = 'hawaleknow/api:p04-review-' + [Guid]::NewGuid().ToString('N')
+./docker/test-api-build-context.ps1 -Image $p04Image -KeepImage
+./docker/smoke-api.ps1 -Image $p04Image
+./docker/test-store-files.ps1 -Image $p04Image
+```

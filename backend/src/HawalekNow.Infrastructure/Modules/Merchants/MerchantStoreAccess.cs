@@ -25,10 +25,28 @@ public sealed class MerchantStoreAccess(HawalekDbContext context, IAccountAccess
         var store = await (mutation ? query : query.AsNoTracking()).SingleOrDefaultAsync(cancellationToken);
         if (store is null) return Result<Store>.Failure(new(ErrorKind.NotFound));
         if (mutation) await context.Entry(store).ReloadAsync(cancellationToken);
+        if (mutation && !store.CanOwnerEdit) return Result<Store>.Failure(new(ErrorKind.Forbidden));
+        return Result<Store>.Success(store);
+    }
+    public async Task<Result<Store>> AdminStoreAsync(Guid actorId, Guid id, bool mutation, CancellationToken cancellationToken)
+    {
+        var identity = mutation ? await identities.FindForMutationAsync(actorId, cancellationToken) : await identities.FindAsync(actorId, cancellationToken);
+        if (identity is not { AccountType: "Admin", EmailConfirmed: true, IsActive: true }) return Result<Store>.Failure(new(ErrorKind.Forbidden));
+        var query = context.Set<Store>().Where(value => value.Id == id);
+        var store = await (mutation ? query : query.AsNoTracking()).SingleOrDefaultAsync(cancellationToken);
+        if (store is null) return Result<Store>.Failure(new(ErrorKind.NotFound));
+        if (mutation)
+        {
+            var ownerId = await context.Set<MerchantAccount>().AsNoTracking().Where(value => value.Id == store.MerchantAccountId).Select(value => (Guid?)value.UserId).SingleOrDefaultAsync(cancellationToken);
+            if (ownerId is null) return Result<Store>.Failure(new(ErrorKind.NotFound));
+            if (!ConfirmedMerchant(await identities.FindForMutationAsync(ownerId.Value, cancellationToken))) return Result<Store>.Failure(new(ErrorKind.Conflict));
+            await context.Entry(store).ReloadAsync(cancellationToken);
+        }
         return Result<Store>.Success(store);
     }
     public async Task<bool> PublicAsync(Store store, CancellationToken cancellationToken)
     {
+        if (!store.CanAppearPublicly) return false;
         var userId = await context.Set<MerchantAccount>().AsNoTracking().Where(value => value.Id == store.MerchantAccountId && value.Status == MerchantApprovalStatus.Approved)
             .Select(value => (Guid?)value.UserId).SingleOrDefaultAsync(cancellationToken);
         return userId is not null && ConfirmedMerchant(await identities.FindAsync(userId.Value, cancellationToken));

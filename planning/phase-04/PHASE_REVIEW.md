@@ -1,6 +1,6 @@
 # مراجعة P04 التاجر والمتجر والفروع
 
-Updated: 2026-11-27
+Updated: 2026-11-28
 Status: InProgress
 ExecutionAuthorization: D021
 UserApproval: Pending
@@ -8,6 +8,13 @@ ReviewStatus: Pending
 V4: Pending
 P05Status: NotStarted
 
+## الوضع الحالي
+
+S01–S07 InReview/Verified محليًا. نجحت597حالة في28نوفمبر (47Architecture+352Integration+198Unit)، صفر فشل أوتخطٍّ، وlocked restore وبناء0/0 وFormat، وبوابات الرفض46+27+43+19 وعقد الأخطاء. التنفيذ كله في Draft PR #11؛ تنتظر المرحلة Docker وCI على رأس الحفظ ثم رأس التسليم النهائي. تبقى UserApproval/V4 Pending والتجربة الشخصية والشرح Deferred وP05NotStarted وتسليمهاDraft. [التقرير](DELIVERY_REPORT.md) و[الأدلة](verification.json).
+
+## السجل الزمني
+
+تصف الفقرات التالية حالة العمل وقت كتابتها؛ يحسم الوضع الحالي أعلاه حالتها الآن، دون محو الفشل أوالتصحيحات.
 بدأ التنفيذ من main63b189618a9c856151920da7669a4e2c9af86461 بعد نجاح بوابة P03. S01 Verified تقنيًا مع85 اختبارًا مناسبًا ناجحًا؛ تأتي المراجعة الإدارية وAudit في S02. [التصميم](DESIGN.md) و[الأدلة](verification.json) و[S01](steps/S01.md). لا اعتماد بشري أوفحص غير منفذ مفترض. تسلم المرحلة كاملة InReview في Draft PR واحدة، مع تسليم P05 Draft دون بدء P05 أودمج P04.
 
 S02 Verified محليًا مع139 اختبارًا مناسبًا وFormat وفاحصي التوثيق وGit وdiff. [دليل المسارات والمعاملة وAudit](../../backend/MERCHANT_OPERATIONS.md) و[تسليم S03](handoffs/S02-to-S03.md). CI على الرأس الجديد تنتظر الرفع؛ [CI S01](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45605384702) أثبتت406 اختبارات على0c7c822 فقط. S03–S07 لم تبدأ بعد.
@@ -31,3 +38,5 @@ S05 InReview/Verified محليًا:135 فحصًا ناجحًا، ثم Format ver
 نجحت CI45856851203 على f7264282abb6bbd5c8d02070c545cb61ceadf7c7 بكل الوظائف و551 اختبارًا (47+324+180)، صفرفشل/تخطٍّ وبناء0/0، بما فيها حسابات القاهرة علىLinux وDocker/التخزين. بدأت [S06](steps/S06.md) بعد التحقق المناسب؛ بناء الإنتاج الأول0/0، والاختبارات قيد العمل. S07 لم تبدأ وUserApproval/V4Pending.
 
 S06 InReview/Verified:197 فحصًا ناجحًا (47Architecture+100Integration+50Unit)، صفرفشل/تخطٍّ وبناء0/0 وFormat verification. أثبتت SQL/HTTP القبول والرفض والتزامن وrollback الفعلي معAudit وبقاءالنشاطالقديموظهورالفروع حتىقبولالطلب. [تسليم S07](handoffs/S06-to-S07.md)InternalReady. لا P05 أوMerge P04، واعتمادالمستخدم وV4Pending والتجربةوالشرحDeferred.
+
+نجحت CI46038731521 على رأسS06e2d9877 بكل الوظائف و569 اختبارًا (47Architecture+335Integration+187Unit)، صفر فشل/تخطٍّ وبناء0/0 وDocker206allowed/82forbidden وSeed وrestart/UIDdenial. بدأت [S07](steps/S07.md)، ونجح بناء الإنتاج الأول0/0؛ اختبارات الإدارة ورحلة التسجيل الفعلية قيد التحقق. لا فحوص S07 أوفحوص التسليم النهائي مفترضة.

@@ -28,13 +28,15 @@ public sealed class BranchService(HawalekDbContext context, MerchantStoreAccess 
         catch (DbUpdateException) { context.ChangeTracker.Clear(); return Fail<BranchDto>(ErrorKind.Conflict); }
         catch (SqlException error) when (Conflict(error)) { context.ChangeTracker.Clear(); return Fail<BranchDto>(ErrorKind.Conflict); }
     }
-    public async Task<Result<BranchDto>> UpdateAsync(Guid actorId, Guid storeId, Guid id, BranchUpdateWrite value, CancellationToken cancellationToken)
+    public Task<Result<BranchDto>> UpdateAsync(Guid actorId, Guid storeId, Guid id, BranchUpdateWrite value, CancellationToken cancellationToken) => UpdateCoreAsync(actorId, storeId, id, value, false, null, cancellationToken);
+    internal Task<Result<BranchDto>> AdminUpdateAsync(Guid actorId, Guid storeId, Guid id, BranchUpdateWrite value, string reason, CancellationToken cancellationToken) => UpdateCoreAsync(actorId, storeId, id, value, true, reason, cancellationToken);
+    private async Task<Result<BranchDto>> UpdateCoreAsync(Guid actorId, Guid storeId, Guid id, BranchUpdateWrite value, bool admin, string? reason, CancellationToken cancellationToken)
     {
-        if (storeId == Guid.Empty || id == Guid.Empty || value is null || !MerchantReviewInput.Version(value.RowVersion) || !BranchInput.Normalize(value.Details, out var details)) return Fail<BranchDto>(ErrorKind.Validation);
+        if (storeId == Guid.Empty || id == Guid.Empty || value is null || !MerchantReviewInput.Version(value.RowVersion) || !BranchInput.Normalize(value.Details, out var details) || admin && !Store.AdminReason(reason)) return Fail<BranchDto>(ErrorKind.Validation);
         try
         {
             await using var transaction = await context.BeginAsync(cancellationToken);
-            var owned = await access.OwnStoreAsync(actorId, storeId, true, cancellationToken);
+            var owned = admin ? await access.AdminStoreAsync(actorId, storeId, true, cancellationToken) : await access.OwnStoreAsync(actorId, storeId, true, cancellationToken);
             if (!owned.IsSuccess) return Result<BranchDto>.Failure(owned.Error!);
             var branch = await context.Set<MerchantBranch>().SingleOrDefaultAsync(item => item.Id == id && item.StoreId == storeId, cancellationToken);
             if (branch is null) return Fail<BranchDto>(ErrorKind.NotFound);
@@ -43,16 +45,20 @@ public sealed class BranchService(HawalekDbContext context, MerchantStoreAccess 
             if ((branch.AreaId != details!.AreaId || branch.CityId != details.CityId || branch.GovernorateId != details.GovernorateId) &&
                 !await locations.CanSelectInsideTransactionAsync(details.GovernorateId, details.CityId, details.AreaId, cancellationToken)) return Fail<BranchDto>(ErrorKind.Validation);
             HoursInput.Normalize(value.Details.Hours, out var hours);
-            branch.Update(details); branch.SetHours(hours!); Audit(actorId, "Branch.Edit", branch.Id);
+            branch.Update(details); branch.SetHours(hours!); Audit(actorId, admin ? "Branch.AdminEdit" : "Branch.Edit", branch.Id, reason);
             await context.SaveChangesAsync(cancellationToken); await transaction.CommitAsync(cancellationToken); return Result<BranchDto>.Success(ToDto(branch, owned.Value, clock.GetUtcNow()));
         }
         catch (DbUpdateException) { context.ChangeTracker.Clear(); return Fail<BranchDto>(ErrorKind.Conflict); }
         catch (SqlException error) when (Conflict(error)) { context.ChangeTracker.Clear(); return Fail<BranchDto>(ErrorKind.Conflict); }
     }
     public async Task<Result<MerchantPage<BranchDto>>> OwnListAsync(Guid actorId, Guid storeId, int page, int pageSize, CancellationToken cancellationToken)
+        => await PrivateListAsync(actorId, storeId, page, pageSize, false, cancellationToken);
+    internal Task<Result<MerchantPage<BranchDto>>> AdminListAsync(Guid actorId, Guid storeId, int page, int pageSize, CancellationToken cancellationToken)
+        => PrivateListAsync(actorId, storeId, page, pageSize, true, cancellationToken);
+    private async Task<Result<MerchantPage<BranchDto>>> PrivateListAsync(Guid actorId, Guid storeId, int page, int pageSize, bool admin, CancellationToken cancellationToken)
     {
         if (!MerchantReviewInput.Page(page, pageSize)) return Fail<MerchantPage<BranchDto>>(ErrorKind.Validation);
-        var owned = await access.OwnStoreAsync(actorId, storeId, false, cancellationToken);
+        var owned = admin ? await access.AdminStoreAsync(actorId, storeId, false, cancellationToken) : await access.OwnStoreAsync(actorId, storeId, false, cancellationToken);
         if (!owned.IsSuccess) return Result<MerchantPage<BranchDto>>.Failure(owned.Error!);
         var rows = await Rows(storeId, page, pageSize, cancellationToken);
         var now = clock.GetUtcNow();
@@ -76,7 +82,7 @@ public sealed class BranchService(HawalekDbContext context, MerchantStoreAccess 
     }
     private Task<List<MerchantBranch>> Rows(Guid storeId, int page, int pageSize, CancellationToken cancellationToken) => context.Set<MerchantBranch>().AsNoTracking()
         .Where(value => value.StoreId == storeId).OrderBy(value => value.Id).Skip((page - 1) * pageSize).Take(pageSize + 1).ToListAsync(cancellationToken);
-    private void Audit(Guid actorId, string operation, Guid id) => context.Add(AuditEntry.Record(actorId, operation, "MerchantBranch", id, null, clock.GetUtcNow()));
+    private void Audit(Guid actorId, string operation, Guid id, string? reason = null) => context.Add(AuditEntry.Record(actorId, operation, "MerchantBranch", id, reason, clock.GetUtcNow()));
     private static bool Conflict(SqlException error) => error.Number is 1205 or 1222 or 51003 or 51011;
     private static Result<T> Fail<T>(ErrorKind kind) => Result<T>.Failure(new(kind));
     public static BranchDto ToDto(MerchantBranch branch, Store store, DateTimeOffset now) => new(branch.Id, store.Id, branch.Kind.ToString(), branch.Name, branch.Address, branch.GovernorateId,

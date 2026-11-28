@@ -96,7 +96,7 @@ public sealed class ActivityChangeService(HawalekDbContext context, MerchantStor
     private void Audit(Guid actorId, string operation, Guid id, string? reason, DateTimeOffset now, Guid before, Guid after) => context.Add(AuditEntry.Record(actorId, operation, "Store", id, reason, now, before.ToString("N"), after.ToString("N")));
     private static bool Matches(byte[] actual, string expected) => actual.AsSpan().SequenceEqual(Convert.FromBase64String(expected));
     private static bool Admin(AccountAccessInfo? identity) => identity is { AccountType: "Admin", EmailConfirmed: true, IsActive: true };
-    private static bool Conflict(SqlException error) => error.Number is 1205 or 1222 or 51003 or 51011;
+    private static bool Conflict(SqlException error) => error.Number is 1205 or 1222 or 51003 or 51010;
     private static Result<T> Fail<T>(ErrorKind kind) => Result<T>.Failure(new(kind));
     private static ActivityChangeDto ToDto(StoreActivityChange change, Store store) => new(change.Id, store.Id, change.PreviousActivityId, change.RequestedActivityId, store.ActivityId,
         change.Status.ToString(), change.RequestedBy, change.RequestedAt, change.RequestReason, change.ReviewedBy, change.ReviewedAt, change.ReviewReason,

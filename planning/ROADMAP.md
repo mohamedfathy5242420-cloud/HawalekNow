@@ -420,6 +420,8 @@ D005: الهوية وOTP وCookies والأدوار ثابتة. D006: Hangfire/O
 
 ### P04-S07 إدارة المتجر بواسطة Admin
 
+- Status: InReview؛ ExecutionStatus: Verified؛ VerificationStatus: Passed؛ UserApproval: Pending؛ V4: Pending؛ [سجل التنفيذ](phase-04/steps/S07.md).
+
 - الاعتمادات السابقة: [P04-S06](#p04-s06).
 - المخرج المطلوب: تعديل وتعليق وإخفاء مع سبب وAudit.
 - بوابة التحقق: V3 permissions وAudit records.

@@ -113,3 +113,7 @@ WeeklyHours قيمة غير قابلة للتعديل الجزئي فيDomain.Me
 ## تأسيس S06
 
 Merchants تملكStoreActivityChange وطلبها ومراجعتها. يستخدمActivityChangeService عقديIdentity وCatalog القائمين داخل معاملته الخارجية، وتبقىحمايةFK للأنشطة primitive فيMigration العامة. الطلب لايعدلStore.ActivityId، والقبول يحدّثStore والقرار وAudit قبلCommit واحدة معنسختيهما. رفض الطلب لا يغير النشاط. لاوحدةProducts أوحزمةأوعقدno-op أوEvent/Job جديد؛ [نقطة تكاملP05](MERCHANT_OPERATIONS.md#s06-main-activity-changes) تتطلبإضافةتأثيرالمنتجاتالمستقبلي إلىهذهالمعاملةواختباره قبلتمكينها، وليستادعاءتنفيذهفيP04.
+
+## تأسيس S07 قيد التحقق
+
+StoreAdministration وعقدها فيApplication.Merchants يقدمان مساراتAdmin المحدودة وقراءةAudit وأفعالStore. تستخدم تفاصيلالمتجر واللوجو والفروع نواةالحالاتالموجودة فيStoreService/BranchService معبوابةAdmin داخل المعاملة نفسها، دون تكرار قواعدالتخزين أو معاملةمتداخلة. تبقىالهويةوالأقفال مملوكة لـIdentity، والبيانات والمراجعة لـMerchants. تفصل علامةتعليقStore عنتعليقMerchantAccount المؤثرعلىالدخول، وتوحدMerchantStoreAccess أثرالحالة علىكل القراءاتالعامة وتعديلاتالمالك. enum العقود فيApplication يحوَّل إلىenumDomain داخلInfrastructure؛لااعتمادمباشرمنControllers علىDomain. [العقود والحالات وحدودالمعاملة](MERCHANT_OPERATIONS.md#s07-store-administration).

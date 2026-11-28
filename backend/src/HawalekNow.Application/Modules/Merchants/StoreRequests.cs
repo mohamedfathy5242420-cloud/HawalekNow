@@ -9,7 +9,7 @@ public sealed record StoreWrite(string Name, string? Phone = null, string? Whats
 public sealed record StoreCreateWrite(Guid ActivityId, StoreWrite Details);
 public sealed record StoreUpdateWrite(string RowVersion, StoreWrite Details);
 public sealed record StoreDto(Guid Id, Guid MerchantAccountId, Guid ActivityId, string Name, string? Phone, string? WhatsApp,
-    string? Facebook, string? Instagram, string? TikTok, bool HasLogo, string RowVersion);
+    string? Facebook, string? Instagram, string? TikTok, bool HasLogo, string RowVersion, bool IsHidden, bool IsSuspended, string? VisibilityReason, string? SuspensionReason, bool CanOwnerEdit);
 public sealed record PublicStoreDto(Guid Id, Guid ActivityId, string Name, string? Phone, string? WhatsApp,
     string? Facebook, string? Instagram, string? TikTok, bool HasLogo);
 

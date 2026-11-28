@@ -5,6 +5,7 @@ using HawalekNow.Application.Modules.Merchants;
 using HawalekNow.Domain.Modules.Identity;
 using HawalekNow.Domain.Modules.Merchants;
 using HawalekNow.Domain.Shared.Auditing;
+using HawalekNow.Infrastructure.Modules.Catalog;
 using HawalekNow.Infrastructure.Modules.Identity;
 using HawalekNow.Infrastructure.Shared.Storage;
 using Microsoft.EntityFrameworkCore;
@@ -109,5 +110,23 @@ public sealed class ActivityChangeHttpTests(SqlDatabase database) : IClassFixtur
         Assert.Contains(mutation.GetProperty("parameters").EnumerateArray(), value => value.GetProperty("name").GetString() == "X-CSRF-TOKEN" && value.GetProperty("required").GetBoolean());
         foreach (var code in new[] { "400", "401", "403", "404", "409", "429" }) Assert.True(mutation.GetProperty("responses").TryGetProperty(code, out _));
         Assert.True(paths.TryGetProperty("/api/v1/merchants/stores/{storeId}/activity-change-requests", out _));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Catalog_lock_unavailability_returns_safe_conflict_without_changing_request_or_activity(bool review)
+    {
+        var setup = await SetupAsync(); using var owner = factory.CreateHttpsClient(); using var admin = factory.CreateHttpsClient();
+        await MerchantTestAccounts.LoginAsync(owner, setup.Owner); await MerchantTestAccounts.LoginAsync(admin, setup.Admin);
+        ActivityChangeDto? change = review ? await RequestAsync(owner, setup.Store, setup.Target) : null;
+        await using var blocker = database.CreateContext(); await using var transaction = await blocker.BeginAsync(); await new CatalogTreeLock(blocker).AcquireAsync(default, 0);
+        using var response = review ? await admin.PostBrowserJsonAsync(ReviewRoute(change!.Id, true), new ActivityChangeReviewWrite(change.RowVersion, change.StoreRowVersion))
+            : await owner.PostBrowserJsonAsync(OwnerRoute(setup.Store.Id), new ActivityChangeWrite(setup.Target, setup.Store.RowVersion));
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode); var json = await response.Content.ReadAsStringAsync(); Assert.DoesNotContain("51010", json); Assert.DoesNotContain("catalog-reference-tree", json);
+        await transaction.CommitAsync(); await using var read = database.CreateContext(); Assert.Equal(setup.Store.ActivityId, (await read.Set<Store>().SingleAsync(value => value.Id == setup.Store.Id)).ActivityId);
+        if (review) Assert.Equal(ActivityChangeStatus.Pending, (await read.Set<StoreActivityChange>().SingleAsync(value => value.Id == change!.Id)).Status);
+        else Assert.False(await read.Set<StoreActivityChange>().AnyAsync(value => value.StoreId == setup.Store.Id));
+        Assert.False(await read.Set<AuditEntry>().AnyAsync(value => value.TargetId == setup.Store.Id && value.Operation == "Store.ActivityChange.Approve"));
     }
 }

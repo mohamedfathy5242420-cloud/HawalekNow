@@ -1,5 +1,7 @@
 namespace HawalekNow.Domain.Modules.Merchants;
 
+public enum StoreModerationAction { Hide = 1, Publish = 2, Suspend = 3, Resume = 4 }
+
 public sealed class Store
 {
     public Guid Id { get; private set; }
@@ -12,6 +14,12 @@ public sealed class Store
     public string? Instagram { get; private set; }
     public string? TikTok { get; private set; }
     public string? LogoKey { get; private set; }
+    public bool IsHidden { get; private set; }
+    public bool IsSuspended { get; private set; }
+    public string? VisibilityReason { get; private set; }
+    public string? SuspensionReason { get; private set; }
+    public bool CanOwnerEdit => !IsSuspended;
+    public bool CanAppearPublicly => !IsHidden && !IsSuspended;
     public byte[] RowVersion { get; private set; } = [];
     private Store() { }
 
@@ -37,6 +45,19 @@ public sealed class Store
         if (ActivityId != previousActivityId || requestedActivityId == Guid.Empty || requestedActivityId == ActivityId) return false;
         ActivityId = requestedActivityId; return true;
     }
+    public bool TryModerate(StoreModerationAction action, string? reason)
+    {
+        if (!AdminReason(reason)) return false;
+        switch (action)
+        {
+            case StoreModerationAction.Hide when !IsHidden: IsHidden = true; VisibilityReason = reason!.Trim(); return true;
+            case StoreModerationAction.Publish when IsHidden: IsHidden = false; VisibilityReason = reason!.Trim(); return true;
+            case StoreModerationAction.Suspend when !IsSuspended: IsSuspended = true; SuspensionReason = reason!.Trim(); return true;
+            case StoreModerationAction.Resume when IsSuspended: IsSuspended = false; SuspensionReason = reason!.Trim(); return true;
+            default: return false;
+        }
+    }
+    public static bool AdminReason(string? reason) => !string.IsNullOrWhiteSpace(reason) && StoreActivityChange.ValidReason(reason);
 }
 
 public sealed record StoreDetails
