@@ -1,11 +1,14 @@
 # ملكية الوحدات وحدود التواصل
 
 OwnerStep: P01-S03
-Updated: 2026-10-11
+Updated: 2026-11-28
+
+تحديث P04-S07: Merchants تملك المتجر والفروع والمواعيد وطلبات النشاط والإدارة المدققة؛ Identity تملك الجلسات والبريد، وCatalog تملك الأنشطة والتصنيفات ودورة المنتجات المستقبلية، وLocations تملك الدليل الإداري. لا وحدة Products جديدة. تحققت S01–S07 محليًا مع597 اختبارًا، وتثبت [مراجعة P04](../planning/phase-04/PHASE_REVIEW.md) و[تقرير التسليم](../planning/phase-04/DELIVERY_REPORT.md) الأدلة وحالة CI. تعليقات غياب الأنواع أدناه تخص سجل التأسيس التاريخي.
+
 
 تحديث P02-S01 بتاريخ 2026-11-10: أضيف AccountType في Domain.Identity وApplicationUser المعتمد على ASP.NET في Infrastructure.Identity؛ MerchantAccount وتكوينه وخدمة حساب التاجر داخل Merchants. أول عقد فعلي IMerchantAccounts وMerchantAccountInfo في Application.Merchants.Contracts لا يكشف Entity. Shared.Persistence التقني يملك DbContext واحدًا وUoW، ويكتشف تكوينات الوحدات دون مرجع إلى أنواعها؛ لا Repository عام. الاختبارات تتحقق من المعاملة المشتركة ومنع الكتابة القديمة على SQL. تفاصيل الاستخدام والتحقق في [S01](../planning/phase-02/steps/S01.md) و[التصميم](../planning/phase-02/DESIGN.md). عبارات «لا أنواع/عقود بعد» في وصف التأسيس أدناه تاريخية؛ قواعد الملكية والاعتماد نفسها لم تتغير.
 
-المصدر: [المتطلبات المعتمدة](../Hawalek_Now_Approved_Requirements_AR.docx)، الأقسام المذكورة أدناه؛ [خطة التنفيذ](../Hawalek_Now_Backend_Master_Execution_Plan_AR.docx)، P01-S03 ومراحل P02–P08؛ [القرارات](../docs/DECISIONS.md)، D001 وD003/D004 وD010/D011. هذه خريطة ملكية؛ الوظائف والعقود لم تنفذ بعد.
+المصدر: [المتطلبات المعتمدة](../Hawalek_Now_Approved_Requirements_AR.docx)، الأقسام المذكورة أدناه؛ [خطة التنفيذ](../Hawalek_Now_Backend_Master_Execution_Plan_AR.docx)، P01-S03 ومراحل P02–P08؛ [القرارات](../docs/DECISIONS.md)، D001 وD003/D004 وD010/D011. هذه خريطة ملكية تشمل وظائف منفذة وأخرى مخططة؛ تحدد أقسام التحديث سجلات التنفيذ، ولا يعني الجدول تنفيذ مراحل P05–P08.
 
 | Module | الملكية والمسؤولية | المصدر والحد الفاصل |
 | --- | --- | --- |
@@ -21,7 +24,7 @@ Updated: 2026-10-11
 
 عمليات Admin الخاصة بالموافقات والتصنيفات والمرادفات والبلاغات والمحتوى والإحصاءات موجودة في الوحدة صاحبة البيانات. Admin صلاحية داخل Identity وليست Module. Audit يسجل فعل الإدارة؛ لا يملك العملية التجارية. الخدمات التشغيلية مثل Outbox وHangfire وLogging والتخزين ليست وحدات تجارية جديدة؛ تتأسس في توقيتها المحدد في Q003-01 إلى Q003-06.
 
-## تأسيس P03 الجاري
+## تأسيس P03 المتحقق
 
 تحديث S04–S07: Catalog تملك الأنشطة ومفاتيحاستيرادها، وLocations تملك المصدرالمثبت وSeed ومفاتيحها؛ التواصل عبرIInitialActivities فيApplication.Catalog.Contracts داخلUoW واحدة. Search تملكSynonymGroup/Term وإدارتها فقط. GeoPoint مفهومتقني مستقل فيDomain.Shared.Geography والتحويلNTS/EF فيInfrastructure.Shared.Geography؛ مستهلكهالمنتظرP04-S04 ولاكيانإنتاجي أضيفلههنا. Cache الاختيارالعامةلهاعقدSnapshot محدودفيApplication.Shared وتنفيذIMemoryCache فيInfrastructure.Shared؛ Decorators الوحدةتعيدDTOs الخاصةبها، والإدارةتبطل بعدCommit. [سياسة الذاكرة](REFERENCE_CACHE.md) و[حزم geography](P03_DEPENDENCIES.md). لا تغييرملكيةالأعمال أوطبقاتالإنتاج أوحساباتP02.
 
@@ -49,15 +52,15 @@ P03-S01 أضاف Activity وCategory وقواعد الأسماء في Domain.Cat
 - Application الخاص بوحدة يستخدم Domain نفس الوحدة وأنواع تطبيقها. التواصل مع وحدة أخرى يتم عبر عقود صريحة في `Application/Modules/<Owner>/Contracts` وNamespace المناظر `.Contracts` فقط. العقود مملوكة للوحدة المقدمة وتعرض بيانات مستقلة عن Entities أو Infrastructure؛ لا مسار Contracts مفتوحًا في Domain أو Infrastructure أو Api.
 - Infrastructure ينفذ عقود الوحدة ويستخدم Domain وApplication الخاصين بها؛ لا يصل لتنفيذ Infrastructure أو Domain وحدة أخرى. عند احتياج عقد وحدة أخرى، يستخدم عقد Application الصريح نفسه دون تجاوز الملكية.
 - Api الخاص بوحدة يستخدم Application نفس الوحدة وعقود Application العامة للوحدات الأخرى عند الحاجة، وليس أنواع Domain أو تفاصيل Infrastructure. تركيب الخدمات في Program هو المكان المخصص للاعتماد على Infrastructure.
-- Contracts ليست موجودة حاليًا؛ لا Interfaces أو DTOs افتراضية أو Commands/Queries أو Events شكلية. ينشأ العقد عند وجود استخدام حقيقي ويُراجع كشفه للبيانات والصلاحيات. الاختبارات تحفظ موضعه وقواعده للمستقبل، ولا تدعي وجود تواصل Runtime بين الوحدات الآن.
+- عند تأسيس P01-S03 لم تكن Contracts موجودة؛ تنشأ الآن عند وجود الاستخدام الفعلي في الوحدات المالكة. لا Interfaces أو DTOs افتراضية أو Commands/Queries أو Events شكلية. ينشأ العقد عند وجود استخدام حقيقي ويُراجع كشفه للبيانات والصلاحيات. الاختبارات تحفظ موضعه وقواعده للمستقبل، ويثبت تحقق P02–P04 التواصل الفعلي عبر العقود اللازمة فقط.
 - تغيير بيانات وحدة يتم داخل حالاتها وعقودها، لا بالتعديل المباشر على Entity أو Repository وحدة أخرى. D003 يثبت DbContext واحدًا وSchemas منطقية؛ الوحدة ليست قاعدة بيانات أو Transaction مستقلة. D004 يحدد حد المعاملة لكل Use Case عند تنفيذه، وOutbox عند الحاجة وفق قرارات التوقيت؛ لا Bus أو Orchestrator عام هنا.
 
-مثال الملكية دون تنفيذ: Identity يثبت تأكيد البريد؛ Merchants يملك Pending/Approved. التاجر المؤكد وPending يستطيع الدخول وتجهيز بياناته، لكن المتجر والفروع والمنتجات لا تظهر للجمهور قبل Approved وفق D010. تنفيذ شرط الظهور في حالات الاستخدام اللاحقة لا ينسخ منطق اعتماد التاجر إلى Shared أو Search أو Catalog.
+مثال الملكية المؤسس والمطبق في P04 للمتجر والفروع: Identity يثبت تأكيد البريد؛ Merchants يملك Pending/Approved. التاجر المؤكد وPending يستطيع الدخول وتجهيز بياناته، لكن المتجر والفروع والمنتجات لا تظهر للجمهور قبل Approved وفق D010. تطبق Merchants بوابة الظهور الحالية، ويجب أن تستهلكها حالات منتجات P05 المستقبلية دون نسخ منطق اعتماد التاجر إلى Shared أو Search أو Catalog.
 
 ## المشترك الحقيقي
 
-المشترك مسؤولية تقنية أو مفهوم مستقل عن أي وحدة، له احتياج مثبت وقرار وملكية واضحة؛ تشابه أسماء أو استخدام نوع في وحدتين لا يكفي. Entity أو قاعدة اعتماد التاجر أو التصنيف أو OTP تظل في وحدتها. لا تجريدات EntityBase أو RepositoryBase أو Result أو IClock أو IFileStorage جديدة في S03.
-S03 لم تضف Shared؛ S04 تضيف المشترك التقني المثبت أدناه. عند إثبات الحاجة في خطوة لاحقة، يمكن إنشاء `Shared` داخل الطبقة المناسبة فقط مع Namespace `HawalekNow.<Layer>.Shared`؛ لا مشروع Shared جديد. المشترك لا يعتمد على Modules، والوحدة تعتمد على Shared باتجاهات الطبقات نفسها فقط. كل إضافة تذكر مستهلكها الحقيقي واختبارها وقرارها، ولا تفتح الباب لنسخ أنواع وحدات إليها.
+المشترك مسؤولية تقنية أو مفهوم مستقل عن أي وحدة، له احتياج مثبت وقرار وملكية واضحة؛ تشابه أسماء أو استخدام نوع في وحدتين لا يكفي. Entity أو قاعدة اعتماد التاجر أو التصنيف أو OTP تظل في وحدتها. لا تجريدات EntityBase أو RepositoryBase أو Result أو IClock أو IFileStorage جديدة في P01-S03.
+P01-S03 لم تضف Shared؛ أضافت P01-S04 المشترك التقني المثبت أدناه، ثم أضيف التخزين اللازم في P04-S03. عند إثبات الحاجة في خطوة لاحقة، يمكن إنشاء `Shared` داخل الطبقة المناسبة فقط مع Namespace `HawalekNow.<Layer>.Shared`؛ لا مشروع Shared جديد. المشترك لا يعتمد على Modules، والوحدة تعتمد على Shared باتجاهات الطبقات نفسها فقط. كل إضافة تذكر مستهلكها الحقيقي واختبارها وقرارها، ولا تفتح الباب لنسخ أنواع وحدات إليها.
 Result/ProblemDetails في P01-S05، Persistence في P02-S01، Audit في P04-S02، وIFileStorage في P04-S03 وفق القرارات؛ لا يبدأ أي منها هنا. SDK والمعمارية ثابتان وDocker مؤجل إلى P01-S06 وفق D009 وليس Passed.
 
 ## ما يحميه الفاحص وحدوده
@@ -112,8 +115,8 @@ WeeklyHours قيمة غير قابلة للتعديل الجزئي فيDomain.Me
 
 ## تأسيس S06
 
-Merchants تملكStoreActivityChange وطلبها ومراجعتها. يستخدمActivityChangeService عقديIdentity وCatalog القائمين داخل معاملته الخارجية، وتبقىحمايةFK للأنشطة primitive فيMigration العامة. الطلب لايعدلStore.ActivityId، والقبول يحدّثStore والقرار وAudit قبلCommit واحدة معنسختيهما. رفض الطلب لا يغير النشاط. لاوحدةProducts أوحزمةأوعقدno-op أوEvent/Job جديد؛ [نقطة تكاملP05](MERCHANT_OPERATIONS.md#s06-main-activity-changes) تتطلبإضافةتأثيرالمنتجاتالمستقبلي إلىهذهالمعاملةواختباره قبلتمكينها، وليستادعاءتنفيذهفيP04.
+Merchants تملكStoreActivityChange وطلبها ومراجعتها. يستخدمActivityChangeService عقديIdentity وCatalog القائمين داخل معاملته الخارجية، وتبقىحمايةFK للأنشطة primitive فيMigration العامة. الطلب لايعدلStore.ActivityId، والقبول يحدّثStore والقرار وAudit قبلCommit واحدة معنسختيهما. رفض الطلب لا يغير النشاط. لا تنفيذ منتجات أوحزمة أوعقد no-op أوEvent/Job جديد؛ [نقطة تكاملP05](MERCHANT_OPERATIONS.md#s06-main-activity-changes) تتطلبإضافةتأثيرالمنتجاتالمستقبلي إلىهذهالمعاملةواختباره قبلتمكينها، وليستادعاءتنفيذهفيP04.
 
-## تأسيس S07 قيد التحقق
+## تأسيس S07
 
 StoreAdministration وعقدها فيApplication.Merchants يقدمان مساراتAdmin المحدودة وقراءةAudit وأفعالStore. تستخدم تفاصيلالمتجر واللوجو والفروع نواةالحالاتالموجودة فيStoreService/BranchService معبوابةAdmin داخل المعاملة نفسها، دون تكرار قواعدالتخزين أو معاملةمتداخلة. تبقىالهويةوالأقفال مملوكة لـIdentity، والبيانات والمراجعة لـMerchants. تفصل علامةتعليقStore عنتعليقMerchantAccount المؤثرعلىالدخول، وتوحدMerchantStoreAccess أثرالحالة علىكل القراءاتالعامة وتعديلاتالمالك. enum العقود فيApplication يحوَّل إلىenumDomain داخلInfrastructure؛لااعتمادمباشرمنControllers علىDomain. [العقود والحالات وحدودالمعاملة](MERCHANT_OPERATIONS.md#s07-store-administration).

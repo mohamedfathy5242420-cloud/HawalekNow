@@ -653,33 +653,42 @@
       "status": "Passed",
       "exitCode": 0,
       "command": "./planning/verify-roadmap.ps1",
-      "detail": "28Nov InProgress baseline:76source rows,75edges,1037local links/anchors accepted. Final InReview state will be checked after its evidence is collected."
+      "detail": "28Nov final InReview state accepted:76source rows,75edges,1051local links/anchors;all7steps Verified,human approval/V4Pending,P05prohibited."
     },
     {
       "name": "GitRules",
       "status": "Passed",
       "exitCode": 0,
       "command": "./planning/verify-git-workflow.ps1",
-      "detail": "28Nov prestaging:27ignored+36allowed samples;491tracked files not ignored. Recheck after staging/final metadata."
+      "detail": "28Nov final prestaging:27ignored+36allowed samples and504tracked files all accepted. New scoped Docker receipt is explicitly staged and checked by final-head CI."
     },
     {
       "name": "DiffCheck",
       "status": "Passed",
       "exitCode": 0,
       "command": "git -c safe.directory=D:/HwalekNow diff --check",
-      "detail": "28Nov worktree whitespace verification exit0;explicit staged verification required before each commit."
+      "detail": "28Nov delivery diff check exit0 after correcting one extra EOF blank line;historical DeliveryFirstDiff failure retained. Production/test/SDK diff from verified implementation head is empty;staged check also required."
     },
     {
       "name": "Docker",
-      "status": "Pending",
-      "command": "./docker/test-api-build-context.ps1;./docker/smoke-api.ps1;./docker/test-store-files.ps1",
-      "detail": "Requires the committed S07 source image;not yet run for S07."
+      "status": "Passed",
+      "command": "./docker/test-api-build-context.ps1 -Image hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622 -KeepImage; ./docker/smoke-api.ps1 -Image hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622; ./docker/test-store-files.ps1 -Image hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622",
+      "detail": "28Nov exact implementation head0c88c6b:211allowed/82forbidden,0missing/extra/forbidden,3exactSeedresources and116clean published files;non-root/read-only smoke;actual host2process and2fresh-container storage persistence;UID65534denied;new labeled volume preserved. Receipt docker-review-verification.json. Final metadata head is checked separately.",
+      "exitCode": 0
     },
     {
       "name": "CI",
-      "status": "Pending",
-      "command": "GitHub REST runs/jobs/logs on exact PR head",
-      "detail": "S07 must be pushed and exact-head all3jobs/logs inspected. S06 CI is not substituted."
+      "status": "Passed",
+      "command": "GitHub REST actions/runs/46145684103+3completed jobs/logs at head0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+      "detail": "28Nov: all3jobs completed/success;597tests/0failed/0skipped,build0/0,format,documentation/Git/negative gates,Docker211allowed/82forbidden/116published/3Seed and restart/UIDdenial. This is the S07 implementation baseline;final delivery metadata commit gets its own CI before task completion.",
+      "exitCode": 0
+    },
+    {
+      "name": "DeliveryFirstDiff",
+      "status": "Failed",
+      "exitCode": 1,
+      "command": "git -c safe.directory=D:/HwalekNow diff --check",
+      "detail": "Final documentation pass found one extra blank line at end of steps/S07.md introduced by an appended receipt. Trimmed to one final newline;no code or historical evidence removed. Recheck required."
     }
   ],
   "userApproval": "Pending",
@@ -1071,6 +1080,58 @@
         "restart": "Passed: host/container processes and unrelated UID denial",
         "volumePreserved": true
       }
+    },
+    {
+      "runId": 46145684103,
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103",
+      "jobs": [
+        {
+          "id": 140981109278,
+          "name": "Documentation and Git rules",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109278"
+        },
+        {
+          "id": 140981109455,
+          "name": "Restore, build, tests and format",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109455"
+        },
+        {
+          "id": 140981109482,
+          "name": "API and SQL image builds",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109482"
+        }
+      ],
+      "tests": {
+        "architecture": 47,
+        "integration": 352,
+        "unit": 198,
+        "passed": 597,
+        "failed": 0,
+        "skipped": 0
+      },
+      "build": {
+        "warnings": 0,
+        "errors": 0
+      },
+      "docker": {
+        "allowedInputs": 211,
+        "forbiddenFixtures": 82,
+        "publishedFiles": 116,
+        "seedResources": 3,
+        "restart": "Passed:host/container and unrelated Linux UID denial",
+        "volumePreserved": true
+      },
+      "scope": "Verified S07 implementation head before the final documentation-only delivery commit. Final PR head requires its own successful run,recorded in PR checks/body and the final receipt;this earlier SHA is not relabeled."
     }
   ],
   "s03StorageRuntime": {
@@ -1170,5 +1231,110 @@
     "passed": 597,
     "failed": 0,
     "skipped": 0
+  },
+  "ci": {
+    "runId": 46145684103,
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+    "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103",
+    "jobs": [
+      {
+        "id": 140981109278,
+        "name": "Documentation and Git rules",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109278"
+      },
+      {
+        "id": 140981109455,
+        "name": "Restore, build, tests and format",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109455"
+      },
+      {
+        "id": 140981109482,
+        "name": "API and SQL image builds",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103/job/140981109482"
+      }
+    ],
+    "tests": {
+      "architecture": 47,
+      "integration": 352,
+      "unit": 198,
+      "passed": 597,
+      "failed": 0,
+      "skipped": 0
+    },
+    "build": {
+      "warnings": 0,
+      "errors": 0
+    },
+    "docker": {
+      "allowedInputs": 211,
+      "forbiddenFixtures": 82,
+      "publishedFiles": 116,
+      "seedResources": 3,
+      "restart": "Passed:host/container and unrelated Linux UID denial",
+      "volumePreserved": true
+    },
+    "scope": "Verified S07 implementation head before the final documentation-only delivery commit. Final PR head requires its own successful run,recorded in PR checks/body and the final receipt;this earlier SHA is not relabeled."
+  },
+  "implementation": {
+    "head": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+    "productionTree": "5f711a9f11aab372c040eb34160320261a7248e0",
+    "testsTree": "86b3895955473df97ebccd6b9b2e3f4c8069a3c1",
+    "finalHeadEvidence": "Final PR#11 current head must have a separate completed/success pull_request run with3successful jobs and597tests. Inspect final PR body/checks and final delivery receipt;never treat this implementation baseline SHA as a later head."
+  },
+  "s07StorageRuntime": {
+    "phase": "P04",
+    "sourceHead": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+    "status": "Passed",
+    "scope": "Exact S07 implementation baseline before the final documentation delivery commit. Final PR head receives separate CI and Docker checks;its SHA/result are recorded in PR#11 checks/body and the final receipt,not inferred from this earlier SHA.",
+    "context": {
+      "run": "160c5bc7c5d444b9ae280ecd02722134",
+      "sourceHead": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+      "rulesSha256": "4BB69D525E3F57E071AD0E2B9D667BAB5E4596131C27B8111D047135F4A52BAF",
+      "status": "Passed",
+      "context": "Passed",
+      "forbidden": [],
+      "missing": [],
+      "unexpected": [],
+      "allowedCount": 211,
+      "forbiddenCount": 82,
+      "image": "hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622",
+      "artifacts": "Passed",
+      "imageId": "sha256:33e52b1d45eb10dc19815350566fa33acc10acd04c0b110949337b482600a962"
+    },
+    "imageArtifacts": {
+      "seedResources": 3,
+      "publishedFiles": 116,
+      "seedAttributionLicense": "Exact bytes verified",
+      "magickNotices": "Exact published LICENSE/NOTICE verified"
+    },
+    "smoke": {
+      "status": "Passed",
+      "detail": "non-root/read-only,liveness,correlation,safe404,Production-docs gate;not SQL/mail readiness"
+    },
+    "storage": {
+      "status": "Passed",
+      "sourceHead": "0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e",
+      "image": "hawaleknow/api:p04-s07-0c88c6bba879-9cb1d622",
+      "volume": "hawaleknow_p04_store_files_a41e5a833b8a44ed8697869386ab67f2",
+      "owner": "a41e5a833b8a44ed8697869386ab67f2",
+      "restart": "Passed",
+      "permissions": "Passed: owner modes0700/0600 and an unrelated UID65534 cannot read the known existing image or write its directory.",
+      "hostRestart": "Passed",
+      "volumeCreated": true,
+      "volumePreserved": true
+    },
+    "ci": {
+      "run": 46145684103,
+      "url": "https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/46145684103"
+    }
   }
 }

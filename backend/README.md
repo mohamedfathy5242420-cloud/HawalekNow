@@ -1,6 +1,6 @@
 # Backend
 
-الحالة الجارية: P04 متحققة محليًا بجميع خطواتها S01–S07 و597 اختبارًا ناجحًا، وبناء بلا تحذيرات أوأخطاء وlocked restore وFormat. تنتظر Docker وCI على رأس الحفظ والتسليم قبل InReview النهائية في Draft PR #11. اعتماد المستخدم وV4 Pending، والتجربة والشرح Deferred. [CURRENT_STATE](../docs/CURRENT_STATE.md) و[تقرير التسليم](../planning/phase-04/DELIVERY_REPORT.md) هما مرجعا الحالة والأدلة.
+الحالة الجارية: P04 كاملة InReview بخطواتها S01–S07، و597 اختبارًا ناجحًا محليًا وفي CI46145684103 على رأس التنفيذ0c88c6b، وبناء0/0 وlocked restore وFormat وDocker والتخزين المستمر والصلاحيات. تبقى Draft PR #11 واحدة وUserApproval/V4 Pending والتجربة والشرح Deferred. تثبت CI وDocker لرأس تحديث التسليم النهائي في وصف PR وChecks. [CURRENT_STATE](../docs/CURRENT_STATE.md) و[تقرير التسليم](../planning/phase-04/DELIVERY_REPORT.md) هما مرجعا الحالة والأدلة.
 
 للتشغيل والإعداد الآمن وHTTPS وCookie/CSRF استخدم [دليل Identity](IDENTITY_OPERATIONS.md). تشرح [عمليات البيانات المرجعية](REFERENCE_DATA_OPERATIONS.md) Catalog وLocations وSeed والمرادفات، ويشرح [دليل Merchants](MERCHANT_OPERATIONS.md) المتجر واللوجو والفروع والمواعيد وطلبات النشاط والإدارة وPostman وحدود المعاملات. لا تطبق Migrations على قاعدة تطبيق موجودة لمجرد تشغيل الاختبارات؛ فاحص الاختبارات ينشئ قواعدSQL جديدة مملوكة له ويزيلها تحت حراس الملكية.
 

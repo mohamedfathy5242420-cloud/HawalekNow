@@ -1,7 +1,7 @@
 # مراجعة P04 التاجر والمتجر والفروع
 
 Updated: 2026-11-28
-Status: InProgress
+Status: InReview
 ExecutionAuthorization: D021
 UserApproval: Pending
 ReviewStatus: Pending
@@ -10,11 +10,14 @@ P05Status: NotStarted
 
 ## الوضع الحالي
 
-S01–S07 InReview/Verified محليًا. نجحت597حالة في28نوفمبر (47Architecture+352Integration+198Unit)، صفر فشل أوتخطٍّ، وlocked restore وبناء0/0 وFormat، وبوابات الرفض46+27+43+19 وعقد الأخطاء. التنفيذ كله في Draft PR #11؛ تنتظر المرحلة Docker وCI على رأس الحفظ ثم رأس التسليم النهائي. تبقى UserApproval/V4 Pending والتجربة الشخصية والشرح Deferred وP05NotStarted وتسليمهاDraft. [التقرير](DELIVERY_REPORT.md) و[الأدلة](verification.json).
+S01–S07 InReview/Verified تقنيًا. نجحت597حالة (47Architecture+352Integration+198Unit)، صفر فشل أوتخطٍّ، وبناء0/0 وlocked restore وFormat. نجحت CI46145684103 بكل الوظائف على رأس التنفيذ0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e؛ وDocker211allowed/82forbidden/116published/3Seed، وsmoke والتخزين المستمر عبر عمليتين وحاويتين ورفض UID آخر، مع حفظ الـvolume. [التقرير](DELIVERY_REPORT.md) و[الأدلة](verification.json) و[إيصال Docker](docker-review-verification.json).
+
+تسلم P04 كاملة InReview في Draft PR #11 واحدة، واعتماد المستخدم وV4 Pending، والتجربة الشخصية والشرح Deferred وتسليم P05 Draft. لا دمج P04 أوبدء P05. إيصال التنفيذ أعلاه محدد بنطاق SHA؛ تثبت CI المستقلة لرأس تحديث التسليم النهائي في وصف PR وChecks قبل انتهاء مهمة التسليم.
 
 ## السجل الزمني
 
 تصف الفقرات التالية حالة العمل وقت كتابتها؛ يحسم الوضع الحالي أعلاه حالتها الآن، دون محو الفشل أوالتصحيحات.
+
 بدأ التنفيذ من main63b189618a9c856151920da7669a4e2c9af86461 بعد نجاح بوابة P03. S01 Verified تقنيًا مع85 اختبارًا مناسبًا ناجحًا؛ تأتي المراجعة الإدارية وAudit في S02. [التصميم](DESIGN.md) و[الأدلة](verification.json) و[S01](steps/S01.md). لا اعتماد بشري أوفحص غير منفذ مفترض. تسلم المرحلة كاملة InReview في Draft PR واحدة، مع تسليم P05 Draft دون بدء P05 أودمج P04.
 
 S02 Verified محليًا مع139 اختبارًا مناسبًا وFormat وفاحصي التوثيق وGit وdiff. [دليل المسارات والمعاملة وAudit](../../backend/MERCHANT_OPERATIONS.md) و[تسليم S03](handoffs/S02-to-S03.md). CI على الرأس الجديد تنتظر الرفع؛ [CI S01](https://github.com/mohamedfathy5242420-cloud/HawalekNow/actions/runs/45605384702) أثبتت406 اختبارات على0c7c822 فقط. S03–S07 لم تبدأ بعد.

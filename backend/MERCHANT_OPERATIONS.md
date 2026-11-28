@@ -1,6 +1,6 @@
 # Merchant workflows and operations
 
-P04 runs on `codex/p04-implement-merchants-stores-and-branches` in [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). S01–S07 are locally verified: full597 tests (47 Architecture+352 Integration+198 Unit), no failures/skips, locked restore, build0/0 and format verification on28Nov. S07 Docker and exact-head CI remain required. CI46038731521 covers only the S06 head e2d9877e85e54f2273b9b3c885e6500f23332f0d. UserApproval/V4 remain Pending under D021. The [delivery report](../planning/phase-04/DELIVERY_REPORT.md) records the evidence scopes and retained failures.
+P04 S01–S07 are technically verified and delivered InReview in the single [Draft PR #11](https://github.com/mohamedfathy5242420-cloud/HawalekNow/pull/11). Full local and S07 CI46145684103 results:597passed (47 Architecture+352 Integration+198 Unit),0failed/0skipped, locked restore, build0/0 and format. The CI receipt covers implementation head0c88c6bba8792bd8b3f9dd1eb52d0ada942eb98e; its Docker checks prove211allowed/82forbidden/116published/3Seed and real storage restarts/UID denial. The final documentation delivery head receives its own CI and Docker validation, recorded in PR checks/body and the final task receipt. UserApproval/V4 remain Pending under D021. See the [delivery report](../planning/phase-04/DELIVERY_REPORT.md) and [scoped Docker receipt](../planning/phase-04/docker-review-verification.json).
 
 ## Accounts and existing security
 
@@ -158,7 +158,7 @@ The Locations-owned `IAdministrativeDirectory` checks a full active path under i
 
 ## S05 weekly hours
 
-Locally verified with135 relevant checks and a further23 time checks after the DST lookahead correction, all with zero failures/skips. Full solution format and build0/0 pass. Exact final-head CI remains required.
+Locally verified with135 relevant checks and a further23 time checks after the DST lookahead correction, all with zero failures/skips. Full solution format and build0/0 pass. These are the original step-local checks; the later phase CI evidence is linked at the top.
 
 `hours` is required on branch/pickup creation and full update through the existing PUT route, in the same rowVersion and Audit transaction as the place details. Supply all seven unique days, Sunday0 through Saturday6. A closed day has no new opening periods; an overnight period from the previous day may still continue. An open day has1–8 periods using exact24-hour `HH:mm`. `closesNextDay:true` permits a duration through midnight up to24 hours; equal start/end with this flag means24 hours. Without it, end must be later than start. Overlaps are rejected across days and the week boundary. Adjacent intervals are continuous.
 
@@ -172,7 +172,7 @@ Migration `20261126155950_P04BranchWeeklyHours` adds required JSON hours. Existi
 
 ## S06 main activity changes
 
-Locally verified with197 relevant tests (47 Architecture+100 Integration+50 Unit), no failures/skips, build0 warnings/errors and full format verification. Final-head CI remains required.
+Locally verified with197 relevant tests (47 Architecture+100 Integration+50 Unit), no failures/skips, build0 warnings/errors and full format verification. These are the original step-local checks; the later phase CI evidence is linked at the top.
 
 | Method/path relative to `/api/v1` | Access | Input/result |
 | --- | --- | --- |
@@ -190,7 +190,7 @@ Audit targets the Store with explicit Request/Approve/Reject operation and actor
 
 Migration `20261126162152_P04StoreActivityChanges` adds the request table, status/review constraints, rowVersion, pending unique index and primitive Catalog FKs without cross-module entities/navigation. It was generated with DesignOnly settings and has not been applied to the application database. These synchronous decisions need no new Outbox kind or job.
 
-Before products are enabled in P05, acceptance must also set incompatible existing products toDraft in this same transaction, through a Products-owned contract that joins the existing UoW. The exact insertion point is documented beside `TryApplyApprovedActivity` in ActivityChangeService. P04 contains no products and performs no product updates; a no-op product handler or event without a consumer would not establish that future invariant. P05 must add its own real SQL rollback/concurrency tests across Store/request/product/Audit before claiming it.
+Before products are enabled in P05, acceptance must also set incompatible existing products toDraft in this same transaction, through a Catalog-owned product lifecycle contract that joins the existing UoW. The exact insertion point is documented beside `TryApplyApprovedActivity` in ActivityChangeService. P04 contains no products and performs no product updates; a no-op product handler or event without a consumer would not establish that future invariant. P05 must add its own real SQL rollback/concurrency tests across Store/request/product/Audit before claiming it.
 
 For Postman, start with the Merchant session and latest own StoreRowVersion. Choose another active Catalog activity as targetActivityId, submit and confirm public activity remains old. Switch deliberately to Admin, refresh the selected request's two versions from its queue entry, then choose approval OR rejection. Approval changes the public activity; rejection leaves it unchanged and permits another request. Refresh versions after any store edit. These are repeatable instructions for the pending personal trial, not a claim that the user performed it.
 
